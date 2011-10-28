@@ -19,7 +19,7 @@ $this->Html->script(array('plugins','script'),array('inline'=>false));
   <meta name="author" content="">
 
   <!--  Mobile viewport optimized: j.mp/bplateviewport -->
-  <meta name="viewport" content="width=device-width; initial-scale=1.0">
+  <!-- <meta name="viewport" content="width=device-width; initial-scale=1.0"> -->
 
   <link rel="shortcut icon" href="<?php echo Router::url('/teammaker.ico'); ?>">
   <link rel="apple-touch-icon" href="<?php echo Router::url('/teammaker_32.png'); ?>">
@@ -31,7 +31,7 @@ $this->Html->script(array('plugins','script'),array('inline'=>false));
   
          
   <?php   	  	
-	$this->Html->css(array('style','cake.generic','custom'),NULL,array('inline'=>false));	
+	$this->Html->css(array('style','cake.generic', 'superfish','custom'),NULL,array('inline'=>false));	
 	echo $asset->scripts_for_layout('css');	
 	
 	//Don't include handheld in asset because it needs media="handheld"

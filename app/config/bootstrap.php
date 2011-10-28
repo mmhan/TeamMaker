@@ -48,3 +48,12 @@
  * Inflector::rules('plural', array('rules' => array(), 'irregular' => array(), 'uninflected' => array()));
  *
  */
+define("ROLE_SU", 1);
+define("ROLE_ADMIN", 4);
+define("ROLE_MEMBER", 5);
+
+/**
+ * User related constants
+ */
+define('RULE_USERNAME', '/^[a-z0-9_\.]*$/i');
+define('ONE_WEEK', 604800);

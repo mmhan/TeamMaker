@@ -15,7 +15,7 @@ $user = $this->Session->read('Auth.User');
 		<li>
 			<?php echo $this->Html->link("Users", array('controller' => 'users', 'action' => 'index')); ?>
 			<ul>
-				<li><?php echo $this->Html->link("Users", array('controller' => 'users', 'action' => 'index')); ?></li>
+				<li><?php echo $this->Html->link("Users", array('controller' => 'users', 'action' => 'index', 'admin' => true)); ?></li>
 				<li><?php echo $this->Html->link("User Groups", array('controller' => 'groups', 'action' => 'index'), array('title' => "E.g.: Super Admins, Admins & Team Members")); ?></li>
 			</ul>
 		</li>

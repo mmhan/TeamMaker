@@ -24,10 +24,12 @@ class UsersController extends AppController {
 			//TODO: comment below in production.
 			,'build_acl', 'init_db'
 		);
+		$this->Auth->fields = array('username' => 'email', 'password' => 'password');
     }
 
     /**
      * Public profile
+	 * TODO: change to email.
      * 
      * @access public
      */

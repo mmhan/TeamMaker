@@ -4,6 +4,7 @@ $user = $this->Session->read('Auth.User');
 
 <div id="nav">
 	<ul class="sf-menu">
+	<?php if(!empty($user)): ?>
 		<li>
 			<?php echo $this->Html->link("Projects", array('controller' => 'projects', 'action' => 'index')); ?>
 			<ul>
@@ -20,4 +21,5 @@ $user = $this->Session->read('Auth.User');
 			</ul>
 		</li>
 	</ul>
+	<?php endif; ?>
 </div>

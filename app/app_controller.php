@@ -15,6 +15,15 @@ class AppController extends Controller {
 	   	'DebugKit.Toolbar' => array('panels' => array('history' => false))
 	);	
 	
+	function beforeFilter(){
+		//allow display action(which is used to render 'pages') so that it's publicly accessible.
+		if (!empty($this->Auth->allowedActions)) {
+	            $this->Auth->allowedActions[] = 'display';
+		} else {
+	            $this->Auth->allowedActions = array('display');
+		}
+	}
+	
 	/**
      * Misc function to check if it was an ajax call.
      * @return boolean

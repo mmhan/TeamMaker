@@ -24,178 +24,6 @@ class UsersController extends AppController {
 			//TODO: comment below in production.
 			,'build_acl', 'init_db'
 		);
-		$this->Auth->fields = array('username' => 'email', 'password' => 'password');
-    }
-
-    /**
-     * Public profile
-	 * TODO: change to email.
-     * 
-     * @access public
-     */
-    function profile ($userName = false){
-		//if there's no user name check for currently logged-in user, and show his profile.
-    	if(!$userName){
-    		$userName = $this->Auth->user('username');
-			//if not logged in, redirect to login page.
-    		if(!$userName) $this->redirect(array('action' => 'login'));
-			//if logged in redirect to his page.
-    		$this->redirect(array('action' => 'profile', $userName));
-    	}
-		//if user name is still not given, (considering it has been redirected.
-    	if(empty($userName)){
-    		$this->Session->setFlash(__('Invalid User', true));
-    		$this->redirect('/');
-    	}
-		//find user data.
-    	$user = $this->User->find('first', array(
-    		'conditions' => array(
-    			'username' => $userName
-    		)
-    	));
-		//if user is not found show 404.
-    	if(empty($user)){
-    		$this->cakeError('error404');
-    	}		
-    	$this->set('user', $user);
-    	$this->_setTitle($user['User']['display_name'] . "'s Profile");
-    	$this->set('isOwner', $userName == $this->Auth->user('username'));
-    }
-    /**
-     * For editing a person's own profile.
-	 * 
-     * @access	only logged in users.
-     */
-    function edit ($id = false) {
-		//get logged in user's id
-    	$userId = $this->Auth->user('id');
-    	//if id is not given use logged in user's id.
-    	if(empty($id)){
-    		$id = $userId;
-    	}
-		
-		//if log in user is not editing his own profile
-		//this is invalid. redirect it.
-    	if ($userId != $id || !$id && empty($this->data)) {
-        	$this->Session->setFlash(__('Invalid User', true));
-            $this->redirect(array('action' => 'edit'));
-		}
-		
-        if (!empty($this->data)) {
-        	//remove email field from data as long as it's not update-able
-        	if(!empty($this->data['User']['email'])){
-        		$email = $this->data['User']['email'];
-        		unset($this->data['User']['email']);
-        	}
-        	
-        	//if password field is blank don't update password.
-        	if (empty($this->data['User']['password'])){
-        		unset($this->data['User']['password']);
-        	}else{//if it's not blank, prepare to update it.
-        		$this->data['User']['current_password'] = $this->Auth->password($this->data['User']['current_password']);
-        		$this->data['User']['password'] = $this->Auth->password($this->data['User']['password']);
-	    		$this->data['User']['hashed_confirm_password'] = $this->Auth->password($this->data['User']['confirm_password']);
-        	}
-			
-        	if ($this->User->save($this->data)) {
-        		$this->_addSessionData($this->User->read(null, $id));
-            	$this->Session->setFlash(__('Your profile has been saved', true));
-			} else {
-            	$this->Session->setFlash(__('Your profile could not be saved. Please, try again.', true));
-			}
-			
-			//put email back in, in case it has been removed from data (since user didn't want to update)
-			if(isset($email) && $email){
-				$this->data['User']['email'] = $email;
-			}
-		}
-		// if data is empty (when Displaying form), get it from db and set.
-		if (empty($this->data)) {
-        	$this->data = $this->User->read(null, $id);
-        }
-    }
-    
-    
-    /**
-     * Reset Password using $userId and $hash 
-     * 
-     * @param	int	id of user to reset password
-     * @param	string	hash.
-     */
-    function reset_password ($userId = 0, $hash = '') {
-		//this is the variable that is to be sent to View, true means the token is correct, false incorrect.
-    	$isMatch = false;
-    	
-    	//generate a token out of salt, time and userId to secure frontend manipulations.
-    	$time = time();
-    	$token = md5(Configure::read('Security.salt') . $time . (empty($userId) ? $this->data['User']['id'] : $userId));
-    	$isPost = !empty($this->data);
-    	
-    	if($isPost){//for submits
-    		if(
-				//time and token are there.
-    			isset($this->data['User']['time']) && isset($this->data['User']['token']) &&
-				//user id is given.
-    			isset($this->data['User']['id']) &&
-				//and given token is correct token
-    			$this->data['User']['token'] == md5(Configure::read('Security.salt') . $this->data['User']['time'] . $this->data['User']['id'])
-    		){
-				//when we are here, we can be sure that the user has the right to reset $this->data['User']['id']'s password
-	    		$this->User->disableValidate("resetPassword");	//disable some of the validations for resetting password.
-	    		$this->User->id = $this->data['User']['id'];
-	    		
-				//hash password and set 
-				$this->data['User']['password'] = $this->Auth->password($this->data['User']['password']);
-				//has confirm password and set to confirm that user typed in correct password twice.
-	    		$this->data['User']['hashed_confirm_password'] = $this->Auth->password($this->data['User']['confirm_password']);
-	    		if ($this->User->save($this->data)) {
-	    			$this->flash(
-	    				"You have successfully changed your password.", 
-	    				array(
-	    					"controller" => "users",
-	    					"action" => "login"
-	    				)
-	    			);
-	    		}
-	    		
-				$isMatch = true;
-    		}
-    	}elseif (!empty($userId) && !empty($hash)) {//for visits coming in from email links.
-    		$this->User->id = $userId;
-    		$this->User->recursive = -1;
-    		$user = $this->User->read(array('hash', 'hash_generated'));
-    		if ($user && $user['User']['hash'] == $hash && strtotime($user['User']['hash_generated']) + ONE_WEEK > time()) {
-    				$isMatch = true;
-    				$this->data['User']['id'] = $userId;
-    		}
-    	}
-    	
-    	$this->data['User']['time'] = $time;
-    	$this->data['User']['token'] = $token;
-    	$this->set('isMatch', $isMatch);
-    }
-
-    
-    /**
-     * Ask for a link to reset password.
-     */
-    function forgot_password () {
-    	$isPost = !empty($this->data) ? TRUE : FALSE;
-    	
-    	if ($isPost) {
-    		//TODO:to use find() instead of findByEmail and use cache.
-    		$this->User->recursive = -1;
-    		$user = $this->User->findByEmail($this->data['User']['email']);
-    		
-    		// user exists
-    		if ($user) {
-    			$this->set('foundUser', true);
-    			$this->set('emailStatus', $this->_send_code($user, 'resetPassword'));
-    		}
-    		else {
-    			$this->set('foundUser', false);
-    		}
-    	}
     }
     
     
@@ -204,11 +32,6 @@ class UsersController extends AppController {
  	 */
     function login () {
 		$isPost = !empty($this->data) ? TRUE : FALSE;
-		$isAjax = $this->_isAjax();
-		
-		if ($isAjax) {
-            $this->layout = 'ajax';
-        }
 		
 		//if it is posted ajax or not, try logging him in.
 		if ($isPost) {
@@ -229,9 +52,7 @@ class UsersController extends AppController {
 					
 					//also remember user's avatar in session.
 					$userId = $this->Auth->user('id');
-		        	$avatar = $this->User->findAvatar($userId);
 					$this->User->updateLastLogin($userId);
-		        	$this->Session->write('Auth.User.avatar', $avatar['Avatar']['filename']);
 					
 					$this->redirect("/" . $redirectTo);
 				} else { // Delete invalid Cookie
@@ -242,16 +63,15 @@ class UsersController extends AppController {
 		
 		
         $loginError = $this->Auth->loginError;
-		//if there's login error and it is ajax, just don't keep the auth message.
-		if($loginError && $isAjax) $this->Session->delete('Message.auth');
+		
 		//set the data to view
-        $this->set(compact('isAjax', 'loginError', 'isPost'));
+        $this->set(compact('loginError', 'isPost'));
         
 		//remember_me cookie write.
 		if(isset($status) && $status && $isPost){
 			$cookie = array();
 			if($this->data['User']['remember_me']){
-				$cookie['username'] = $this->data['User']['username'];
+				$cookie['email'] = $this->data['User']['email'];
 				$cookie['password'] = $this->data['User']['password'];
 				$this->Cookie->write('Auth.User', $cookie, true, '+2 weeks');
 				unset($this->data['User']['remember_me']);				
@@ -265,7 +85,7 @@ class UsersController extends AppController {
         }
         
         //if user has just logged-in, redirect to auto redirect location or the default redirect location.
-        if(!$isAjax && $isPost && $status){
+        if($isPost && $status){
         	if($redirectTo = $this->Session->read('Auth.redirect')){
         		$this->redirect('/' .$redirectTo);
         	}else{
@@ -287,7 +107,9 @@ class UsersController extends AppController {
         $this->Session->setFlash("Bye!");
 		
 		//if there's any remember me option delete it.
-		if($this->Cookie->read('Auth.User')) $this->Cookie->delete("Auth.User");
+		if($this->Cookie->read('Auth.User')){
+			$this->Cookie->delete("Auth.User");
+		}
 		
         $this->redirect($this->Auth->logout());
     }
@@ -299,6 +121,7 @@ class UsersController extends AppController {
 	 * @param 	string	hash to verify against
 	 * @return 	void
 	 */
+	/**
 	function activate ($userId = 0, $code = '') {
 		if (!empty($userId) && !empty($code) && $this->User->verify($userId, $code)) {
 			$this->User->activateUser($userId, true);
@@ -310,12 +133,12 @@ class UsersController extends AppController {
 			$this->set('errMsg', $errMsg);
 		}
 	}
-
+	**/
     /**
      * Change the session data to the updated one if user profile has been updated.
      * @param $data
      * @return unknown_type
-     */
+     
     function _addSessionData ($data) {
     	if($data){
     		if(isset($data['Avatar']['filename']) && !empty($data['Avatar']['filename'])){
@@ -323,7 +146,7 @@ class UsersController extends AppController {
     		}
     		$this->Session->write('Auth.User', $data['User']);
     	}
-    }
+    }*/
     
     /**
      * log user in
@@ -331,15 +154,7 @@ class UsersController extends AppController {
      * @access public
      */
     function admin_login () {
-        $isPost = isset($this->data) ? TRUE : FALSE;
-
-        if ($isPost) {
-            if ($this->Auth->login() || $this->Auth->user()) {
-                $this->redirect($this->Auth->redirect());
-            } else {
-                $this->Session->setFlash("Incorrect login information!");
-            }
-        }
+		$this->redirect('/users/login');
     }
 
 	/**
@@ -599,13 +414,21 @@ class UsersController extends AppController {
 		$this->set('groups', $this->User->Group->find('list'));
 		$this->set('group_id', $group_id);
 	}
-
+	/**
+	 * To edit an existing user
+	 **/
 	function admin_edit($id = null) {
 		if (!$id && empty($this->data)) {
 			$this->Session->setFlash(__('Invalid user', true));
 			$this->redirect(array('action' => 'index'));
 		}
 		if (!empty($this->data)) {
+			if($this->data['User']['password'] != $this->Auth->password('')){
+				$this->data['User']['hashed_confirm_password'] = $this->Auth->password($this->data['User']['confirm_password']);
+				$this->User->disableValidate("resetPassword");
+			}else{
+				unset($this->data['User']['password']);
+			}
 			if ($this->User->save($this->data)) {
 				$this->Session->setFlash(__('The user has been saved', true));
 				$this->redirect(array('action' => 'index'));

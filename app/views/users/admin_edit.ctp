@@ -1,12 +1,23 @@
 <div class="users form">
 <?php echo $this->Form->create('User');?>
 	<fieldset>
- 		<legend><?php __('Admin Edit User'); ?></legend>
+ 		<legend><?php __('Edit User'); ?></legend>
 	<?php
 		echo $this->Form->input('id');
+		echo $this->Form->input('name');
 		echo $this->Form->input('email');
-		echo $this->Form->input('password', array('value' => ''));
-		echo $this->Form->input('confirm_password', array('value' => ''));
+	?>
+	<div class="input password">
+	<?php
+		echo $this->Form->input('password', array(
+			'value' => '', 
+			'div' => false, 
+			'label' => 'Password' . $this->Html->tag('span', "Please leave this field as blank, if you don't wish to change user's password", array('class' => 'tip'))
+		));
+	?>
+	</div>
+	<?php
+		echo $this->Form->input('confirm_password', array('value' => '', 'type' => 'password'));
 		echo $this->Form->input('group_id');
 	?>
 	</fieldset>

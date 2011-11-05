@@ -14,10 +14,10 @@ $user = $this->Session->read('Auth.User');
 		</li>
 		
 		<li>
-			<?php echo $this->Html->link("Users", array('controller' => 'users', 'action' => 'index')); ?>
+			<?php echo $this->Html->link("Users", array('controller' => 'users', 'action' => 'index', 'admin' => true)); ?>
 			<ul>
 				<li><?php echo $this->Html->link("Users", array('controller' => 'users', 'action' => 'index', 'admin' => true)); ?></li>
-				<li><?php echo $this->Html->link("User Groups", array('controller' => 'groups', 'action' => 'index'), array('title' => "E.g.: Super Admins, Admins & Team Members")); ?></li>
+				<li><?php echo $this->Html->link("User Groups", array('controller' => 'groups', 'action' => 'index', 'admin' => 'true'), array('title' => "E.g.: Super Admins, Admins & Team Members")); ?></li>
 			</ul>
 		</li>
 	</ul>
@@ -26,7 +26,7 @@ $user = $this->Session->read('Auth.User');
 <?php if(!empty($user)): ?>
 <div id="secondNav">
 	<ul class="sf-menu">
-		<li><?php echo $this->Html->link('Logout', array('controller' => 'users', 'action' => 'logout')); ?></li>
+		<li><?php echo $this->Html->link('Logout', array('controller' => 'users', 'action' => 'logout', 'admin' => false)); ?></li>
 	</ul>
 </div>
 <?php endif; ?>

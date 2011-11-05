@@ -239,7 +239,8 @@ class User extends AppModel {
 		if(!$id) return false;
 		
 		$this->id = $id;
-		return $this->saveField('last_login_time', date("Y-m-d H:i:s"));
+		$status = $this->saveField('last_login_time', date("Y-m-d H:i:s"));
+		return $status;
 	}
 }
 ?>

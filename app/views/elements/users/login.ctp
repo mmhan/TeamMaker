@@ -5,5 +5,6 @@
 <?php echo $this->Form->create("User", array("action" => 'login')); ?>
 	<?php echo $this->Form->input("User.email", array()); ?>
 	<?php echo $this->Form->input("User.password", array()); ?>
+	<?php echo $this->Form->input("User.remember_me", array('type' => 'checkbox')); ?>
 	<?php echo $this->Form->submit("Login"); ?>
 <?php echo $this->Form->end(); ?>

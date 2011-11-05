@@ -23,3 +23,10 @@ $user = $this->Session->read('Auth.User');
 	</ul>
 	<?php endif; ?>
 </div>
+<?php if(!empty($user)): ?>
+<div id="secondNav">
+	<ul class="sf-menu">
+		<li><?php echo $this->Html->link('Logout', array('controller' => 'users', 'action' => 'logout')); ?></li>
+	</ul>
+</div>
+<?php endif; ?>

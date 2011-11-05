@@ -199,25 +199,6 @@ button {  width: auto; overflow: visible; }
 .clearfix:after  { content: "."; display: block; height: 0; clear: both; visibility: hidden; }
 .clearfix { zoom: 1; }
 
-
-
-
-
-
- /* Primary Styles
-    Author: 
- */
-
-
-
-
-
-
-
-
-
-
-
 /* 
  * print styles
  * inlined to avoid required HTTP connection www.phpied.com/delay-loading-your-print-css/ 

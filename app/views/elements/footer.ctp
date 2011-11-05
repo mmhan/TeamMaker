@@ -1,1 +1,1 @@
-<div>TM + &copy;<?php echo date('Y')?> TeamB BIS7. All rights reserved.</div>
+<div>&copy;<?php echo date('Y')?> TeamB BIS7. All rights reserved.</div>

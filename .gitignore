@@ -1,6 +1,6 @@
 app/tmp/
 app/config/database.php
-
+app/webroot/csv_files/
 # Compiled source #
 ###################
 *.com

@@ -25,11 +25,11 @@ CREATE TABLE `acos` (
   `lft` int(10) default NULL,
   `rght` int(10) default NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=53 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=55 DEFAULT CHARSET=latin1;
 
 /*Data for the table `acos` */
 
-insert  into `acos`(`id`,`parent_id`,`model`,`foreign_key`,`alias`,`lft`,`rght`) values (1,NULL,NULL,NULL,'controllers',1,104),(2,1,NULL,NULL,'Pages',2,15),(3,2,NULL,NULL,'display',3,4),(4,2,NULL,NULL,'add',5,6),(5,2,NULL,NULL,'edit',7,8),(6,2,NULL,NULL,'index',9,10),(7,2,NULL,NULL,'view',11,12),(8,2,NULL,NULL,'delete',13,14),(9,1,NULL,NULL,'Groups',16,37),(10,9,NULL,NULL,'admin_index',17,18),(11,9,NULL,NULL,'admin_view',19,20),(12,9,NULL,NULL,'admin_add',21,22),(13,9,NULL,NULL,'admin_edit',23,24),(14,9,NULL,NULL,'admin_delete',25,26),(15,9,NULL,NULL,'add',27,28),(16,9,NULL,NULL,'edit',29,30),(17,9,NULL,NULL,'index',31,32),(18,9,NULL,NULL,'view',33,34),(19,9,NULL,NULL,'delete',35,36),(20,1,NULL,NULL,'Projects',38,59),(21,20,NULL,NULL,'admin_index',39,40),(22,20,NULL,NULL,'admin_view',41,42),(23,20,NULL,NULL,'admin_add',43,44),(24,20,NULL,NULL,'admin_edit',45,46),(25,20,NULL,NULL,'admin_delete',47,48),(26,20,NULL,NULL,'add',49,50),(27,20,NULL,NULL,'edit',51,52),(28,20,NULL,NULL,'index',53,54),(29,20,NULL,NULL,'view',55,56),(30,20,NULL,NULL,'delete',57,58),(31,1,NULL,NULL,'Sitemaps',60,73),(32,31,NULL,NULL,'sitemap',61,62),(33,31,NULL,NULL,'add',63,64),(34,31,NULL,NULL,'edit',65,66),(35,31,NULL,NULL,'index',67,68),(36,31,NULL,NULL,'view',69,70),(37,31,NULL,NULL,'delete',71,72),(38,1,NULL,NULL,'Users',74,103),(39,38,NULL,NULL,'login',75,76),(40,38,NULL,NULL,'logout',77,78),(41,38,NULL,NULL,'admin_login',79,80),(42,38,NULL,NULL,'init_db',81,82),(43,38,NULL,NULL,'build_acl',83,84),(44,38,NULL,NULL,'admin_index',85,86),(45,38,NULL,NULL,'admin_add',87,88),(46,38,NULL,NULL,'admin_edit',89,90),(47,38,NULL,NULL,'admin_delete',91,92),(48,38,NULL,NULL,'add',93,94),(49,38,NULL,NULL,'edit',95,96),(50,38,NULL,NULL,'index',97,98),(51,38,NULL,NULL,'view',99,100),(52,38,NULL,NULL,'delete',101,102);
+insert  into `acos`(`id`,`parent_id`,`model`,`foreign_key`,`alias`,`lft`,`rght`) values (1,NULL,NULL,NULL,'controllers',1,108),(2,1,NULL,NULL,'Pages',2,15),(3,2,NULL,NULL,'display',3,4),(4,2,NULL,NULL,'add',5,6),(5,2,NULL,NULL,'edit',7,8),(6,2,NULL,NULL,'index',9,10),(7,2,NULL,NULL,'view',11,12),(8,2,NULL,NULL,'delete',13,14),(9,1,NULL,NULL,'Groups',16,37),(10,9,NULL,NULL,'admin_index',17,18),(11,9,NULL,NULL,'admin_view',19,20),(12,9,NULL,NULL,'admin_add',21,22),(13,9,NULL,NULL,'admin_edit',23,24),(14,9,NULL,NULL,'admin_delete',25,26),(15,9,NULL,NULL,'add',27,28),(16,9,NULL,NULL,'edit',29,30),(17,9,NULL,NULL,'index',31,32),(18,9,NULL,NULL,'view',33,34),(19,9,NULL,NULL,'delete',35,36),(20,1,NULL,NULL,'Projects',38,63),(21,20,NULL,NULL,'admin_index',39,40),(22,20,NULL,NULL,'admin_view',41,42),(23,20,NULL,NULL,'admin_add',43,44),(24,20,NULL,NULL,'admin_edit',45,46),(25,20,NULL,NULL,'admin_delete',47,48),(26,20,NULL,NULL,'add',49,50),(27,20,NULL,NULL,'edit',51,52),(28,20,NULL,NULL,'index',53,54),(29,20,NULL,NULL,'view',55,56),(30,20,NULL,NULL,'delete',57,58),(31,1,NULL,NULL,'Sitemaps',64,77),(32,31,NULL,NULL,'sitemap',65,66),(33,31,NULL,NULL,'add',67,68),(34,31,NULL,NULL,'edit',69,70),(35,31,NULL,NULL,'index',71,72),(36,31,NULL,NULL,'view',73,74),(37,31,NULL,NULL,'delete',75,76),(38,1,NULL,NULL,'Users',78,107),(39,38,NULL,NULL,'login',79,80),(40,38,NULL,NULL,'logout',81,82),(41,38,NULL,NULL,'admin_login',83,84),(42,38,NULL,NULL,'init_db',85,86),(43,38,NULL,NULL,'build_acl',87,88),(44,38,NULL,NULL,'admin_index',89,90),(45,38,NULL,NULL,'admin_add',91,92),(46,38,NULL,NULL,'admin_edit',93,94),(47,38,NULL,NULL,'admin_delete',95,96),(48,38,NULL,NULL,'add',97,98),(49,38,NULL,NULL,'edit',99,100),(50,38,NULL,NULL,'index',101,102),(51,38,NULL,NULL,'view',103,104),(52,38,NULL,NULL,'delete',105,106),(53,20,NULL,NULL,'admin_dashboard',59,60),(54,20,NULL,NULL,'admin_settings',61,62);
 
 /*Table structure for table `admins_projects` */
 
@@ -40,9 +40,11 @@ CREATE TABLE `admins_projects` (
   `user_id` int(16) NOT NULL,
   `project_id` int(16) NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 /*Data for the table `admins_projects` */
+
+insert  into `admins_projects`(`id`,`user_id`,`project_id`) values (1,1,1);
 
 /*Table structure for table `aros` */
 
@@ -113,9 +115,29 @@ CREATE TABLE `projects` (
   `created` datetime default NULL,
   `modified` datetime default NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 /*Data for the table `projects` */
+
+insert  into `projects`(`id`,`name`,`collection_end`,`feedback_end`,`description`,`status`,`created`,`modified`) values (1,'CSV #4','2011-11-30 00:00:00','2011-11-30 00:00:00','asdf',1,'2011-11-05 19:35:45','2011-11-05 19:35:45');
+
+/*Table structure for table `uploads` */
+
+DROP TABLE IF EXISTS `uploads`;
+
+CREATE TABLE `uploads` (
+  `id` int(16) NOT NULL auto_increment,
+  `project_id` int(16) NOT NULL,
+  `name` varchar(150) default NULL,
+  `size` int(8) default NULL,
+  `created` datetime default NULL,
+  `modified` datetime default NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+/*Data for the table `uploads` */
+
+insert  into `uploads`(`id`,`project_id`,`name`,`size`,`created`,`modified`) values (1,1,'49bcf931fbede84de9ebb918d7ba20648c4acf48',539,'2011-11-05 19:35:45','2011-11-05 19:35:45');
 
 /*Table structure for table `users` */
 
@@ -135,7 +157,7 @@ CREATE TABLE `users` (
 
 /*Data for the table `users` */
 
-insert  into `users`(`id`,`name`,`email`,`password`,`group_id`,`last_login_time`,`created`,`modified`) values (1,'Super Admin','mmhan2u@gmail.com','6c46adf5a02d03471d5173ecfa6b7db309d2b708',1,'2011-11-05 09:52:17','2011-10-19 20:36:26','2011-11-05 09:52:17'),(5,'Member','mmhan2u+member@gmail.com','6c46adf5a02d03471d5173ecfa6b7db309d2b708',3,NULL,'2011-10-19 20:36:26','2011-10-19 20:36:26'),(4,'Test Reception','mmhan2u+admin@gmail.com','6c46adf5a02d03471d5173ecfa6b7db309d2b708',2,NULL,'2011-10-19 20:36:26','2011-10-19 20:36:26'),(6,'Test User','test@example.com','6c46adf5a02d03471d5173ecfa6b7db309d2b708',3,NULL,'2011-10-28 13:07:32','2011-11-05 08:52:27'),(7,'Mr. Soong','soongwengchew@gmail.com','62f37d34f4d62e6776066d30b7694a14a640b47c',1,NULL,'2011-10-28 13:12:36','2011-11-05 08:54:33');
+insert  into `users`(`id`,`name`,`email`,`password`,`group_id`,`last_login_time`,`created`,`modified`) values (1,'Super Admin','mmhan2u@gmail.com','6c46adf5a02d03471d5173ecfa6b7db309d2b708',1,'2011-11-05 18:31:56','2011-10-19 20:36:26','2011-11-05 18:31:56'),(5,'Member','mmhan2u+member@gmail.com','6c46adf5a02d03471d5173ecfa6b7db309d2b708',3,NULL,'2011-10-19 20:36:26','2011-10-19 20:36:26'),(4,'Test Reception','mmhan2u+admin@gmail.com','6c46adf5a02d03471d5173ecfa6b7db309d2b708',2,NULL,'2011-10-19 20:36:26','2011-10-19 20:36:26'),(6,'Test User','test@example.com','6c46adf5a02d03471d5173ecfa6b7db309d2b708',3,NULL,'2011-10-28 13:07:32','2011-11-05 08:52:27'),(7,'Mr. Soong','soongwengchew@gmail.com','62f37d34f4d62e6776066d30b7694a14a640b47c',1,NULL,'2011-10-28 13:12:36','2011-11-05 08:54:33');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

@@ -66,5 +66,11 @@ class Project extends AppModel {
 		)
 	);
 	
+	var $hasMany = array(
+		'Upload' => array(
+			'className' => 'Upload'
+		)
+	);
+	
 }
 ?>

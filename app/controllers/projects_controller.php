@@ -65,7 +65,8 @@ class ProjectsController extends AppController {
 	function admin_add() {
 		if (!empty($this->data)) {
 			$this->Project->create();
-			if ($status = $this->Project->save($this->data)) {
+			$status = $this->Project->saveAll($this->data);
+			if ($status) {
 				$this->Session->setFlash(__('The project has been saved', true));
 				$this->redirect(array('action' => 'dashboard'));
 			} else {

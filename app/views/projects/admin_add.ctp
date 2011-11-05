@@ -1,5 +1,8 @@
+<?php
+//TODO:: refine labels.
+?>
 <div class="projects">
-<?php echo $this->Form->create('Project');?>
+<?php echo $this->Form->create('Project', array('type' => 'file'));?>
 	<fieldset>
  		<legend><?php __('New Project'); ?></legend>
 	<?php
@@ -27,6 +30,7 @@
 		echo $this->Form->input('description');
 		echo $this->Form->input("Admin", array('div' => 'input select habtmSelector'));
 	?>
+	<?php echo $this->Form->input("Upload.0.file", array('type' => 'file', 'label' => 'CSV File Import to Users')); ?>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit', true));?>
 <?php echo $this->Html->link("&laquo; Back", array('action' => 'index'), array('escape' => false)); ?>

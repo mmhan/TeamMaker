@@ -7,3 +7,14 @@ h1 {
 #secondNav{
 	float:right;
 }
+
+div.c50{width:48%; overflow:hidden; float:left;}
+div.c40{width:38%; overflow:hidden; float:left;}
+div.c10{width:8%; overflow:hidden; float:left;}
+div.c20{width:18%; overflow:hidden; float:left;}
+div.c25{width:22%; overflow:hidden; float:left; margin-right:1%;}
+div.c50{width:45%; overflow:hidden; float:left;}
+div.c60{width:55%; overflow:hidden; float:left;}
+div.c70{width:65%; overflow:hidden; float:left;}
+div.c75{width:72%; overflow:hidden; float:left;}
+div.c30{width:30%; overflow:hidden; float:left;}

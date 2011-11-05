@@ -49,8 +49,8 @@
  *
  */
 define("ROLE_SU", 1);
-define("ROLE_ADMIN", 4);
-define("ROLE_MEMBER", 5);
+define("ROLE_ADMIN", 2);
+define("ROLE_MEMBER", 3);
 
 /**
  * User related constants

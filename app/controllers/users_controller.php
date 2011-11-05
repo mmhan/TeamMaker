@@ -173,7 +173,7 @@ class UsersController extends AppController {
 		$group->id = ROLE_ADMIN;
 			$this->Acl->allow($group, 'controllers');
 		
-        $group->id = ROLE_USER;            
+        $group->id = ROLE_MEMBER;            
 	}
 
         

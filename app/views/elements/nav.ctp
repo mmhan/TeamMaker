@@ -6,10 +6,10 @@ $user = $this->Session->read('Auth.User');
 	<ul class="sf-menu">
 	<?php if(!empty($user)): ?>
 		<li>
-			<?php echo $this->Html->link("Projects", array('controller' => 'projects', 'action' => 'index')); ?>
+			<?php echo $this->Html->link("Projects", array('controller' => 'projects', 'action' => 'index', 'admin' => 'true')); ?>
 			<ul>
-				<li></li>
-				<li></li>
+				<li><?php echo $this->Html->link("List Projects", array('controller' => 'projects', 'action' => 'index', 'admin' => 'true')); ?></li>
+				<li><?php echo $this->Html->link("Add Project", array('controller' => 'projects', 'action' => 'add', 'admin' => 'true')); ?></li>
 			</ul>
 		</li>
 		

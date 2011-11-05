@@ -4,8 +4,26 @@
  		<legend><?php __('New Project'); ?></legend>
 	<?php
 		echo $this->Form->input('name');
-		echo $this->Form->input('collection_end');
-		echo $this->Form->input('feedback_end');
+	?>
+	<div class="colContainer">
+		<div class="c50">
+		<?php
+			echo $this->Form->input('collection_end', array(
+				'type'=>'text',
+				'div' => 'input datetimeui'
+			));
+		?>
+		</div>
+		<div class="c50">
+		<?php
+			echo $this->Form->input('feedback_end', array(
+				'type'=>'text',
+				'div' => 'input datetimeui'
+			));
+		?>
+		</div>
+	</div>
+	<?php
 		echo $this->Form->input('description');
 		echo $this->Form->input("Admin");
 	?>

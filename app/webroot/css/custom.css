@@ -4,20 +4,31 @@ a {
 h1, h2, h3 { 
 	font-family: 'Ubuntu', arial, serif;
 }
+textarea{
+	min-width: 400px;
+}
+input{
+	min-width: 300px;
+}
 #secondNav{
 	float:right;
 }
 
-div.c50{width:48%; overflow:hidden; float:left;}
-div.c40{width:38%; overflow:hidden; float:left;}
-div.c10{width:8%; overflow:hidden; float:left;}
-div.c20{width:18%; overflow:hidden; float:left;}
-div.c25{width:22%; overflow:hidden; float:left; margin-right:1%;}
-div.c50{width:45%; overflow:hidden; float:left;}
-div.c60{width:55%; overflow:hidden; float:left;}
-div.c70{width:65%; overflow:hidden; float:left;}
-div.c75{width:72%; overflow:hidden; float:left;}
-div.c30{width:30%; overflow:hidden; float:left;}
+div.c10{width:8%;}
+div.c20{width:18%;}
+div.c25{width:22%;}
+div.c30{width:30%;}
+div.c40{width:38%;}
+div.c50{width:48%;}
+div.c60{width:55%;}
+div.c70{width:65%;}
+div.c75{width:72%;}
+
+div.c10,div.c20,div.c25, div.c30, div.c40, div.c50, div.c60, div.c70, div.c75{
+	overflow:hidden; float:left; margin-right:1%;
+}
+div.colContainer{overflow:hidden;}
+div.colContainer div{clear:none; padding:0 5px 0 0;}
 
 div.fRight{float:right;}
 div.fLeft{float:left;}

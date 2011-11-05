@@ -26,7 +26,6 @@ body {
 	background: #003d4c;
 	color: #fff;
 	font-family:'lucida grande',verdana,helvetica,arial,sans-serif;
-	font-size:90%;
 	margin: 0;
 }
 a {
@@ -48,7 +47,7 @@ h1, h2, h3, h4 {
 h1 {
 	background:#fff;
 	color: #003d4c;
-	font-size: 100%;
+	font-size: 120%;
 }
 h2 {
 	background:#fff;
@@ -239,8 +238,8 @@ fieldset {
 fieldset legend {
 	background:#fff;
 	color: #e32;
-	font-size: 160%;
 	font-weight: bold;
+	font-size: 120%;
 }
 fieldset fieldset {
 	margin-top: 0px;
@@ -248,7 +247,6 @@ fieldset fieldset {
 	padding: 16px 10px;
 }
 fieldset fieldset legend {
-	font-size: 120%;
 	font-weight: normal;
 }
 fieldset fieldset div {
@@ -257,7 +255,7 @@ fieldset fieldset div {
 }
 form div {
 	clear: both;
-	margin-bottom: 1em;
+	margin-bottom: 0.5em;
 	padding: .5em;
 	vertical-align: text-top;
 }
@@ -279,26 +277,21 @@ form div.submit {
 }
 label {
 	display: block;
-	font-size: 110%;
 	margin-bottom:3px;
 }
 input, textarea {
 	clear: both;
-	font-size: 140%;
 	font-family: "frutiger linotype", "lucida grande", "verdana", sans-serif;
 	padding: 1%;
-	width:98%;
 }
 select {
 	clear: both;
-	font-size: 120%;
 	vertical-align: text-bottom;
 }
 select[multiple=multiple] {
 	width: 100%;
 }
 option {
-	font-size: 120%;
 	padding: 0 3px;
 }
 input[type=checkbox] {
@@ -320,7 +313,7 @@ div.radio label {
 }
 input[type=submit] {
 	display: inline;
-	font-size: 110%;
+	font-size: 120%;
 	width: auto;
 }
 form .submit input[type=submit] {
@@ -338,14 +331,14 @@ form .submit input[type=submit]:hover {
 }
 .input .tip{
 	display:block;
-	font-size: 0.8em;
+	font-size: 80%;
 	color: #aaa;
 }
 /** Notices and Errors **/
 div.message {
 	clear: both;
 	color: #fff;
-	font-size: 140%;
+	font-size: 110%;
 	font-weight: bold;
 	margin: 0 0 1em 0;
 	background: #c73e14;
@@ -361,7 +354,7 @@ p.error {
 	background-color: #e32;
 	color: #fff;
 	font-family: Courier, monospace;
-	font-size: 120%;
+	font-size: 110%;
 	line-height: 140%;
 	padding: 0.8em;
 	margin: 1em 0;
@@ -376,7 +369,6 @@ p.error em {
 	color: #000;
 	display: block;
 	font-family: Courier, monospace;
-	font-size: 120%;
 	line-height: 140%;
 	padding: 0.8em;
 	margin: 1em 0;

@@ -27,9 +27,12 @@ $this->Html->script(array('plugins','script'),array('inline'=>false));
   <!-- Moving jquery to the top, cuz some jquery plugins don't play with with it at the bottom of the page -->
   <!-- Grab Google CDN's jQuery. fall back to local if necessary -->
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
-  <script>!window.jQuery && document.write(unescape('%3Cscript src="/js/jquery-1.4.4.min.js"%3E%3C/script%3E'))</script>
-  
-         
+  <!-- JQuery UI -->
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="<?php echo Router::url('/js/jquery-1.4.4.min.js'); ?>"%3E%3C/script%3E'))</script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="<?php echo Router::url('/js/jquery-1.8.7-ui.min.js'); ?>"%3E%3C/script%3E'))</script>
+        
+  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/themes/cupertino/jquery-ui.css">
   <?php   	  	
 	$this->Html->css(array('style','cake.generic', 'superfish','custom'),NULL,array('inline'=>false));	
 	echo $asset->scripts_for_layout('css');	

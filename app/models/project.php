@@ -48,12 +48,17 @@ class Project extends AppModel {
 
 	var $hasAndBelongsToMany = array(
 		'Admin' => array(
-			'className' => 'Admin',
+			'className' => 'User',
 			'joinTable' => 'admins_projects',
 			'foreignKey' => 'project_id',
-			'associationForeignKey' => 'admin_id',
+			'associationForeignKey' => 'user_id',
 			'unique' => true,
-			'conditions' => '',
+			'conditions' => array(
+				'OR' =>array(
+					'User.group_id' => ROLE_ADMIN,
+					'User.group_id' => ROLE_SU
+				)
+			),
 			'fields' => '',
 			'order' => '',
 			'limit' => '',

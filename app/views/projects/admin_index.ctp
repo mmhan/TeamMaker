@@ -9,6 +9,20 @@
 	<div class="c25">
 		<h3>Seeding Phase</h3>
 		<p>Newly created projects, members have not received notification to fill in their skills yet.</p>
+		<?php if(array_key_exists(PROJECT_SEED,$projects) && !empty($projects[PROJECT_SEED])): ?>
+		<ul class="projects seed">			
+			<?php foreach($projects[PROJECT_SEED] as $proj): ?>
+			<li><div class="project" data-id="<?php echo $proj['id'] ?>" >
+				<?php echo $proj['name'] ?>
+				<div class="actions">
+					<ul>
+						<li><?php echo $this->Html->link('Go to Project &laquo;', array('action' => "dashboard")); ?></li>
+					</ul>
+				</div>
+			</div></li>
+			<?php endforeach; ?>
+		</ul>
+		<?php endif; ?>
 	</div>
 	<div class="c25">
 		<h3>Collection Phase</h3>

@@ -4,16 +4,54 @@ class ProjectsController extends AppController {
 	var $name = 'Projects';
 
 	function admin_index() {
+		$user = $this->Auth->user('id');
+		//get user's projects.
+		$result = $this->Project->find('all', array(
+			'recursive' => -1,
+			'conditions' => array('AdminProject.user_id' => $user), 
+			'fields' => array('Project.id', 'Project.name'),
+			'joins' => array(
+				array(
+						'table' => 'admins_projects',
+						'alias' => 'AdminProject',
+						'type' => 'LEFT',
+						'foreignKey' => false,
+						'conditions'=> 'Project.id = AdminProject.project_id'
+				)
+			)
+		));
+		$list = Set::classicExtract($result,'{n}.Project.id');
+		
+		//set all other projects.
+		$currProjects = $this->Project->find('all', array(
+			'recursive' => -1,
+			'conditions' => array(
+				'Project.status <>' => PROJECT_ARCHIVE,
+				'Project.id' => $list				
+			)
+		));
+		$projects = Set::combine($currProjects, '{n}.Project.id', '{n}.Project', '{n}.Project.status');
+		
+		FireCake::log($projects);
+		
+		//sort phase 1 projects by their modified date
+		if(array_key_exists(PROJECT_SEED, $projects))
+			$projects[PROJECT_SEED] = Set::sort(array_values($projects[PROJECT_SEED]), '{n}.modified', 'desc'); 
+			
+		//sort phase 2 projects by their cut-off date
+		if(array_key_exists(PROJECT_COLLECT, $projects))
+			$projects[PROJECT_COLLECT] = Set::sort(array_values($projects[PROJECT_COLLECT]), '{n}.collection_end', 'asc');
+			
+		//sort phase 3 projects by their cut-off date
+		if(array_key_exists(PROJECT_FEEDBACK, $projects))
+			$projects[PROJECT_FEEDBACK] = Set::sort(array_values($projects[PROJECT_FEEDBACK]), '{n}.feedback_end', 'asc');
+		
+		//set archived projects.
 		$this->Project->recursive = 0;
-		$this->set('projects', $this->paginate());
-	}
-
-	function admin_view($id = null) {
-		if (!$id) {
-			$this->Session->setFlash(__('Invalid project', true));
-			$this->redirect(array('action' => 'index'));
-		}
-		$this->set('project', $this->Project->read(null, $id));
+		$this->paginate['Project']['order'] = "Project.feedback_end DESC";
+		$projects[PROJECT_ARCHIVE] = $this->paginate(array('Project.status' => PROJECT_ARCHIVE, 'Project.id' => $list));
+		
+		$this->set(compact('projects'));
 	}
 
 	function admin_add() {

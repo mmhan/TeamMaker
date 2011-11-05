@@ -57,3 +57,9 @@ define("ROLE_MEMBER", 3);
  */
 define('RULE_USERNAME', '/^[a-z0-9_\.]*$/i');
 define('ONE_WEEK', 604800);
+
+/** Project Phases **/
+define("PROJECT_SEED", 1);
+define("PROJECT_COLLECT", 2);
+define("PROJECT_FEEDBACK", 3);
+define("PROJECT_ARCHIVE", 4);

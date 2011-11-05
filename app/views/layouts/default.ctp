@@ -32,7 +32,7 @@ $this->Html->script(array('plugins','script'),array('inline'=>false));
   <script>!window.jQuery && document.write(unescape('%3Cscript src="<?php echo Router::url('/js/jquery-1.4.4.min.js'); ?>"%3E%3C/script%3E'))</script>
   <script>!window.jQuery && document.write(unescape('%3Cscript src="<?php echo Router::url('/js/jquery-1.8.7-ui.min.js'); ?>"%3E%3C/script%3E'))</script>
         
-  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/themes/cupertino/jquery-ui.css">
+  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/themes/smoothness/jquery-ui.css">
   <?php   	  	
 	$this->Html->css(array('style','cake.generic', 'superfish','custom'),NULL,array('inline'=>false));	
 	echo $asset->scripts_for_layout('css');	

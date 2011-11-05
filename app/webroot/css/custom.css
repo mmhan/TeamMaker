@@ -27,8 +27,12 @@ div.c75{width:72%;}
 div.c10,div.c20,div.c25, div.c30, div.c40, div.c50, div.c60, div.c70, div.c75{
 	overflow:hidden; float:left; margin-right:1%;
 }
-div.colContainer{overflow:hidden;}
-div.colContainer div{clear:none; padding:0 5px 0 0;}
+div.colContainer{overflow:hidden; }
+div.colContainer div{clear:none;}
 
 div.fRight{float:right;}
 div.fLeft{float:left;}
+
+.habtmSelector select[multiple]{
+	width: 400px;
+}

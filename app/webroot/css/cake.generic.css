@@ -207,7 +207,6 @@ div.paging span a {
 dl {
 	line-height: 2em;
 	margin: 0em 0em;
-	width: 60%;
 }
 dl .altrow {
 	background: #f4f4f4;
@@ -253,7 +252,7 @@ fieldset fieldset div {
 	clear: left;
 	margin: 0 20px;
 }
-form div {
+form div.input {
 	clear: both;
 	margin-bottom: 0.5em;
 	padding: .5em;
@@ -274,6 +273,7 @@ form div.submit {
 	border: 0;
 	clear: both;
 	margin-top: 10px;
+	margin-left: 150px;
 }
 label {
 	display: block;

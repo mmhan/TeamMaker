@@ -25,8 +25,13 @@ class ProjectsController extends AppController {
 			} else {
 				$this->Session->setFlash(__('The project could not be saved. Please, try again.', true));
 			}
+		}else{
+			//make it so that the person who's creating is one of the admin by default.
+			$this->data['Admin']['Admin'] = array($this->Auth->user('group_id'));
 		}
 		$admins = $this->Project->Admin->find('list', array('group_id' => array(ROLE_SU, ROLE_ADMIN)));
+		
+		
 		$this->set(compact('admins'));
 	}
 

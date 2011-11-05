@@ -33,9 +33,16 @@ TeamMaker = function () {
 			init: function(){
 				$('.input.datetimeui :text').datetimepicker({
 					dateFormat:"yy-mm-dd",
-					timeFormat:"hh:mm:ss"
+					timeFormat:"hh:mm:ss",
+					stepMinute: 10
 				});
 				$('.input.timeui :text').timepicker();
+			}
+		},
+		/* HABTM select using chosen */
+		HabtmSelector:{
+			init: function(){
+				$('.input.habtmSelector select').chosen();
 			}
 		}
 	};
@@ -73,6 +80,7 @@ TeamMaker = function () {
         init: function () {
 			priv.Nav.init();
 			priv.Datetime.init();
+			priv.HabtmSelector.init();
 			this.__init__();
         }
 	};

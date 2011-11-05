@@ -14,24 +14,26 @@ class Project extends AppModel {
 			),
 		),
 		'collection_end' => array(
-			'time' => array(
+			//TODO: To add validation to check if time is in future.
+			/* 'time' => array(
 				'rule' => array('time'),
 				//'message' => 'Your custom message here',
 				//'allowEmpty' => false,
 				//'required' => false,
 				//'last' => false, // Stop validation after this rule
 				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
+			), */
 		),
 		'feedback_end' => array(
-			'time' => array(
+			//TODO: To add validation to check if given input is later than collection_end.
+			/* 'time' => array(
 				'rule' => array('time'),
 				//'message' => 'Your custom message here',
 				//'allowEmpty' => false,
 				//'required' => false,
 				//'last' => false, // Stop validation after this rule
 				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
+			), */
 		),
 		'status' => array(
 			'numeric' => array(
@@ -53,12 +55,7 @@ class Project extends AppModel {
 			'foreignKey' => 'project_id',
 			'associationForeignKey' => 'user_id',
 			'unique' => true,
-			'conditions' => array(
-				'OR' =>array(
-					'User.group_id' => ROLE_ADMIN,
-					'User.group_id' => ROLE_SU
-				)
-			),
+			'conditions' => '',
 			'fields' => '',
 			'order' => '',
 			'limit' => '',
@@ -68,6 +65,6 @@ class Project extends AppModel {
 			'insertQuery' => ''
 		)
 	);
-
+	
 }
 ?>

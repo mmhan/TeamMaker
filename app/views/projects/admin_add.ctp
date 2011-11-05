@@ -25,7 +25,7 @@
 	</div>
 	<?php
 		echo $this->Form->input('description');
-		echo $this->Form->input("Admin");
+		echo $this->Form->input("Admin", array('div' => 'input select habtmSelector'));
 	?>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit', true));?>

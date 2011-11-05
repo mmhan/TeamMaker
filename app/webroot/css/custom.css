@@ -1,8 +1,8 @@
 a {
 	color: orange; 
 }
-h1 { 
-	font-family: 'Ubuntu', arial, serif; font-size: 30px; 
+h1, h2, h3 { 
+	font-family: 'Ubuntu', arial, serif;
 }
 #secondNav{
 	float:right;
@@ -18,3 +18,6 @@ div.c60{width:55%; overflow:hidden; float:left;}
 div.c70{width:65%; overflow:hidden; float:left;}
 div.c75{width:72%; overflow:hidden; float:left;}
 div.c30{width:30%; overflow:hidden; float:left;}
+
+div.fRight{float:right;}
+div.fLeft{float:left;}

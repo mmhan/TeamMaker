@@ -1,5 +1,6 @@
 <div class="users index">
 	<h2><?php __('Users');?></h2>
+	<p>This is a list of all users of this systems.</p>
 	<table cellpadding="0" cellspacing="0">
 	<tr>
 			<th><?php echo $this->Paginator->sort('id');?></th>
@@ -45,6 +46,8 @@
 <div class="actions">
 	<h3><?php __('Actions'); ?></h3>
 	<ul>
-		<li><?php echo $this->Html->link(__('New User', true), array('action' => 'add')); ?></li>
+		<?php foreach($groups as $i => $group): ?>
+			<li><?php echo $this->Html->link(__('New ' . $group, true), array('action' => 'add', 'group_id' => $i)); ?></li>
+		<?php endforeach; ?>
 	</ul>
 </div>

@@ -268,7 +268,7 @@ form .required {
 }
 form .required label:after {
 	color: #e32;
-	content: '*';
+	content: ' *';
 	display:inline;
 }
 form div.submit {

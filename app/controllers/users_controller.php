@@ -355,6 +355,9 @@ class UsersController extends AppController {
 	    $group->id = ROLE_SU;
 	    	$this->Acl->allow($group, 'controllers');
 		
+		$group->id = ROLE_ADMIN;
+			$this->Acl->allow($group, 'controllers');
+		
         $group->id = ROLE_USER;            
 	}
 
@@ -571,6 +574,18 @@ class UsersController extends AppController {
 	}
 
 	function admin_add() {
+		$user = $this->Auth->user();
+		$group_id;
+		if(empty($this->params['named']['group_id'])){
+			//fail-safe redirect for cases that role wasn't given.
+			$this->redirect(array('controller' => 'users', 'action' => 'add', 'admin' => true, 'group_id' => ROLE_ADMIN));
+		}else if($this->params['named']['group_id'] == ROLE_SU && $user['User']['group_id'] != ROLE_SU){
+			//if non SU try to add SU
+			$this->redirect(array('controller' => 'users', 'actions' => 'add', 'admin' => true, 'group_id' => ROLE_ADMIN));
+		}else{
+			$group_id = $this->params['named']['group_id'];
+		}
+		
 		if (!empty($this->data)) {
 			$this->User->create();
 			$this->data['User']['hashed_confirm_password'] = $this->Auth->password($this->data['User']['confirm_password']);
@@ -582,6 +597,7 @@ class UsersController extends AppController {
 			}
 		}
 		$this->set('groups', $this->User->Group->find('list'));
+		$this->set('group_id', $group_id);
 	}
 
 	function admin_edit($id = null) {

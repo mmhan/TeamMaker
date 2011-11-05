@@ -26,7 +26,7 @@ class ProjectsController extends AppController {
 				$this->Session->setFlash(__('The project could not be saved. Please, try again.', true));
 			}
 		}
-		$admins = $this->Project->Admin->find('list');
+		$admins = $this->Project->Admin->find('list', array('group_id' => array(ROLE_SU, ROLE_ADMIN)));
 		$this->set(compact('admins'));
 	}
 

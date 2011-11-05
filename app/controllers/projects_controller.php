@@ -31,9 +31,7 @@ class ProjectsController extends AppController {
 			)
 		));
 		$projects = Set::combine($currProjects, '{n}.Project.id', '{n}.Project', '{n}.Project.status');
-		
-		FireCake::log($projects);
-		
+				
 		//sort phase 1 projects by their modified date
 		if(array_key_exists(PROJECT_SEED, $projects))
 			$projects[PROJECT_SEED] = Set::sort(array_values($projects[PROJECT_SEED]), '{n}.modified', 'desc'); 
@@ -54,12 +52,22 @@ class ProjectsController extends AppController {
 		$this->set(compact('projects'));
 	}
 
+	function admin_dashboard($id = null) {
+		if (!$id) {
+			$this->Session->setFlash(__('Invalid project', true));
+			$this->redirect(array('action' => 'index'));
+		}
+		$project = $this->Project->read(null, $id);
+		//TODO: to check if the accessing admin is actually the owner of the project and deny access if he's not.
+		$this->set('project', $project);
+	}
+	
 	function admin_add() {
 		if (!empty($this->data)) {
 			$this->Project->create();
-			if ($this->Project->save($this->data)) {
+			if ($status = $this->Project->save($this->data)) {
 				$this->Session->setFlash(__('The project has been saved', true));
-				$this->redirect(array('action' => 'index'));
+				$this->redirect(array('action' => 'dashboard'));
 			} else {
 				$this->Session->setFlash(__('The project could not be saved. Please, try again.', true));
 			}
@@ -67,21 +75,23 @@ class ProjectsController extends AppController {
 			//make it so that the person who's creating is one of the admin by default.
 			$this->data['Admin']['Admin'] = array($this->Auth->user('group_id'));
 		}
-		$admins = $this->Project->Admin->find('list', array('group_id' => array(ROLE_SU, ROLE_ADMIN)));
+		$admins = $this->Project->Admin->find('list');
 		
 		
 		$this->set(compact('admins'));
 	}
-
-	function admin_edit($id = null) {
+	
+	function admin_settings($id = null) {
 		if (!$id && empty($this->data)) {
 			$this->Session->setFlash(__('Invalid project', true));
 			$this->redirect(array('action' => 'index'));
 		}
+		//TODO: to check if the accessing admin is actually the owner of the project and deny access if he's not.
+		
 		if (!empty($this->data)) {
 			if ($this->Project->save($this->data)) {
 				$this->Session->setFlash(__('The project has been saved', true));
-				$this->redirect(array('action' => 'index'));
+				$this->redirect(array('action' => 'dashboard', $id));
 			} else {
 				$this->Session->setFlash(__('The project could not be saved. Please, try again.', true));
 			}

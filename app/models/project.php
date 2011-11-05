@@ -50,7 +50,7 @@ class Project extends AppModel {
 
 	var $hasAndBelongsToMany = array(
 		'Admin' => array(
-			'className' => 'User',
+			'className' => 'Admin',
 			'joinTable' => 'admins_projects',
 			'foreignKey' => 'project_id',
 			'associationForeignKey' => 'user_id',

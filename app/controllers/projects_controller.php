@@ -67,8 +67,17 @@ class ProjectsController extends AppController {
 			$this->Project->create();
 			$status = $this->Project->saveAll($this->data);
 			if ($status) {
-				$this->Session->setFlash(__('The project has been saved', true));
-				$this->redirect(array('action' => 'dashboard'));
+				if(empty($this->data['Upload'][0]['file'])){
+					$this->Session->setFlash(__('The project has been saved', true));
+					$this->redirect(array('action'=>'dashboard'));
+				}else{
+					$this->redirect(array(
+						'action' => 'add_users', 
+						'admin' => true, 
+						$this->Project->getLastInsertId(),
+						$this->Project->Upload->getLastInsertId()
+					));
+				}
 			} else {
 				$this->Session->setFlash(__('The project could not be saved. Please, try again.', true));
 			}
@@ -80,6 +89,10 @@ class ProjectsController extends AppController {
 		
 		
 		$this->set(compact('admins'));
+	}
+	
+	function admin_add_users($projectId, $uploadId){
+		
 	}
 	
 	function admin_settings($id = null) {

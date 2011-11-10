@@ -30,7 +30,13 @@
 		echo $this->Form->input('description');
 		echo $this->Form->input("Admin", array('div' => 'input select habtmSelector'));
 	?>
-	<?php echo $this->Form->input("Upload.0.file", array('type' => 'file', 'label' => 'CSV File Import to Users')); ?>
+	<?php echo $this->Form->input("Upload.0.file", 
+		array(
+			'type' => 'file', 
+			'label' => 'CSV File Import to Users' 
+				. $this->Html->tag('span', "(Optional: You can add users later.)", array('class' => 'tip'))
+			)
+		); ?>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit', true));?>
 <?php echo $this->Html->link("&laquo; Back", array('action' => 'index'), array('escape' => false)); ?>

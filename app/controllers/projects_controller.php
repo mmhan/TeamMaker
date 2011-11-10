@@ -67,7 +67,8 @@ class ProjectsController extends AppController {
 			$this->Project->create();
 			$status = $this->Project->saveAll($this->data);
 			if ($status) {
-				if(empty($this->data['Upload'][0]['file'])){
+				$name = Set::classicExtract($this->data, 'Upload.0.file.name');
+				if(empty($name)){
 					$this->Session->setFlash(__('The project has been saved', true));
 					$this->redirect(array('action'=>'dashboard'));
 				}else{
@@ -92,6 +93,29 @@ class ProjectsController extends AppController {
 	}
 	
 	function admin_add_users($projectId, $uploadId){
+		if(empty($projectId) || empty($uploadId)){
+			$this->Session->setFlash(__("Invalid project or csv file provided", true));
+			$this->redirect(array('action' => 'index'));
+		}
+		//TODO: check whether current admin is one of the admin who is allowed to edit this project.
+		//		and redirect if admin doesn't have access.
+		
+		//read the project file.
+		$this->Project->id = $projectId;
+		$this->Project->recursive = -1;
+		$project = $this->Project->read();
+		if(empty($project)){
+			$this->Session->setFlash(__("Invalid project.", true));
+			$this->redirect(array('action' => 'index'));
+		}
+		
+		//read the file that has been uploaded.
+		$filename = $this->Project->Upload->field('name',array('id'=> $uploadId));
+		if(empty($filename)){
+			$this->Session->setFlash(__("Invalid csv file provided", true));
+			$this->redirect(array('action' => "dashboard", $projectId));
+		}
+		
 		
 	}
 	

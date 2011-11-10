@@ -5,6 +5,7 @@
 <?php echo $this->Form->create('Project', array('action' => 'add_users', 'admin' => true));?>
 	<fieldset>
  		<legend><?php __('New Project : Step 2'); ?></legend>
+		<p>Please map the imported fields with existing attributes of the database.</p>
 	<?php
 		echo $this->Form->input('id');
 	?>

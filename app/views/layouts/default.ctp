@@ -57,6 +57,7 @@ $this->Html->script(array('plugins','script'),array('inline'=>false));
     </header>
     
     <div id="content">
+	<?php echo $this->Session->flash(); ?>
 	<?php echo $content_for_layout ?>
     </div>
     

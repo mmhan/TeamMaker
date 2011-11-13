@@ -3,6 +3,7 @@
 	<fieldset>
  		<legend><?php __('New ' . Inflector::singularize($groups[$group_id])); ?></legend>
 	<?php
+		echo $this->Form->input('given_id', array('type' => 'text', 'label' => 'Given ID'));
 		echo $this->Form->input('name');
 		echo $this->Form->input('email');
 		echo $this->Form->input('password');
@@ -12,6 +13,7 @@
 	<?php
 		echo $this->Form->label("group_id");
 		echo $this->Form->label($groups[$group_id]);
+		echo $this->Form->hidden("group_id", array('value' =>$group_id));
 	?>
 	</div>
 	</fieldset>

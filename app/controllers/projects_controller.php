@@ -73,7 +73,7 @@ class ProjectsController extends AppController {
 					$this->redirect(array('action'=>'dashboard'));
 				}else{
 					$this->redirect(array(
-						'action' => 'add_users', 
+						'action' => 'add_members', 
 						'admin' => true, 
 						$this->Project->getLastInsertId(),
 						$this->Project->Upload->getLastInsertId()
@@ -92,14 +92,21 @@ class ProjectsController extends AppController {
 		$this->set(compact('admins'));
 	}
 	
-	function admin_add_users($projectId, $uploadId){
+	function admin_add_members($projectId, $uploadId){
 		if(empty($projectId) || empty($uploadId)){
 			$this->Session->setFlash(__("Invalid project or csv file provided", true));
 			$this->redirect(array('action' => 'index'));
 		}
+		//AT POST
+		if(!empty($this->data)){
+			debug($this->data);
+			exit;
+		}
 		//TODO: check whether current admin is one of the admin who is allowed to edit this project.
 		//		and redirect if admin doesn't have access.
 		
+		
+		//AT GET
 		//read the project file.
 		$this->Project->id = $projectId;
 		$this->Project->recursive = -1;
@@ -115,8 +122,16 @@ class ProjectsController extends AppController {
 			$this->Session->setFlash(__("Invalid csv file provided", true));
 			$this->redirect(array('action' => "dashboard", $projectId));
 		}
+		$importedFields = $this->Project->Upload->listHeaders($uploadId);
+		$this->set('importedFields', $importedFields);
 		
+		$userTableFields = $this->Project->Member->getImportableFields();
+		$this->set('userTableFields', $userTableFields);
 		
+		$this->data = array(
+			'Project' => array('id' => $projectId),
+			'Upload' => array('id' => $uploadId)
+		);
 	}
 	
 	function admin_settings($id = null) {

@@ -77,3 +77,5 @@ div.projMgmt{
 div.projMgmt h3 a{
 	text-decoration: none;
 }
+
+td.actions select, td.actionOptionsContainer select{ width: 100%; }

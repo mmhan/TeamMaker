@@ -391,14 +391,16 @@ class UsersController extends AppController {
 	function admin_add() {
 		$user = $this->Auth->user();
 		$group_id;
-		if(empty($this->params['named']['group_id'])){
-			//fail-safe redirect for cases that role wasn't given.
-			$this->redirect(array('controller' => 'users', 'action' => 'add', 'admin' => true, 'group_id' => ROLE_ADMIN));
-		}else if($this->params['named']['group_id'] == ROLE_SU && $user['User']['group_id'] != ROLE_SU){
-			//if non SU try to add SU
-			$this->redirect(array('controller' => 'users', 'actions' => 'add', 'admin' => true, 'group_id' => ROLE_ADMIN));
-		}else{
-			$group_id = $this->params['named']['group_id'];
+		if(empty($this->data)){
+			if(empty($this->params['named']['group_id'])){
+				//fail-safe redirect for cases that role wasn't given.
+				$this->redirect(array('controller' => 'users', 'action' => 'add', 'admin' => true, 'group_id' => ROLE_ADMIN));
+			}else if($this->params['named']['group_id'] == ROLE_SU && $user['User']['group_id'] != ROLE_SU){
+				//if non SU try to add SU
+				$this->redirect(array('controller' => 'users', 'actions' => 'add', 'admin' => true, 'group_id' => ROLE_ADMIN));
+			}else{
+				$group_id = $this->params['named']['group_id'];
+			}
 		}
 		
 		if (!empty($this->data)) {

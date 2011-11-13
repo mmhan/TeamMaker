@@ -63,6 +63,21 @@ class Project extends AppModel {
 			'finderQuery' => '',
 			'deleteQuery' => '',
 			'insertQuery' => ''
+		),
+		'Member' => array(
+			'className' => 'Member',
+			'joinTable' => 'members_projects',
+			'foreignKey' => 'project_id',
+			'associationForeignKey' => 'user_id',
+			'unique' => true,
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'finderQuery' => '',
+			'deleteQuery' => '',
+			'insertQuery' => ''
 		)
 	);
 	

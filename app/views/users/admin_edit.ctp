@@ -4,6 +4,7 @@
  		<legend><?php __('Edit User'); ?></legend>
 	<?php
 		echo $this->Form->input('id');
+		echo $this->Form->input('given_id', array('type' => 'text', 'label' => 'Given ID'));
 		echo $this->Form->input('name');
 		echo $this->Form->input('email');
 	?>

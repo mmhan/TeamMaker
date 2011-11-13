@@ -9,6 +9,13 @@ class User extends AppModel {
 	);
 	
 	var $validate = array(
+		'given_id' => array(
+			'isUnique' => array(
+				'rule' => 'isUnique',
+				'allowEmpty' => false,
+				'message' => 'The Given ID you have provided is already in use, please use a different one.'
+			)
+		),
 		'email' => array(
 			'email' => array(
 				'rule' => 'email',

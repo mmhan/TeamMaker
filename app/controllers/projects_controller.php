@@ -2,7 +2,10 @@
 class ProjectsController extends AppController {
 
 	var $name = 'Projects';
-
+	function beforeFilter(){
+		//allow this to happen with no authentication, to speed it up.
+		$this->Auth->allowedActions = array('admin_add_members_status');
+	}
 	function admin_index() {
 		$user = $this->Auth->user('id');
 		//get user's projects.
@@ -97,13 +100,17 @@ class ProjectsController extends AppController {
 			$this->Session->setFlash(__("Invalid project or csv file provided", true));
 			$this->redirect(array('action' => 'index'));
 		}
-		//AT POST
-		if(!empty($this->data)){
-			debug($this->data);
-			exit;
-		}
 		//TODO: check whether current admin is one of the admin who is allowed to edit this project.
 		//		and redirect if admin doesn't have access.
+		
+		//AT POST
+		if(!empty($this->data) && $this->_isAjax()){
+			$importData = $this->Project->getImportData($this->data);
+			$returnData = $this->_processImport($importData);
+			
+			exit;
+		}
+		
 		
 		
 		//AT GET
@@ -132,6 +139,21 @@ class ProjectsController extends AppController {
 			'Project' => array('id' => $projectId),
 			'Upload' => array('id' => $uploadId)
 		);
+	}
+	
+	function admin_add_members_status(){
+		//fake progress
+		$progress = $this->Session->read('Import.progress');
+		$this->Session->write('Import.progress', $progress + 20);
+		//fake progress ends
+		
+		$this->layout = 'ajax';
+		$data = array(
+			'progress' => $this->Session->read('Import.progress'),
+			'total' => $this->Session->read('Import.total')
+		);
+		$this->set('data', $data);
+		$this->render('/ajaxreturn');
 	}
 	
 	function admin_settings($id = null) {
@@ -167,6 +189,11 @@ class ProjectsController extends AppController {
 		}
 		$this->Session->setFlash(__('Project was not deleted', true));
 		$this->redirect(array('action' => 'index'));
+	}
+	
+	function _processImport($data){
+		$this->Session->write('Import.total', count($importData)); 
+		$this->Session->write('Import.progress', 0);
 	}
 }
 ?>

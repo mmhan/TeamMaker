@@ -78,13 +78,20 @@ TeamMaker = function () {
 		},
 		/** scripts to handle the actions of importing fields **/
 		Import:{
+			//checks whether or not to init module.
+			formId: '#ProjectAdminAddMembersForm',
+			$form: false,
 			autoInit: function(){
-				return $('#ProjectAdminAddMembersForm').length;
+				this.$form = $(this.formId);
+				return this.$form.length;
 			},
+			//initialize the module.
 			init: function(){
 				$('tr.importFields')
 					.delegate('select.memberImportActions', 'change', $.proxy(this.actionChange, this));
+				this.$form.submit($.proxy(this.formSubmit, this));
 			},
+			//action listener to change event of select dropdowns
 			actionChange: function(e){
 				var $me = $(e.target);
 				var $myTr = $(e.target).closest('tr');
@@ -96,6 +103,7 @@ TeamMaker = function () {
 					'data[Import][' + index + "]"
 				);
 			},
+			//will show a list of importable fields from user table.
 			mapFieldModifySelect: function($container, prefix){
 				var $select = $("<select>").attr('name', prefix + "[maps_to]");
 				$.each(TeamMaker.UserFields, function(i, val){
@@ -105,11 +113,59 @@ TeamMaker = function () {
 				});
 				$container.empty().append($select);
 			},
+			//will show a list of importable skills
 			isSkillModifySelect: function($container, prefix){
 				$container.empty();
 			},
+			//will not show anything as option.
 			discardModifySelect: function($container){
 				$container.empty();
+			},
+			//will submit the form using ajax while checking for updates.
+			formSubmit: function(e){
+				//hides form and show status
+				$('div.importForm').slideUp('medium', function(){
+					$('div.importStatus').slideDown();
+				});
+				//submit with ajax
+				$.ajax({
+					url: this.$form.attr('action'),
+					type: 'POST',
+					dataType: 'html',
+					data: this.$form.serialize(),
+					timeout: 5 * 60 * 1000, //5 minutes
+					context: this,
+					success: this.formSubmitSuccess
+				});
+				//periodically, check for status with ajax
+				this.timeoutID = window.setInterval($.proxy(this.formSubmitStatusCheck, this), 2000);
+				e.preventDefault();
+				return false;
+			},
+			//will execute when the form has been successfully submitted.
+			formSubmitSuccess: function(data){
+				this.importData = data;
+			},
+			//will check for status of form submission.
+			formSubmitStatusCheck: function(){
+				$.ajax({
+					url: this.$form.attr('data-status'),
+					type: 'POST',
+					dataType: 'json',
+					context: this,
+					success: this.formSubmitStatusSuccess
+				});
+			},
+			//will check for success of form submission.
+			formSubmitStatusSuccess: function(data){
+				var $bar = $('#progressIndicator');
+				var progress = data.progress / data.total * 100;
+				$bar.find(".progress").css('width', progress + "%");
+				$bar.find("#progressTxt").text(data.progress + "/" + data.total);
+				
+				if(data.progress == data.total){
+					window.clearTimeout(this.timeoutID);
+				}
 			}
 		}
 	};

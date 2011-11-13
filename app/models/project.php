@@ -87,5 +87,25 @@ class Project extends AppModel {
 		)
 	);
 	
+	function getImportData($data){
+		$this->data = $data;
+		//read all csv data
+		$csvData = $this->Upload->readCsv($this->data['Upload']['id']);
+		
+		$members = array();
+		foreach($csvData as $i => $row){
+			$m = array();
+			foreach($this->data['Import'] as $column){
+				if($column['action'] == 'mapField'){
+					$m['Member'][$column['maps_to']] = $row[$column['field_name']];
+				}else if($column['action'] == 'isSkill'){
+					//TODO: add importing of skill.
+				}
+				if(!empty($m)) $members[$i] = $m;
+			}
+		}
+		
+		return $members;
+	}
 }
 ?>

@@ -31,5 +31,23 @@ class Upload extends AppModel {
  		
 		return $header;
 	}
+	
+	function readCsv($id){
+		App::import('Vendor', 'parseCSV', array('file' => 'parse_csv' . DS . 'parsecsv.lib.php'));
+		
+		//read the file that has been uploaded.
+		$filename = $this->field('name',array('id'=> $id));
+		if(empty($filename)){
+			return false;
+		}
+		
+		// set the filename to read CSV from
+		$filename = WWW_ROOT . 'csv_files' . DS . $filename;
+		
+		$csv = new parseCSV();
+		$csv->auto($filename);
+		
+		return $csv->data;
+	}
 }
 ?>

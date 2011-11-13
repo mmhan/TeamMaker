@@ -79,3 +79,19 @@ div.projMgmt h3 a{
 }
 
 td.actions select, td.actionOptionsContainer select{ width: 100%; }
+
+div#progressIndicator{
+	width:300px;
+	height: 20px;
+	border: 1px solid #ffcc00;
+}
+div#progressIndicator div.progress{	
+	width: 0%;
+	height: 20px;
+	background-color: #ffcc00;
+}
+div#progressIndicator span#progressTxt{
+	color: #ffcc00;
+	font-weight: bold;
+	float:right;
+}

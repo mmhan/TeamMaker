@@ -35,5 +35,12 @@ class Member extends User{
 		}
 		return $fields;
 	}
+	
+	/**
+	 * Import a single row of user
+	 **/
+	function import($data){
+		
+	}
 }
 ?>

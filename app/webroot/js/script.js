@@ -163,7 +163,7 @@ TeamMaker = function () {
 				$bar.find(".progress").css('width', progress + "%");
 				$bar.find("#progressTxt").text(data.progress + "/" + data.total);
 				
-				if(data.progress == data.total){
+				if(data.progress >= data.total){
 					window.clearTimeout(this.timeoutID);
 				}
 			}

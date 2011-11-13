@@ -192,8 +192,12 @@ class ProjectsController extends AppController {
 	}
 	
 	function _processImport($data){
-		$this->Session->write('Import.total', count($importData)); 
+		//$this->Session->write('Import.total', count($data));
+		$this->Session->write('Import.total', 100); //FAKE
 		$this->Session->write('Import.progress', 0);
+		foreach($data as $member){
+			$status = $this->Project->Member->import($data);
+		}
 	}
 }
 ?>

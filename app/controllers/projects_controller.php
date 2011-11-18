@@ -109,6 +109,7 @@ class ProjectsController extends AppController {
 			$returnData = $this->_processImport($importData);
 			$this->layout= "ajax";
 			$this->set('data', $returnData);
+			$this->set('projectId', $this->data['Project']['id']);
 			$this->render('admin_add_members_at_post');
 		}else{
 			//AT GET

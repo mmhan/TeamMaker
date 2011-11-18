@@ -58,8 +58,8 @@ array(
 		<div class="progress"></div>
 		<span id="progressTxt"></span>
 	</div>
-	<div id="status">
-		<p>Please wait...</p>
-	</div>
+</div>
+<div id="status" style="display:none;">
+	<p>Please wait...</p>
 </div>
 </div>

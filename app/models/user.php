@@ -30,27 +30,7 @@ class User extends AppModel {
 				'rule' => 'isUnique',
 				'allowEmpty' => false,
 				'on' => 'create',
-				'message' => 'The email you\'ve selected is already in use, please use a different one.'
-			)
-		),
-		'username' => array(
-			'alphaNumericAndSome' => array(
-				'rule' => RULE_USERNAME,
-				'allowEmpty' => false,
-				'on' => 'create',
-				'message' => 'Please enter a valid username with only small letter characters, numbers, underscore(_) and/or dot(.) are accepted.'
-			),
-			'isUnique' => array(
-				'rule' => 'isUnique',
-				'allowEmpty' => false,
-				'on' => 'create',
-				'message' => 'The username you\'ve selected is already in use, please use a different one.'
-			),
-			'minLength' => array(
-				'rule' => array('minLength', 4),
-				'allowEmpty' => false,
-				'on' => 'create',
-				'message' => 'The username must have at least 4 characters.'
+				'message' => 'The email you\'ve entered is already in use, please use a different one.'
 			)
 		),
 		'password' => array(

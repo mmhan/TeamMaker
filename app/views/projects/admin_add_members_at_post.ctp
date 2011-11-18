@@ -38,7 +38,11 @@
 	<li><?php echo $this->Html->link("Go to Dashboard", array('action' => 'dashboard', $projectId))?></li>
 </ul>
 </div>
-<div class="c80">
-<p><?php echo $this->Html->link("Edit Members", array('action' => 'members', $projectId)) ?> | <?php echo $this->Html->link("Edit Skills", array('action' => 'skills', $projectId)) ?> | <?php echo $this->Html->link("Edit Rules", array('action' => 'rules', $projectId)) ?></p>
+<div class="c80 actions">
+<p>
+<?php echo $this->Html->link("Edit Members", array('action' => 'members', $projectId)) ?> | 
+<?php echo $this->Html->link("Edit Skills", array('action' => 'skills', $projectId)) ?> | 
+<?php echo $this->Html->link("Edit Rules", array('action' => 'rules', $projectId)) ?>
+</p>
 </div>
 </div>

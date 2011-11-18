@@ -144,10 +144,7 @@ TeamMaker = function () {
 			},
 			//will execute when the form has been successfully submitted.
 			formSubmitSuccess: function(data){
-				var $statusDiv = $('#status').hide().html(data);
-				$("div.importStatus").slideUp('medium', function(){
-					$statusDiv.slideDown();
-				});
+				$('#status').hide().html(data);
 			},
 			//will check for status of form submission.
 			formSubmitStatusCheck: function(){
@@ -168,6 +165,9 @@ TeamMaker = function () {
 				
 				if(data.progress >= data.total){
 					window.clearTimeout(this.timeoutID);
+					$("div.importStatus").slideUp('medium', function(){
+						$('#status').slideDown();
+					});
 				}
 			}
 		}

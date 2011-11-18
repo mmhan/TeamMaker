@@ -7,6 +7,7 @@ App::import('Model', 'User');
 class Member extends User{
 	var $name = "Member";
 	var $useTable = "users";
+	var $actsAs = array("Containable");
 	
 	/** Associate with projects **/
 	var $hasAndBelongsToMany = array(
@@ -68,9 +69,59 @@ class Member extends User{
 	/**
 	 * Import a single row of user
 	 **/
-	function import($data){
-		FireCake::log($data);
+	function import($data, $merge = true){
+		if($merge){
+			$data = Set::merge($this->findMergeableData($data), $data);
+		}
 		return $this->saveAll($data);
+	}
+	
+	/**
+	 * This will check the current existing user data for merging
+	 * Will find using given_id and see if there's any data that can be merged.
+	 * If it found any mergeable data, it'll return the data in the mergeable format
+	 **/
+	function findMergeableData($data){
+		$givenId = Set::extract($data, 'Member.given_id');
+		if(!empty($givenId)){
+			$data = $this->find("first", array(
+				'contain' => array("Project.id"),
+				'conditions' => array("Member.given_id" => $givenId)
+			));
+			if(!empty($data)){
+				//reformat projects data.
+				if(!empty($data['Project'])){
+					$projData = $data['Project'];
+					unset($data['Project']);
+					
+					$data['Project']['Project'] = array();
+					foreach($projData as $project){
+						$data['Project']['Project'][] = $project['id'];
+					}
+				}
+				
+				return $data;
+			}
+		}
+		return array();
+	}
+	
+	/**
+	 * function used to pick and choose the validation methods based on use cases.
+	 * 
+	 * @override		parent's disableValidate
+	 * @param	string	type of action the model is going to perform.
+	 * 
+	 * @return	boolean	true if it was in specified actions, false if it wasn't.
+	 */
+	function disableValidate ($type) {
+		switch ($type) {
+			case "import" : 
+				unset($this->validate['password']);
+				break;
+			default :
+				return parent::disableValidate($type);
+		}
 	}
 }
 ?>

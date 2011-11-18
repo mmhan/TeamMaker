@@ -10,9 +10,13 @@ class User extends AppModel {
 	
 	var $validate = array(
 		'given_id' => array(
+			'notempty' => array(
+				'rule' => 'notempty',
+				'allowEmpty' => false,
+				'message' => "The Given ID should not be empty."
+			),
 			'isUnique' => array(
 				'rule' => 'isUnique',
-				'allowEmpty' => false,
 				'message' => 'The Given ID you have provided is already in use, please use a different one.'
 			)
 		),
@@ -80,10 +84,10 @@ class User extends AppModel {
 	    if (empty($this->data['User']['group_id'])) {
 	        $data = $this->read();
 	    }
-	    if (!array_key_exists('group_id', $data['User']) && !$data['User']['group_id']) {
+	    if (!array_key_exists('group_id', $data[$this->name]) && !$data[$this->name]['group_id']) {
 	        return null;
 	    } else {
-	        return array('Group' => array('id' => $data['User']['group_id']));
+	        return array('Group' => array('id' => $data[$this->name]['group_id']));
 	    }
 	}
 
@@ -104,9 +108,6 @@ class User extends AppModel {
             $aro = $node[0];
             $aro['Aro']['parent_id'] = $parent[0]['Aro']['id'];
             $this->Aro->save($aro);
-			
-			$key = 'CreatedBy_' . $this->data['User']['id'];
-			Cache::delete($key);
         }
 	}
 	

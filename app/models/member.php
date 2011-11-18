@@ -8,6 +8,28 @@ class Member extends User{
 	var $name = "Member";
 	var $useTable = "users";
 	
+	/** Associate with projects **/
+	var $hasAndBelongsToMany = array(
+		'Project' => array(
+			'className' => 'Project',
+			'joinTable' => 'members_projects',
+			'foreignKey' => 'user_id',
+			'associationForeignKey' => 'project_id',
+			'unique' => true,
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'finderQuery' => '',
+			'deleteQuery' => '',
+			'insertQuery' => ''
+		)
+	);
+	
+	/**
+	 * A list of fields that should not be imported.
+	 **/
 	var $noImport = array(
 		'id',
 		'password',
@@ -15,9 +37,16 @@ class Member extends User{
 		'last_login_time', 'created', 'modified'
 	);
 	
+	//only find members.
 	function beforeFind($queryData){
 		$queryData['conditions']['Member.group_id'] = array(ROLE_MEMBER);
-		return $queryData;
+		return parent::beforeFind($queryData);
+	}
+	
+	//only save as members
+	function beforeSave($data){
+		$this->data['Member']['group_id'] = ROLE_MEMBER;
+		return parent::beforeFind($data);
 	}
 	
 	/** 
@@ -40,7 +69,8 @@ class Member extends User{
 	 * Import a single row of user
 	 **/
 	function import($data){
-		
+		FireCake::log($data);
+		return $this->saveAll($data);
 	}
 }
 ?>

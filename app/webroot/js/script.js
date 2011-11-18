@@ -144,7 +144,10 @@ TeamMaker = function () {
 			},
 			//will execute when the form has been successfully submitted.
 			formSubmitSuccess: function(data){
-				this.importData = data;
+				var $statusDiv = $('#status').hide().html(data);
+				$("#progressIndicator").slideUp('medium', function(){
+					$statusDiv.slideDown();
+				});
 			},
 			//will check for status of form submission.
 			formSubmitStatusCheck: function(){

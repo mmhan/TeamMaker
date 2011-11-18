@@ -87,21 +87,33 @@ class Project extends AppModel {
 		)
 	);
 	
+	/**
+	 * This function will take the given mapping data and return the data in the cakephp format.
+	 **/
 	function getImportData($data){
 		$this->data = $data;
+		
 		//read all csv data
 		$csvData = $this->Upload->readCsv($this->data['Upload']['id']);
+		
+		$projId = $this->data['Project']['id'];
 		
 		$members = array();
 		foreach($csvData as $i => $row){
 			$m = array();
 			foreach($this->data['Import'] as $column){
 				if($column['action'] == 'mapField'){
-					$m['Member'][$column['maps_to']] = $row[$column['field_name']];
+					//map using given data.
+					$m['Member'][$column['maps_to']] = trim($row[$column['field_name']]);
 				}else if($column['action'] == 'isSkill'){
 					//TODO: add importing of skill.
 				}
-				if(!empty($m)) $members[$i] = $m;
+				
+				if(!empty($m)){
+					//add member to current project.
+					$m['Project']['Project'] = array($projId);
+					$members[$i] = $m;
+				}
 			}
 		}
 		

@@ -107,45 +107,41 @@ class ProjectsController extends AppController {
 		if(!empty($this->data) && $this->_isAjax()){
 			$importData = $this->Project->getImportData($this->data);
 			$returnData = $this->_processImport($importData);
+			$this->layout= "ajax";
+			$this->set('data', $returnData);
+			$this->render('admin_add_members_at_post');
+		}else{
+			//AT GET
+			//read the project file.
+			$this->Project->id = $projectId;
+			$this->Project->recursive = -1;
+			$project = $this->Project->read();
+			if(empty($project)){
+				$this->Session->setFlash(__("Invalid project.", true));
+				$this->redirect(array('action' => 'index'));
+			}
 			
-			exit;
+			//read the file that has been uploaded.
+			$filename = $this->Project->Upload->field('name',array('id'=> $uploadId));
+			if(empty($filename)){
+				$this->Session->setFlash(__("Invalid csv file provided", true));
+				$this->redirect(array('action' => "dashboard", $projectId));
+			}
+			$importedFields = $this->Project->Upload->listHeaders($uploadId);
+			$this->set('importedFields', $importedFields);
+			
+			$userTableFields = $this->Project->Member->getImportableFields();
+			$this->set('userTableFields', $userTableFields);
+			
+			$this->data = array(
+				'Project' => array('id' => $projectId),
+				'Upload' => array('id' => $uploadId)
+			);
 		}
-		
-		
-		
-		//AT GET
-		//read the project file.
-		$this->Project->id = $projectId;
-		$this->Project->recursive = -1;
-		$project = $this->Project->read();
-		if(empty($project)){
-			$this->Session->setFlash(__("Invalid project.", true));
-			$this->redirect(array('action' => 'index'));
-		}
-		
-		//read the file that has been uploaded.
-		$filename = $this->Project->Upload->field('name',array('id'=> $uploadId));
-		if(empty($filename)){
-			$this->Session->setFlash(__("Invalid csv file provided", true));
-			$this->redirect(array('action' => "dashboard", $projectId));
-		}
-		$importedFields = $this->Project->Upload->listHeaders($uploadId);
-		$this->set('importedFields', $importedFields);
-		
-		$userTableFields = $this->Project->Member->getImportableFields();
-		$this->set('userTableFields', $userTableFields);
-		
-		$this->data = array(
-			'Project' => array('id' => $projectId),
-			'Upload' => array('id' => $uploadId)
-		);
 	}
 	
-	function admin_add_members_status(){
-		//fake progress
+	function admin_add_members_status(){	
 		$progress = $this->Session->read('Import.progress');
-		$this->Session->write('Import.progress', $progress + 20);
-		//fake progress ends
 		
 		$this->layout = 'ajax';
 		$data = array(
@@ -192,12 +188,15 @@ class ProjectsController extends AppController {
 	}
 	
 	function _processImport($data){
-		//$this->Session->write('Import.total', count($data));
-		$this->Session->write('Import.total', 100); //FAKE
+		$this->Session->write('Import.total', count($data));
 		$this->Session->write('Import.progress', 0);
-		foreach($data as $member){
-			$status = $this->Project->Member->import($data);
+		$status = array();
+		foreach($data as $i => $member){
+			$status[$i]['status'] = $this->Project->Member->import($member);
+			$status[$i]['error'] = $this->Project->Member->validationErrors;
+			$this->Session->write('Import.progress', $i + 1);
 		}
+		return $status;
 	}
 }
 ?>

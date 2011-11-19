@@ -170,6 +170,193 @@ TeamMaker = function () {
 					});
 				}
 			}
+		},
+		/**
+		 * Module for creation of skills.
+		 */
+		skillsForm: {
+			$me: false,
+			$tmpl: false,
+			$container: false,
+			/**
+			 * Whether or not to init the module.
+			 */
+			autoInit: function(){
+				this.$me = $("#skillsForm");
+				return $("#skillsForm").length;
+			},
+			/**
+			 * Init the module.
+			 */
+			init: function(){
+				this.$tmpl = $('#skillTemplate');
+				this.$container = this.$me.find('div.skills');
+				this.$me.delegate('a.add', 'click', $.proxy(this.addNew, this));
+				this.dataInit();
+			},
+			/**
+			 * This function will check if data exists, if it does, will populate data, if not, will show you a blank one.
+			 */
+			dataInit: function(){
+				if(TeamMaker.skillData){
+					
+				}else{
+					this.addNew();
+				}
+				this.$container.delegate('div.skill select', 'change', $.proxy(this.onSelectChange, this));
+				this.$container.delegate('div.numericRange input', 'change', $.proxy(this.onNumericRangeChange, this));
+				this.$container.delegate('div.textRange input', 'change', $.proxy(this.onTextRangeChange, this));
+				this.$container.delegate('div.text input', 'change', $.proxy(this.onTextChange, this));
+			},
+			/**
+			 * This function will creat
+			 */
+			addNew: function(e){
+				if(e) e.preventDefault();
+				//clone
+				var $clone = this.$tmpl.children().first().clone();
+				//get index
+				var myIndex = this.$container.children().length;
+				//get the item to change stuffs.
+				var $select = $clone
+					.attr('data-index', myIndex)
+					.find('select');
+				
+				//change some val
+				$.each(['name', 'id'], function(i, val){
+					$select.attr(val, $select.attr(val).replace('${i}', myIndex));
+				});
+				//apend
+				this.$container.append($clone);
+			},
+			/**
+			 * Will execute on changing a skill value type drop-down menu
+			 */
+			onSelectChange: function(e){
+				var $me = $(e.target);
+				var myIndex = $me.closest('div.skill').attr('data-index');
+				var $container = $me.closest('div.skill').find('div.skillOption');
+				var choice = parseInt($me.val());
+				
+				var cloneStr = '';
+				//ref to my pub obj
+				var pub = TeamMaker.skillsForm;
+				
+				//use it as string instead.
+				cloneStr = $(pub.tmpl[choice]).html();
+				//substitute placeholders
+				$.each(
+					[{pattern: /\${i}/g, val: myIndex}], 
+					function(i, o){
+						cloneStr = cloneStr.replace(o.pattern, o.val);
+					}
+				);
+				switch(choice){
+					case pub.constants.NUMERIC_RANGE:
+						break;
+					case pub.constants.TEXT_RANGE:
+						break;
+					case pub.constants.TEXT:
+						break; 
+				}
+				
+				//populate container
+				$container.html(cloneStr);
+			},
+			/**
+			 * Validate the numeric range input data.
+			 */
+			onNumericRangeChange: function(e){
+				var $parent = $(e.target).closest('div.colContainer');
+				//query fields in question
+				var fields = {
+					$min : $parent.find('input.min').first().removeData('error'),
+					$max : $parent.find('input.max').first().removeData('error'),
+					$range : $parent.find('input.range').first()
+				};
+				var minVal = priv.Validate.isNumber(fields.$min.val());
+				var maxVal = priv.Validate.isNumber(fields.$max.val());
+				
+				//validate min or max value.
+				if(minVal === false){
+					fields.$min.data('error', true);
+				}
+				if(maxVal === false){
+					fields.$max.data('error', true);
+				}
+				
+				if(minVal >= maxVal){//min is larger or equal to max
+					fields.$max.data('error', true);
+				}else{
+					fields.$max.data('error', fields.$max.data('error') || false);
+				}
+				
+				$.each(fields, function(i, $el){
+					if($el.data('error')){
+						$el.addClass('error');
+					}else{
+						$el.removeClass('error');
+					}
+				});
+				
+				//doesn't matter if any of 'em got an error or not, just update the value.
+				fields.$range.val(fields.$min.val() + "-" + fields.$max.val());
+			},
+			/**
+			 * Validate the text range input data
+			 */
+			onTextRangeChange: function(e){
+				var $me = $(e.target).removeData('error');
+				var val = $me.val();
+				if(val.split('|').length <= 1){
+					$me.addClass('error').data('error', true);
+				}else{
+					$me.removeClass('error').data('error', false);
+				}
+			},
+			/**
+			 * Validate the text input data.
+			 */
+			onTextChange: function(e){
+				var $me = $(e.target).removeData('error');
+				var val = priv.Validate.isInt($me.val());
+				if(val !== false){
+					$me.removeClass("error").data('error', false);
+				}else{
+					$me.addClass('error').data('error', true);
+				}
+			}
+		},
+		Validate: {
+			isEmpty: function(val){
+				return val.length == 0;
+			},
+			isInt: function(val){
+				if(this.isEmpty(val)) return false;
+				
+				if(val.match(/^[\d]*$/)){
+					var num = parseInt(val);
+					if(!isNaN(num)){
+						return num;
+					}
+				}
+				return false;
+			},
+			isNumber: function(val){
+				if(this.isEmpty(val)) return false;
+				
+				//do a check of float/int.
+				if(this.isInt(val) !== false){
+					return this.isInt(val);
+				}else{
+					var flt = parseFloat(val);
+					if(!isNaN(flt)){
+						return flt;
+					}			
+				}
+								
+				return false;
+			}
 		}
 	};
 	

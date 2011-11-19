@@ -10,6 +10,16 @@ textarea{
 input{
 	min-width: 300px;
 }
+.tip{
+	font-size: 80%;
+	color: #aaa;
+}
+.input .tip{
+	display:block;
+	font-size: 80%;
+	color: #aaa;
+}
+
 #secondNav{
 	float:right;
 }
@@ -98,3 +108,15 @@ div#progressIndicator span#progressTxt{
 }
 
 div.actions.c80{width:70%;}
+
+/**
+ * 	Skills form
+ */
+#skillsForm div.skill{
+	padding: 1em 0 0.5em;
+}
+.skillTypeDesc{margin-top: 1em;}
+.skillTypeDesc dd{margin-left: 15em;}
+.skillOption input{min-width:100px;}
+.skillValueRange.numericRange input{min-width:0;}
+.skillValueRange.textRange input{width:90%;}

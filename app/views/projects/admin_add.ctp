@@ -38,6 +38,7 @@
 			)
 		); ?>
 	</fieldset>
+	<?php echo $this->element('skills_form'); ?>
 <?php echo $this->Form->end(__('Submit', true));?>
 <?php echo $this->Html->link("&laquo; Back", array('action' => 'index'), array('escape' => false)); ?>
 </div>

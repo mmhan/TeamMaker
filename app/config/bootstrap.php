@@ -63,3 +63,8 @@ define("PROJECT_SEED", 1);
 define("PROJECT_COLLECT", 2);
 define("PROJECT_FEEDBACK", 3);
 define("PROJECT_ARCHIVE", 4);
+
+/** Skill types **/
+define("SKILL_NUMERIC_RANGE", 1);
+define("SKILL_TEXT_RANGE", 2);
+define("SKILL_TEXT", 3);

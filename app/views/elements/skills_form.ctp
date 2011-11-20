@@ -10,7 +10,10 @@ TeamMaker.skillsForm ={
 		NUMERIC_RANGE:<?php echo SKILL_NUMERIC_RANGE ?>,
 		TEXT_RANGE:<?php echo SKILL_TEXT_RANGE ?>,
 		TEXT: <?php echo SKILL_TEXT ?>
-	}
+	},
+	<?php if(isset($this->data) && !empty($this->data['Skill'])): ?>
+	data: <?php echo $this->Javascript->object($this->data['Skill']); ?>
+	<?php endif; ?>
 }; 
 </script>
 <div id="skillTemplate" class="hidden">

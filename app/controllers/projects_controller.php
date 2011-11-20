@@ -83,6 +83,7 @@ class ProjectsController extends AppController {
 					));
 				}
 			} else {
+				if(isset($this->data['Skill']['${i}'])) unset($this->data['Skill']['${i}']); 
 				$this->Session->setFlash(__('The project could not be saved. Please, try again.', true));
 			}
 		}else{

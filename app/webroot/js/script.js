@@ -213,30 +213,39 @@ TeamMaker = function () {
 			 * Init the module.
 			 */
 			init: function(){
+				//remember usefull jquery objs
 				this.$tmpl = $('#skillTemplate');
 				this.$container = this.$me.find('div.skills');
+				
+				//delegate add more button.
 				this.$me.delegate('a.add', 'click', $.proxy(this.addNew, this));
 				
-				this.$container.delegate('div.skill select', 'change', $.proxy(this.onSelectChange, this));
+				//delegate select menu to populate form.
+				this.$container.delegate('div.skillValuesType select', 'change', $.proxy(this.onSelectChange, this));
+				
+				//delegate all validations.
 				this.$container.delegate('div.skillName input', 'change', $.proxy(this.onSkillNameChange, this));
 				this.$container.delegate('div.numericRange input', 'change', $.proxy(this.onNumericRangeChange, this));
 				this.$container.delegate('div.textRange input', 'change', $.proxy(this.onTextRangeChange, this));
 				this.$container.delegate('div.text input', 'change', $.proxy(this.onTextChange, this));
+				
 				this.dataInit();
 			},
 			/**
 			 * This function will check if data exists, if it does, will populate data, if not, will show you a blank one.
 			 */
 			dataInit: function(){
-				if(TeamMaker.skillData){
-					
+				if(TeamMaker.skillsForm.data){
+					$.each(TeamMaker.skillsForm.data, $.proxy(function(i, row){
+						this.addNewWithData(row);
+					}, this));
 				}else{
 					this.addNew();
 				}
 				
 			},
 			/**
-			 * This function will creat
+			 * This function will create new rows of skills.
 			 */
 			addNew: function(e){
 				if(e) e.preventDefault();
@@ -255,6 +264,19 @@ TeamMaker = function () {
 				});
 				//apend
 				this.$container.append($clone);
+				return myIndex;
+			},
+			/**
+			 * This function will add new rows of skills using given data.
+			 */
+			addNewWithData: function(row){
+				var myIndex = this.addNew();
+				//change select using data.
+				this.$container
+					.find('select[name="data[Skill][' + myIndex + '][type]"]')
+					.val(row.type)
+					.data('data', row)
+					.change();
 			},
 			/**
 			 * Will execute on changing a skill value type drop-down menu
@@ -278,17 +300,36 @@ TeamMaker = function () {
 						cloneStr = cloneStr.replace(o.pattern, o.val);
 					}
 				);
-				switch(choice){
-					case pub.constants.NUMERIC_RANGE:
-						break;
-					case pub.constants.TEXT_RANGE:
-						break;
-					case pub.constants.TEXT:
-						break; 
-				}
-				
+								
 				//populate container
 				$container.html(cloneStr);
+				
+				//check if there's data to populate automatically.
+				var row = $me.data('data');
+				if(row){
+					//put in name
+					$container
+						.find('input[name="data[Skill][' + myIndex + '][name]"]')
+						.val(row.name);
+					$container
+						.find('input[name="data[Skill][' + myIndex + '][range]"]')
+						.val(row.range);
+						
+					switch(choice){
+						case pub.constants.NUMERIC_RANGE:
+							$container
+								.find('input[name="data[Skill][' + myIndex + '][min]"]')
+								.val(row.min);
+							$container
+								.find('input[name="data[Skill][' + myIndex + '][max]"]')
+								.val(row.max);
+							break;
+						case pub.constants.TEXT_RANGE:
+							break;
+						case pub.constants.TEXT:
+							break; 
+					}
+				}
 			},
 			/**
 			 * Validate the skill name data

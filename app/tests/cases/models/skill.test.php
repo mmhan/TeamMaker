@@ -102,5 +102,45 @@ class SkillTestCase extends CakeTestCase {
 		$this->assertNotEqual($status, false, "validate should allow text with integer as range");
 	}
 
+	function testIsValidValue(){
+		foreach(range(1, 4) as $i)
+			Cache::delete("Skill_" . $i);
+		
+		$this->assertFalse($this->Skill->isValidValue('0', -1), 'Given skill is non-existent');
+		
+		$this->assertTrue($this->Skill->isValidValue('1', 1), '1 is in 0-5');
+		$this->assertTrue($this->Skill->isValidValue('5', 1), '5 is in 0-5');
+		$this->assertTrue($this->Skill->isValidValue('0', 1), '0 is in 0-5');
+		$this->assertFalse($this->Skill->isValidValue('-1', 1), '-1 is not in 0-5');
+		$this->assertFalse($this->Skill->isValidValue('10', 1), '10 is not in 0-5');
+		$this->assertFalse($this->Skill->isValidValue('4.0', 1), '4.0 shouldnt be allowed');
+		$this->assertFalse($this->Skill->isValidValue('4.5', 1), '4.5 shouldnt be allowed');
+		
+		$this->assertTrue($this->Skill->isValidValue('1', 2), '1 is in 0.0-5.0');
+		$this->assertTrue($this->Skill->isValidValue('1.5', 2), '1.5 is in 0.0-5.0');
+		$this->assertTrue($this->Skill->isValidValue('0.0', 2), '0.0 is in 0.0-5.0');
+		$this->assertTrue($this->Skill->isValidValue('5.0', 2), '5.0 is in 0.0-5.0');
+		$this->assertFalse($this->Skill->isValidValue('-1', 2), '-1 is not in 0.0-5.0');
+		$this->assertFalse($this->Skill->isValidValue('-1.0', 2), '-1.0 is not in 0.0-5.0');
+		$this->assertFalse($this->Skill->isValidValue('-0.1', 2), '-0.1 is not in 0.0-5.0');
+		$this->assertFalse($this->Skill->isValidValue('5.1', 2), '5.1 is not in 0.0-5.0');
+		$this->assertFalse($this->Skill->isValidValue('7', 2), '7 is not in 0.0-5.0');
+		$this->assertFalse($this->Skill->isValidValue('7.0', 2), '7.0 is not in 0.0-5.0');
+		
+		$this->assertTrue($this->Skill->isValidValue('1', 3), '1 is in valid textRange value');
+		$this->assertTrue($this->Skill->isValidValue('0', 3), '0 is in valid textRange value');
+		$this->assertTrue($this->Skill->isValidValue('4', 3), '4 is in valid textRange value');
+		$this->assertFalse($this->Skill->isValidValue('asd', 3), 'asd is not in valid textRange value');
+		$this->assertFalse($this->Skill->isValidValue('-1', 3), '-1 is not in valid textRange value');
+		$this->assertFalse($this->Skill->isValidValue('5', 3), '5 is not in valid textRange value');
+		
+		$this->assertTrue($this->Skill->isValidValue('abcde', 4), 'abcde is valid text of 10 char');
+		$this->assertTrue($this->Skill->isValidValue('a', 4), 'a is valid text of 10 char');
+		$this->assertTrue($this->Skill->isValidValue('abcdefghij', 4), 'abcdefghij is valid text of 10 char');
+		$this->assertFalse($this->Skill->isValidValue('abcdefghijk', 4), 'abcdefghijk is not valid text of 10 char');
+		
+		
+	}
+
 }
 ?>

@@ -77,5 +77,57 @@ class Skill extends AppModel {
 		}
 		return $return;
 	}
+	
+	function isValidValue($value, $id){
+		$skill = Cache::read("Skill_" . $id);
+		if(empty($skill)){
+			$this->id = $id;
+			$this->recursive = -1;
+			$skill = $this->read();
+			if(empty($skill)){
+				return false;
+			}
+			//flat it down by a level.
+			$skill = $skill[$this->alias];
+			//write it to cache
+			Cache::write('Skill_' . $id, $skill);
+		}
+		
+		//get the type.
+		$type = $skill['type'];
+		switch($type){
+			case SKILL_NUMERIC_RANGE:
+				//only integers??
+				$isOnlyIntegers = preg_match("|^\d+-\d+$|", $skill['range']);
+				list($min, $max) = explode('-', $skill['range']);
+				
+				if($isOnlyIntegers){
+					//true if value is int and in range
+					return
+						preg_match("|^\d+$|", $value) &&
+						$value == (string)(int) $value && 
+						(int) $value >= (int) $min && 
+						(int) $value <= (int) $max;
+				}else{
+					//true if value is float and in range
+					return 
+						$value == (string)(float) $value &&
+						(float) $value >= (float) $min && 
+						(float) $value <= (float) $max;
+				}
+				break;
+			case SKILL_TEXT_RANGE:
+				//true if the index is in range.
+				return
+					is_numeric($value) && 
+					(int) $value <= count(explode('|', $skill['range'])) - 1 &&
+					(int) $value >= 0;
+				break;
+			case SKILL_TEXT:
+				//true if the text is less than given number of characters.
+				return strlen($value) <= $skill['range'];
+				break;
+		}
+	}
 }
 ?>

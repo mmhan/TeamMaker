@@ -15,16 +15,36 @@ class SkillFixture extends CakeTestFixture {
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
 
+	/** Skill fixture to use **/
 	var $records = array(
 		array(
 			'id' => 1,
 			'project_id' => 1,
-			'name' => 'Lorem ipsum dolor sit amet',
-			'type' => 1,
-			'range' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
-			'created' => '2011-11-18 14:41:16',
-			'modified' => '2011-11-18 14:41:16'
+			'name' => 'Numeric Range',
+			'type' => SKILL_NUMERIC_RANGE,
+			'range' => '0-5'
 		),
+		array(
+			'id' => 2,
+			'project_id' => 1,
+			'name' => 'Numeric Range',
+			'type' => SKILL_NUMERIC_RANGE,
+			'range' => '0.0-5.0'
+		),
+		array(
+			'id' => 3,
+			'project_id' => 1,
+			'name' => 'Text Range',
+			'type' => SKILL_TEXT_RANGE,
+			'range' => 'Hopeless|Bad|Okay|Good|Awesome'
+		),
+		array(
+			'id' => 4,
+			'project_id' => 1,
+			'name' => 'Text Range',
+			'type' => SKILL_TEXT,
+			'range' => '10'
+		)
 	);
 }
 ?>

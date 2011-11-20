@@ -67,13 +67,14 @@ class ProjectsController extends AppController {
 	
 	function admin_add() {
 		if (!empty($this->data)) {
+			if(isset($this->data['Skill']['${i}'])) unset($this->data['Skill']['${i}']); 
 			$this->Project->create();
 			$status = $this->Project->saveAll($this->data);
 			if ($status) {
 				$name = Set::classicExtract($this->data, 'Upload.0.file.name');
 				if(empty($name)){
 					$this->Session->setFlash(__('The project has been saved', true));
-					$this->redirect(array('action'=>'dashboard'));
+					$this->redirect(array('action'=>'dashboard', $this->Project->getLastInsertId()));
 				}else{
 					$this->redirect(array(
 						'action' => 'add_members', 
@@ -83,7 +84,6 @@ class ProjectsController extends AppController {
 					));
 				}
 			} else {
-				if(isset($this->data['Skill']['${i}'])) unset($this->data['Skill']['${i}']); 
 				$this->Session->setFlash(__('The project could not be saved. Please, try again.', true));
 			}
 		}else{

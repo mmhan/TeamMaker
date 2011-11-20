@@ -82,6 +82,9 @@ class Project extends AppModel {
 	);
 	
 	var $hasMany = array(
+		'Skill' => array(
+			'className' => "Skill"
+		),
 		'Upload' => array(
 			'className' => 'Upload'
 		)

@@ -171,6 +171,30 @@ TeamMaker = function () {
 				}
 			}
 		},
+		/***
+		 * Project add form validation
+		 */
+		projectAddForm: {
+			$me : false,
+			//to check whether to init this module or not.
+			autoInit: function(){
+				this.$me = $("#ProjectAdminAddForm");
+				return this.$me.length;
+			},
+			//init module add listener for form submission
+			init: function(){
+				this.$me.submit($.proxy(this.onFormSubmit, this));
+			},
+			//when the form was submitted.
+			onFormSubmit: function(e){
+				//e.preventDefault();
+				var skillFormIsValid = priv.skillsForm.onSubmit(e);
+				if(!skillFormIsValid){
+					alert("Please fix the errors highlighted in skills section.");
+				}
+				return skillFormIsValid;
+			}
+		},
 		/**
 		 * Module for creation of skills.
 		 */
@@ -192,6 +216,12 @@ TeamMaker = function () {
 				this.$tmpl = $('#skillTemplate');
 				this.$container = this.$me.find('div.skills');
 				this.$me.delegate('a.add', 'click', $.proxy(this.addNew, this));
+				
+				this.$container.delegate('div.skill select', 'change', $.proxy(this.onSelectChange, this));
+				this.$container.delegate('div.skillName input', 'change', $.proxy(this.onSkillNameChange, this));
+				this.$container.delegate('div.numericRange input', 'change', $.proxy(this.onNumericRangeChange, this));
+				this.$container.delegate('div.textRange input', 'change', $.proxy(this.onTextRangeChange, this));
+				this.$container.delegate('div.text input', 'change', $.proxy(this.onTextChange, this));
 				this.dataInit();
 			},
 			/**
@@ -203,10 +233,7 @@ TeamMaker = function () {
 				}else{
 					this.addNew();
 				}
-				this.$container.delegate('div.skill select', 'change', $.proxy(this.onSelectChange, this));
-				this.$container.delegate('div.numericRange input', 'change', $.proxy(this.onNumericRangeChange, this));
-				this.$container.delegate('div.textRange input', 'change', $.proxy(this.onTextRangeChange, this));
-				this.$container.delegate('div.text input', 'change', $.proxy(this.onTextChange, this));
+				
 			},
 			/**
 			 * This function will creat
@@ -262,6 +289,17 @@ TeamMaker = function () {
 				
 				//populate container
 				$container.html(cloneStr);
+			},
+			/**
+			 * Validate the skill name data
+			 */
+			onSkillNameChange: function(e){
+				var $me = $(e.target).removeData('error');
+				if(priv.Validate.isEmpty($me.val())){
+					$me.data('error', true).addClass('error');
+				}else{
+					$me.data('error', false).removeClass('error');
+				}
 			},
 			/**
 			 * Validate the numeric range input data.
@@ -325,6 +363,43 @@ TeamMaker = function () {
 				}else{
 					$me.addClass('error').data('error', true);
 				}
+			},
+			onSubmit: function(e){
+				//remove unselected fields.
+				this.$me.find('div.skillValuesType select').each(function(i, el){
+					if(priv.Validate.isEmpty($(el).val())) //if select is not selected to something valid
+						$(el).closest('div.skill').remove(); //remove row.
+				});
+				//validate all skill names
+				this.$me.find("div.skillName input").each($.proxy(function(i, el){
+					this.onSkillNameChange({target: el}); //fake event
+				}, this));
+				//validate all skills numeric range data, it'll suffice to only validate one field out of min and max.
+				this.$me.find("div.numericRange input[name$='\[min\]']").each($.proxy(function(i, el){
+					this.onNumericRangeChange({target: el});
+				}, this));
+				//validate all skills text range data
+				this.$me.find("div.textRange input").each($.proxy(function(i, el){
+					this.onTextRangeChange({target: el});
+				}, this));
+				//validate all text input data.
+				this.$me.find('div.text input').each($.proxy(function(i, el){
+					this.onTextChange({target: el});
+				}, this));
+				//now loop through all validated fields and search if there's any error with them.
+				//if not return true, else return false.
+				var ret = true;
+				this.$me
+					.find('div.skillName input, div.numericRange input, div.textRange input, div.text input')
+					.each($.proxy(function(i, el){
+						if($(el).data('error')){
+							//found an error, change the return data
+							//and break out of each loop 
+							ret = false;
+							return false;
+						} 
+					}, this));
+				return ret;
 			}
 		},
 		Validate: {

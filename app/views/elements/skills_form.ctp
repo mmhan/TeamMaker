@@ -71,7 +71,7 @@ TeamMaker.skillsForm ={
 	<div class="c60 skillValueRange text">
 		<div class="colContainer clearfix">
 			<div class="c40"><label for="skillRange${i}">Max Character Count</label></div>
-			<div class="c60"><input type="text" id="skillRange${i}" name="data[Skill][${i}][name]"/></div>
+			<div class="c60"><input type="text" id="skillRange${i}" name="data[Skill][${i}][range]"/></div>
 		</div>
 		<div class="skillTypeDesc tip">
 			<p>Please enter the maximum number of characters allowed for this field.</p>

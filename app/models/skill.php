@@ -74,8 +74,6 @@ class Skill extends AppModel {
 			case SKILL_TEXT:
 				$return = ($range == (string)(int) $range);
 				break;
-			default:
-				break;
 		}
 		return $return;
 	}

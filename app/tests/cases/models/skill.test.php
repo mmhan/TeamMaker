@@ -47,8 +47,7 @@ class SkillTestCase extends CakeTestCase {
 			'type' => SKILL_NUMERIC_RANGE,
 			'name' => "Numeric Range",
 			'range' => 'abc-2.0'
-		),
-		);
+		));
 		
 		$dToSave = array('Skill' => $data[0]);
 		$status = $this->Skill->save($dToSave);
@@ -69,6 +68,38 @@ class SkillTestCase extends CakeTestCase {
 		$dToSave = array('Skill' => $data[4]);
 		$status = $this->Skill->save($dToSave);
 		$this->assertEqual($status, false, "validate should not allow txt and float as min and max");
+		
+		$status = $this->Skill->save(array(
+			'Skill' => array(
+				'type' => SKILL_TEXT_RANGE,
+				'range' => "abc"
+			)
+		));
+		$this->assertEqual($status, false, "validate should not allow text range with only one option.");
+		
+		$status = $this->Skill->save(array(
+			'Skill' => array(
+				'type' => SKILL_TEXT_RANGE,
+				'range' => "abc|def"
+			)
+		));
+		$this->assertNotEqual($status, false, "validate should allow text range with more than one option.");
+		
+		$status = $this->Skill->save(array(
+			'Skill' => array(
+				'type' => SKILL_TEXT,
+				'range' => "abc"
+			)
+		));
+		$this->assertEqual($status, false, "validate should not allow text with non-integer as range");
+		
+		$status = $this->Skill->save(array(
+			'Skill' => array(
+				'type' => SKILL_TEXT,
+				'range' => "20"
+			)
+		));
+		$this->assertNotEqual($status, false, "validate should allow text with integer as range");
 	}
 
 }

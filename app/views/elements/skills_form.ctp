@@ -46,7 +46,8 @@ TeamMaker.skillsForm ={
 			<dt>Valid Allowable Values</dt>
 			<dd>
 				Integers - <strong>0,1,2,10,100,1000</strong> or <br />
-				Decimals - <strong>0.0, 5.0, 5.5, 100.0, 99.9</strong>
+				Decimals - <strong>0.0, 5.0, 5.5, 100.0, 99.9</strong><br />
+				Inclusively.
 			</dd>
 		</dl></div>
 	</div>

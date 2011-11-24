@@ -78,8 +78,10 @@ div.projMgmt{
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e6e6e6', endColorstr='#f9f9f9',GradientType=0 ); /* IE6-9 */
 	overflow: hidden;
 }
-ul.projects div.actions{
+ul.projects div.actions, div.actions.autoWidth{
 	width: auto;
+}
+ul.projects div.actions{
 	float: right;
 }
 div.projMgmt{
@@ -124,3 +126,7 @@ div.actions.c80{width:70%;}
 
 #status .status_return dl dd{margin-left: 30em;}
 
+/*	admin/projects/members */
+#ProjectMembersForm{
+	min-height: 300px;
+}

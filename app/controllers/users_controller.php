@@ -1,4 +1,25 @@
 <?php
+/**
+ * contains UsersController
+ *
+ * @author 		@mmhan
+ * @version 	$Id$
+ * @copyright 	MIT Licence
+ * @package 	teammaker.controllers
+ */
+
+
+/**
+ * UsersController for the app. Handles CRUD, authentication
+ * and ACL. 
+ * 
+ * Also contains methods to generate ACL. 
+ *
+ * @package 	default
+ * @author  	@mmhan
+ * @package		teammaker.controllers
+ */ 
+
 class UsersController extends AppController {
 
     var $name       = 'Users';
@@ -387,10 +408,20 @@ class UsersController extends AppController {
 		$this->set('users', $this->paginate());
 		$this->set('groups', $this->User->Group->find('list'));
 	}
-
+	
+	/**
+	 * Adds users
+	 *
+	 * @return void
+	 * @author 	@mmhan
+	 */
 	function admin_add() {
 		$user = $this->Auth->user();
 		$group_id;
+		
+		/**
+		 * At GET
+		 */
 		if(empty($this->data)){
 			if(empty($this->params['named']['group_id'])){
 				//fail-safe redirect for cases that role wasn't given.
@@ -403,12 +434,34 @@ class UsersController extends AppController {
 			}
 		}
 		
+		/**
+		 * At POST
+		 */
 		if (!empty($this->data)) {
 			$this->User->create();
+			
 			$this->data['User']['hashed_confirm_password'] = $this->Auth->password($this->data['User']['confirm_password']);
-			if ($this->User->save($this->data)) {
+			
+			$status = false;
+			
+			//check to see if project_id was also provided.
+			//cases coming from /admin/projects/members/$id
+			$projectId = isset($this->data['Project']['Project'][0]) && !empty($this->data['Project']['Project'][0]) ? $this->data['Project']['Project'][0] : false;
+			if($projectId){
+				$status = $this->User->saveAll($this->data);
+			}else{
+				$status = $this->User->save($this->data);
+			} 
+			
+			//save and redirect
+			if ($status) {
 				$this->Session->setFlash(__('The user has been saved', true));
-				$this->redirect(array('action' => 'index'));
+				if($projectId){
+					$this->redirect(array('controller' => 'projects', 'action' => 'members', $projectId));
+				}else{
+					$this->redirect(array('action' => 'index'));
+				}
+				
 			} else {
 				$this->Session->setFlash(__('The user could not be saved. Please, try again.', true));
 			}
@@ -416,6 +469,7 @@ class UsersController extends AppController {
 		$this->set('groups', $this->User->Group->find('list'));
 		$this->set('group_id', $group_id);
 	}
+
 	/**
 	 * To edit an existing user
 	 **/
@@ -456,5 +510,4 @@ class UsersController extends AppController {
 		$this->Session->setFlash(__('User was not deleted', true));
 		$this->redirect(array('action' => 'index'));
 	}
-}
-?>
+}// END

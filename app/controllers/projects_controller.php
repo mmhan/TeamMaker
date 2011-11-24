@@ -1,9 +1,15 @@
 <?php
 class ProjectsController extends AppController {
 
+
 	var $name = 'Projects';
+	
+	/**
+	 * Before filter call back that customize a few things.
+	 */
 	function beforeFilter(){
 		//allow this to happen with no authentication, to speed it up.
+		//it is used by admin_add_members for the progress indicator.
 		$this->Auth->allowedActions = array('admin_add_members_status');
 	}
 	
@@ -107,10 +113,16 @@ class ProjectsController extends AppController {
 		$this->set(compact('admins'));
 	}
 
+	
 	/**
-	 * This action is step2 of add project and also edit members's redirect page after file upload.
+	 * This action is step2 of add project and 
+	 * also edit members's redirect page after file upload.
+	 *
+	 * @return 	void
+	 * @author	@mmhan  
 	 */
 	function admin_add_members($projectId, $uploadId){
+		
 		if(empty($projectId) || empty($uploadId)){
 			$this->Session->setFlash(__("Invalid project or csv file provided", true));
 			$this->redirect(array('action' => 'index'));
@@ -133,6 +145,7 @@ class ProjectsController extends AppController {
 			
 			$this->layout= "ajax";
 			$this->set('data', $returnData);
+			$this->set('fromImport', $this->data['Project']['from_import']);
 			$this->set('projectId', $this->data['Project']['id']);
 			$this->render('admin_add_members_at_post');
 		}else{
@@ -165,21 +178,6 @@ class ProjectsController extends AppController {
 			);
 		}
 	}
-	
-	/**
-	 * This action will show a form where the admin will be able to 
-	 * edit the list of members that belongs to the project.
-	 */
-	function admin_edit_members($id = null){
-		if(!empty($this->data)){
-			//AT POST
-		}else{
-			//AT GET
-			$this->Project->id = $id;
-			$this->data = $this->Project->read();
-		}
-	}
-	
 	
 	/**
 	 * To query the status of an import using ajax to show progress indicator.
@@ -235,6 +233,91 @@ class ProjectsController extends AppController {
 		}
 		$this->Session->setFlash(__('Project was not deleted', true));
 		$this->redirect(array('action' => 'index'));
+	}
+
+	/**
+	 * This action will show a form where the admin will be able to 
+	 * edit the list of members that belongs to the project.
+	 */
+	function admin_members($id = null){
+		
+		if(
+			(empty($this->data) && $id == null ) || //GET
+			(!empty($this->data) && !isset($this->data['Project']['id'])) //POST
+		){
+			$this->Session->setFlash(__("Invalid project.", true));
+			$this->redirect(array('action' => 'index'));
+		}
+		
+		if(!empty($this->data)){
+			//AT POST
+			
+			//save the given data.
+			$status = $this->Project->saveAll($this->data);
+			
+			if($status){
+				$this->Session->setFlash("Project Saved.");
+				$this->redirect(array('action' => 'members', $this->data['Project']['id']));
+			}else{
+				$this->Session->setFlash("Couldn't save data. Please try again.");
+			}
+		}else{
+			//AT GET
+						
+			$this->data = $this->Project->find('first', array(
+				'fields' => array('Project.id', 'Project.name'),
+				'contain' => array("Member"),
+				'conditions' => array('Project.id' => $id)
+			));
+						
+			$this->set('members', $this->Project->Member->find('list', array('order' => "Member.name")));
+		}
+	}
+	
+	/**
+	 * This will upload another csv file to import.
+	 *
+	 * @return void
+	 * @author  @mmhan
+	 */
+	function admin_import_file($id = null) {
+		
+		if(empty($this->data)){
+			$this->Session->setFlash(__('Invalid Request', true));
+			$this->redirect(array('action' => 'index'));
+		}else{
+			//get uploaded file.
+			$name = Set::classicExtract($this->data, 'Upload.0.file.name');
+			$id = Set::classicExtract($this->data, "Project.id");
+			
+			if(empty($id)){
+				//no id provided.
+				$this->Session->setFlash(__('Invalid Request', true));
+				$this->redirect(array('action' => 'index'));
+				
+			} else if (empty($name)) {
+				//no file uploaded
+				$this->Session->setFlash(__('Selected file couldn\'t be uploaded. Please try again.', true));
+				$this->redirect(array('action'=>'members', $id));
+				
+			} else {
+				//saved.
+				$status = $this->Project->saveAll($this->data);
+				if ($status) {
+					$this->redirect(array(
+						'action' => 'add_members', 
+						'admin' => true, 
+						$id,
+						$this->Project->Upload->getLastInsertId(),
+						'from_import' => true
+					));
+				} else {
+					//save error.
+					$this->Session->setFlash(__('The project could not be saved. Please, try again.', true));
+					$this->redirect(array('action' => 'members', $id));
+				}
+			}
+		}
 	}
 	
 	/**

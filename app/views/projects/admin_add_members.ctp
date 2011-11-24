@@ -1,3 +1,7 @@
+<?php
+$fromImport = isset($this->params['named']['from_import']) && $this->params['named']['from_import'];
+?>
+
 <script type="text/javascript">
 var TeamMaker = TeamMaker || {};
 TeamMaker.UserFields = <?php echo $this->Javascript->object($userTableFields); ?>;
@@ -12,11 +16,12 @@ array(
 	'data-status' => Router::url(array('action' => 'add_members_status', 'admin' => true))	
 ));?>
 	<fieldset>
- 		<legend><?php __('New Project : Step 2'); ?></legend>
+ 		<legend><?php __( ($fromImport) ? 'Import Members' : 'New Project : Step 2'); ?></legend>
 		<p>Please map the imported fields with existing attributes of the database.</p>
 		<?php
 			echo $this->Form->input('id');
 			echo $this->Form->hidden('Upload.id');
+			echo $this->Form->hidden('from_import', array('value' => $fromImport));
 		?>
 		<br />
 		<table>
@@ -49,9 +54,16 @@ array(
 		</table>
 		
 	</fieldset>
-<?php echo $this->Form->submit(__('Next', true) . ' &raquo;', array('escape' => false)); ?>
+<?php echo $this->Form->submit(
+	$fromImport ? 
+		__("Submit", true) : 
+		__("Next", true) . ' &raquo;', 
+		array('escape' => false)
+); ?> 
 <?php echo $this->Form->end();?>
-<?php echo $this->Html->link('Skip this step &raquo;', array('action' => 'index'), array('escape' => false)); ?>
+<?php echo
+	$fromImport ? '' :  
+	$this->Html->link('Skip this step &raquo;', array('action' => 'index'), array('escape' => false)); ?> 
 </div>
 <div class="importStatus" style="display:none;">
 	<h2>Importing members</h2>

@@ -1,3 +1,9 @@
+<?php
+
+$projectId = (isset($this->params['named']['project_id'])) ? $this->params['named']['project_id'] : false;
+
+?>
+
 <div class="users form">
 <?php echo $this->Form->create('User');?>
 	<fieldset>
@@ -8,6 +14,8 @@
 		echo $this->Form->input('email');
 		echo $this->Form->input('password');
 		echo $this->Form->input('confirm_password', array('type' => 'password'));
+		echo ($projectId) ?
+			$this->Form->hidden("Project.Project.0", array('value' => $projectId)) : '';
 	?>
 	<div class="input text">
 	<?php

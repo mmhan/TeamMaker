@@ -77,35 +77,51 @@ class Member extends User{
 	
 	/**
 	 * Import a single row of user
+	 * 
+	 * @param 	mixed 	that data that is to be imported.
+	 * @return 	mixed 	Return data of a saveAll();
 	 **/
-	function import($data, $merge = true){
-		if($merge){
-			$data = Set::merge($this->findMergeableData($data), $data);
-		}
+	function import($data){
+		
+		$data = Set::merge($this->findMergeableData($data), $data);
+		
+		if(empty($data['MembersSkill'])) unset($data['MembersSkill']);
+		
+		FireCake::log($data);
+		
 		return $this->saveAll($data);
 	}
 	
 	/**
-	 * This will check the current existing user data for merging
+	 * This method will check the current existing user data for merging
 	 * Will find using given_id and see if there's any data that can be merged.
 	 * If it found any mergeable data, it'll return the data in the mergeable format
+	 * 
+	 * @param 	mixed 	This data will be used to find existing data and manipulate it
+	 * @return 	mixed 	Formatted array to be thrown into saveAll();
 	 **/
-	function findMergeableData($data){
-		$givenId = Set::extract($data, 'Member.given_id');
+	function findMergeableData($importData){
+		$givenId = Set::extract($importData, 'Member.given_id');
+		$currProjId = Set::extract($importData, "Project.Project.0");
+		
 		if(!empty($givenId)){
+			
 			$data = $this->find("first", array(
-				'contain' => array("Project.id"),
+				'contain' => array("Project.id", "MembersSkill"),
 				'conditions' => array("Member.given_id" => $givenId)
 			));
+			
 			if(!empty($data)){
+				
 				//reformat projects data.
 				if(!empty($data['Project'])){
 					$projData = $data['Project'];
-					unset($data['Project']);
 					
 					$data['Project']['Project'] = array();
 					foreach($projData as $project){
-						$data['Project']['Project'][] = $project['id'];
+						//don't add duplicates and don't add currentProjId cos, the $importData already have it.
+						if(!in_array($project['id'], $data['Project']['Project']) && $project['id'] != $currProjId)
+							$data['Project']['Project'][] = $project['id'];
 					}
 				}
 				

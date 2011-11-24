@@ -11,7 +11,6 @@ class ProjectsController extends AppController {
 	 * This action will show a list of all projects to admins.
 	 * 
 	 */
-	
 	function admin_index() {
 		$user = $this->Auth->user('id');
 		//get user's projects.
@@ -61,6 +60,9 @@ class ProjectsController extends AppController {
 		$this->set(compact('projects'));
 	}
 
+	/**
+	 * Show dashboard of a project.
+	 */
 	function admin_dashboard($id = null) {
 		if (!$id) {
 			$this->Session->setFlash(__('Invalid project', true));
@@ -71,6 +73,9 @@ class ProjectsController extends AppController {
 		$this->set('project', $project);
 	}
 	
+	/**
+	 * Add a new project.
+	 */
 	function admin_add() {
 		if (!empty($this->data)) {
 			if(isset($this->data['Skill']['${i}'])) unset($this->data['Skill']['${i}']); 
@@ -162,6 +167,21 @@ class ProjectsController extends AppController {
 	}
 	
 	/**
+	 * This action will show a form where the admin will be able to 
+	 * edit the list of members that belongs to the project.
+	 */
+	function admin_edit_members($id = null){
+		if(!empty($this->data)){
+			//AT POST
+		}else{
+			//AT GET
+			$this->Project->id = $id;
+			$this->data = $this->Project->read();
+		}
+	}
+	
+	
+	/**
 	 * To query the status of an import using ajax to show progress indicator.
 	 */
 	function admin_add_members_status(){	
@@ -216,6 +236,7 @@ class ProjectsController extends AppController {
 		$this->Session->setFlash(__('Project was not deleted', true));
 		$this->redirect(array('action' => 'index'));
 	}
+	
 	/**
 	 * This will process the way imports work.
 	 */

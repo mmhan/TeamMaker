@@ -68,3 +68,8 @@ define("PROJECT_ARCHIVE", 4);
 define("SKILL_NUMERIC_RANGE", 1);
 define("SKILL_TEXT_RANGE", 2);
 define("SKILL_TEXT", 3);
+
+define("EMAIL_FROM", 'contact@teammaker.mmhan.net');
+
+define("SMTP_HOST", '');
+define("SMTP_PORT", '');

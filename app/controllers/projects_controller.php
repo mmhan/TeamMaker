@@ -4,6 +4,8 @@ class ProjectsController extends AppController {
 
 	var $name = 'Projects';
 	
+	var $components = array('Email');
+	
 	/**
 	 * Before filter call back that customize a few things.
 	 */
@@ -354,6 +356,56 @@ class ProjectsController extends AppController {
 		}
 		
 	}
+	/**
+	 * Viewless action to launch the project.
+	 * 
+	 */
+	function admin_launch(){
+		if(empty($this->data) || (!empty($this->data) && empty($this->data['Project']['id']))){
+			$this->Session->setFlash(__('Invalid Request', true));
+			$this->redirect(array('action' => 'index'));
+		}
+		
+		//get project's data
+		$project = $this->Project->find('first', array('conditions' => array('Project.id' => $this->data['Project']['id'])));
+		
+		//get all users
+		$members = $this->Project->Member->findForLaunch($this->data['Project']['id']);
+		
+		//generating passwords for new users.
+		if (!empty($members['new'])) {
+			foreach ($members['new'] as $i => $m) {
+				$m['Member']['g_password'] = $password = $this->_generatePassword($m);
+				$m['Member']['password'] = $this->Auth->password($password);
+				$members['new'][$i] = $m;
+			}
+			//reformat the data for saveAll()
+			$saveData = Set::combine($members['new'], '{n}.Member.id', '{n}.Member');
+			
+			//save it
+			$this->Project->Member->disableValidate("import");
+			$status = $this->Project->Member->saveAll($saveData);
+			
+			if(!$status){
+				$this->Session->setFlash("Project failed to launch. Passwords can't be generated.");
+				//$this->redirect(array('action' => 'dashboard', $project['Project']['id']));
+			}
+		}
+		
+		//send email to everyone of them
+		foreach($members as $type => $group){
+			$isNew = ($type == 'new');
+			foreach($group as $i =>  $member){
+				$members[$type][$i]['email'] = $this->_sendLaunchMail($project, $member, $isNew);
+			}
+		}
+		
+		$this->Project->id = $project['Project']['id'];
+		$this->Project->saveField("status", PROJECT_COLLECT);
+		
+		$this->Session->setFlash("Project successfully launched");
+		$this->set('members', $members);
+	}
 	
 	/**
 	 * This will process the way imports work.
@@ -371,6 +423,66 @@ class ProjectsController extends AppController {
 			$this->Session->write('Import.progress', $i + 1);
 		}
 		return $status;
+	}
+	
+	/**
+	 * This will take a member's data,
+	 * generate a password for that person and return the password in plain text
+	 *
+	 * @return void
+	 * @author  
+	 */
+	function _generatePassword($member) {
+		return substr(
+			MD5($member['Member']['name'] . $member['Member']['email'] . strtotime('now')), 0 , 6);
+	}
+	
+	/**
+	 * This function will send an email to given member
+	 *
+	 * @return  boolean		status
+	 * @author  @mmhan
+	 */
+	function _sendLaunchMail($project, $member, $isNew) {
+		$this->Email->reset();
+        //prepare subject
+        $this->Email->subject = '[TeamMaker] You have a New Project "' . $project['Project']['name'] . '"';
+        //prepare from
+        $this->Email->from = EMAIL_FROM;
+        //prepare to
+        $this->Email->to = $member['Member']['email'];
+        //prepare template
+        $this->Email->template = $isNew ? "launch_new" : "launch_existing";
+        //send as both/text, use text only first.
+        $this->Email->sendAs = 'text';
+        //pass variables
+        $this->set(compact('project', 'member'));
+        
+        //send email, only when server is in production, otherwise put it to session data.
+        if(Configure::read("debug") != 0){
+        	$this->Email->delivery = 'debug';
+			$status = $this->Email->send();
+			FireCake::info($this->Session->read("Message.email"));
+			$this->Session->delete("Message.email");
+			return $status;
+        }else{
+        	//uncomment this if required.
+			//$this->_setSmtpOptions();
+        	return $this->Email->send();
+        }
+	}
+	
+	/**
+	 * This function will set up SMTP options (if required by server)
+	 */
+	function _setSmtpOptions(){
+		if(isset($this->Email)){
+            $this->Email->smtpOptions = array(
+                'host' => SMTP_HOST,
+                'port' => SMTP_PORT
+            );
+        }
+
 	}
 }
 ?>

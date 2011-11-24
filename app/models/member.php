@@ -50,7 +50,7 @@ class Member extends User{
 	//only find members.
 	function beforeFind($queryData){
 		$queryData['conditions']['Member.group_id'] = array(ROLE_MEMBER);
-		return parent::beforeFind($queryData);
+		return $queryData;
 	}
 	
 	//only save as members
@@ -147,6 +147,56 @@ class Member extends User{
 			default :
 				return parent::disableValidate($type);
 		}
+	}
+	
+	/**
+	 * This function will find users who are in the given project
+	 * 		- categorize them in new and existing users.
+	 * 		- return the data.
+	 *
+	 * @return void
+	 * @author  
+	 */
+	function findForLaunch($projectId) {
+		
+		$retData = array();
+		
+		//find all members that belong to the project.
+		$members = $this->find('all', array(
+			'fields' => array('Member.id', 'Member.given_id', 'Member.name', 'Member.email', 'Member.password', 'Member.last_login_time'),
+			'joins' => array(
+			    array(
+			    	'table' => 'members_projects',
+			        'alias' => 'MembersProject',
+			        'type' => 'LEFT',
+			        'conditions' => array(
+			            'MembersProject.user_id = Member.id',
+			        )
+			    )
+			),
+			'conditions' => array(
+				'MembersProject.project_id' => $projectId
+			),
+			'recursive' => -1
+		));
+		
+		//categorize them
+		$new = array();
+		$existing = array();
+		
+		foreach($members as $member){
+			$password = Set::extract($member, 'Member.password');
+			$loginTime = Set::extract($member, "Member.last_login_time");
+			if(empty($password) || empty($loginTime)){
+				$new[] = $member;
+			}else{
+				$existing[] = $member;
+			}
+		}
+		
+		$retData = compact('new', 'existing');
+		
+		return $retData;
 	}
 }
 ?>

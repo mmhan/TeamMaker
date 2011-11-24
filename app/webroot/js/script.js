@@ -46,6 +46,7 @@ TeamMaker = function () {
 		}
 		if(this.afterAutoInit && $.isFunction(this.afterAutoInit)) this.afterAutoInit();
 	};
+	
 	/**
 	 * Private modules that doesn't need to be exposed
 	 **/
@@ -503,6 +504,30 @@ TeamMaker = function () {
 				return ret;
 			}
 		},
+		
+		/**
+		 * Launch
+		 */
+		launchButton: {
+			$me : false,
+			autoInit: function(){
+				this.$me = $("#ProjectLaunchForm");
+				return this.$me.length;
+			},
+			init: function(){
+				this.$me.submit(function(e){
+					return confirm(
+						"Are you sure you want to launch?" +
+						"\n\n\tYou will not be able to add/remove/edit skills and members anymore." +
+						"\n\tPlease ensure the project's description is descriptive enough so that members won't mistake the email for a spam." 
+					);
+				})
+			}
+		},
+		
+		/**
+		 * A Misc module to validate some of the forms and etc.
+		 */
 		Validate: {
 			isEmpty: function(val){
 				return val.length == 0;

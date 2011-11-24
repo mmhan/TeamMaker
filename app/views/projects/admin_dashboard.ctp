@@ -19,4 +19,21 @@
 		<h3 class="settings"><?php echo $this->Html->link("Settings", array('action' => 'settings', $project['Project']['id'])); ?></h3>
 		<p class="tips">Change cut-off dates, deadlines, Add project admins.</p>
 	</div>
+	
+</div>
+<div class="launch">
+<?php echo $this->Form->create("Project", array('action' => 'launch')) ?>
+<?php echo $this->Form->input('id', array('value' => $project['Project']['id'])) ?>
+<div class="clearfix">
+	<div class="c25"><?php echo $this->Form->submit("Launch Project") ?></div>
+	<div class="c75">
+		<div class="message">
+		<p><strong>Warning</strong></p>
+		<p>Notification emails will be sent out to all new users; asking them to sign in, fill in their skills and nomination data.</p>
+		<p>You will no longer be able to add new users or skills after launching.</p>
+		</div>
+	</div>
+</div>
+
+<?php echo $this->Form->end(); ?>
 </div>

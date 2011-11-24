@@ -19,7 +19,9 @@ input{
 	font-size: 80%;
 	color: #aaa;
 }
-
+.bigger{
+	font-size: 120%;
+}
 #secondNav{
 	float:right;
 }
@@ -129,4 +131,8 @@ div.actions.c80{width:70%;}
 /*	admin/projects/members */
 #ProjectMembersForm{
 	min-height: 300px;
+}
+
+div.launch{
+	margin-top: 50px;
 }

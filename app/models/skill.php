@@ -52,15 +52,6 @@ class Skill extends AppModel {
 		)
 	);
 	
-	/**
-	 * Call back to be executed afterSave
-	 */
-	function afterSave($created){
-		if(!$created){
-			
-		}
-	}
-	
 	/***
 	 * This function will validate a Range's validatity using type
 	 * Used for creation of the skills data. 
@@ -101,6 +92,9 @@ class Skill extends AppModel {
 	 * @return	boolean
 	 */
 	function isValidValue($value, $id){
+		
+		if(empty($value)) return false;
+		
 		$skill = Cache::read("Skill_" . $id);
 		if(empty($skill)){
 			$this->id = $id;
@@ -161,6 +155,17 @@ class Skill extends AppModel {
 	 */
 	function findAllSkills($projectId){
 		return $this->find("list", array("conditions" => array("Skill.project_id" => $projectId)));
+	}
+	
+	/**
+	 * This function will remove the cache of cached skills after a saveAll action.
+	 * 
+	 * @param	array 	an array of any size listing all ids.
+	 */
+	function removeCache($ids = array()){
+		foreach($ids as $id){
+			Cache::delete('Skill_' . $id);
+		}
 	}
 }
 ?>

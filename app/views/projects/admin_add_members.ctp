@@ -1,6 +1,7 @@
 <script type="text/javascript">
 var TeamMaker = TeamMaker || {};
 TeamMaker.UserFields = <?php echo $this->Javascript->object($userTableFields); ?>;
+TeamMaker.SkillFields = <?php echo $this->Javascript->object($skillFields); ?>
 </script>
 <div class="projects">
 <div class="importForm">
@@ -20,13 +21,13 @@ array(
 		<br />
 		<table>
 			<thead>
-				<th>Imported Field Names</th>
+				<th class="importedFieldName">Imported Field Names</th>
 				<th>Action</th>
 				<th>Existing Field Name</th>
 			</thead>
 			<?php foreach($importedFields as $i => $field): ?>
 			<tr class="importFields" data-index="<?php echo $i ?>" data-fieldname="<?php echo $field ?>">
-				<td>
+				<td class="importedFieldName">
 					<?php echo $field ?> 
 					<?php echo $this->Form->hidden("Import.$i.field_name", array('value' => $field)); ?>
 				</td>

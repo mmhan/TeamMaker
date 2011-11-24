@@ -102,14 +102,30 @@ class Project extends AppModel {
 		$projId = $this->data['Project']['id'];
 		
 		$members = array();
+		$skillErrors = array();
 		foreach($csvData as $i => $row){
 			$m = array();
+			$skillCount = 0;
 			foreach($this->data['Import'] as $column){
 				if($column['action'] == 'mapField'){
 					//map using given data.
 					$m['Member'][$column['maps_to']] = trim($row[$column['field_name']]);
 				}else if($column['action'] == 'isSkill'){
-					//TODO: add importing of skill.
+					//TODO: refactor it so that a new function `isValidValues()` that takes all id and values, 
+					//		returning the true/false in an array.
+					
+					$field = $column['field_name'];	//field name of CSV that's currently considered.
+					$value = $row[$field];			//value of that field.
+					
+					if(empty($value)){
+						$skillErrors[$i][$field] = sprintf("Value cannot be empty.");						 
+					}else if($this->Skill->isValidValue($value, $column['skill_id'])){
+						$m['MembersSkill'][$skillCount]['skill_id'] = $column['skill_id'];
+						$m['MembersSkill'][$skillCount]['skill_value'] = $value;
+						$skillCount++;
+					}else{
+						$skillErrors[$i]['warning'][$field] = sprintf("Given value `%s` is not within defined range", $value);
+					}
 				}
 				
 				if(!empty($m)){
@@ -119,6 +135,8 @@ class Project extends AppModel {
 				}
 			}
 		}
+		
+		$this->importError = $skillErrors;
 		
 		return $members;
 	}

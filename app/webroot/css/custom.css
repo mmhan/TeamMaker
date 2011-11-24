@@ -115,8 +115,12 @@ div.actions.c80{width:70%;}
 #skillsForm div.skill{
 	padding: 1em 0 0.5em;
 }
+.importedFieldName{text-align:right;}
 .skillTypeDesc{margin-top: 1em;}
 .skillTypeDesc dd{margin-left: 15em;}
 .skillOption input{min-width:100px;}
 .skillValueRange.numericRange input{min-width:0;}
 .skillValueRange.textRange input{width:90%;}
+
+#status .status_return dl dd{margin-left: 30em;}
+

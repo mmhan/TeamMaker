@@ -28,6 +28,15 @@ class Member extends User{
 		)
 	);
 	
+	/** Associate with skills **/
+	public $hasMany = array(
+		'MembersSkill' => array(
+			'className' => 'MembersSkill',
+			'foreign_key' => 'user_id',
+			'dependent' => true
+		)
+	);
+	
 	/**
 	 * A list of fields that should not be imported.
 	 **/

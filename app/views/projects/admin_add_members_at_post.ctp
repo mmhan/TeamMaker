@@ -12,7 +12,17 @@
 		<td><?php echo $i + 1 ?></td>
 		<td><?php echo $row['status'] ? "Success" : "Fail" ?></td>
 		<td>
+		<?php if (!empty($row['warning'])): ?>
+		<p><strong>Warning</strong></p>
+		<dl>
+			<?php foreach ($row['warning'] as $key => $value) : ?>
+			<dt><?=$key  ?></dt>
+			<dd><?=$value  ?></dd>
+			<?php endforeach; ?>
+		</dl>
+		<?php endif; ?>
 		<?php if(!empty($row['error'])): $hasError++;?>
+		<p><strong>Error</strong></p>
 		<dl>
 			<?php foreach($row['error'] as $field => $err): ?>
 			<dt><?php echo Inflector::humanize($field) ?></dt>
@@ -27,7 +37,7 @@
 <?php if(!$hasError): ?>
 <p>Your project has been successfully created and all members have been imported.</p>
 <?php else: ?>
-<p>Your project has been successfully created and imported <?php echo $hasError ?> out of <?php echo count($data) ?> given members for the project.</p>
+<p>Your project has been successfully created and imported <?php echo count($data) - $hasError ?> out of <?php echo count($data) ?> given members for the project.</p>
 <p>Please see above for a list of rows that we have failed to import.</p>
 <div class="notice">
 	<p>Please seperate those rows out from the uploaded file and ensure that they have all the necessary fields.<br />Import the seperated file again after fixing the data.</p>

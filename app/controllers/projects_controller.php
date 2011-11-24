@@ -6,6 +6,12 @@ class ProjectsController extends AppController {
 		//allow this to happen with no authentication, to speed it up.
 		$this->Auth->allowedActions = array('admin_add_members_status');
 	}
+	
+	/**
+	 * This action will show a list of all projects to admins.
+	 * 
+	 */
+	
 	function admin_index() {
 		$user = $this->Auth->user('id');
 		//get user's projects.
@@ -95,19 +101,31 @@ class ProjectsController extends AppController {
 		
 		$this->set(compact('admins'));
 	}
-	
+
+	/**
+	 * This action is step2 of add project and also edit members's redirect page after file upload.
+	 */
 	function admin_add_members($projectId, $uploadId){
 		if(empty($projectId) || empty($uploadId)){
 			$this->Session->setFlash(__("Invalid project or csv file provided", true));
 			$this->redirect(array('action' => 'index'));
 		}
+		
 		//TODO: check whether current admin is one of the admin who is allowed to edit this project.
 		//		and redirect if admin doesn't have access.
 		
 		//AT POST
 		if(!empty($this->data) && $this->_isAjax()){
+			//get the transformed data and errors.
 			$importData = $this->Project->getImportData($this->data);
+			$skillImportError = $this->Project->importError;
+			 
+			//process the import, and its status.
 			$returnData = $this->_processImport($importData);
+			
+			//combine the two errors, use skillImportErrors as warnings cos they aren't that critical
+			$returnData = Set::merge($skillImportError, $returnData);
+			
 			$this->layout= "ajax";
 			$this->set('data', $returnData);
 			$this->set('projectId', $this->data['Project']['id']);
@@ -134,7 +152,7 @@ class ProjectsController extends AppController {
 			
 			$this->set('userTableFields', $this->Project->Member->getImportableFields());
 			
-			$this->set("skillFields", $this->Project->Skill->getSkills($projectId));
+			$this->set("skillFields", $this->Project->Skill->findAllSkills($projectId));
 			
 			$this->data = array(
 				'Project' => array('id' => $projectId),
@@ -143,6 +161,9 @@ class ProjectsController extends AppController {
 		}
 	}
 	
+	/**
+	 * To query the status of an import using ajax to show progress indicator.
+	 */
 	function admin_add_members_status(){	
 		$progress = $this->Session->read('Import.progress');
 		
@@ -155,6 +176,9 @@ class ProjectsController extends AppController {
 		$this->render('/ajaxreturn');
 	}
 	
+	/**
+	 * To edit the settings of a project.
+	 */
 	function admin_settings($id = null) {
 		if (!$id && empty($this->data)) {
 			$this->Session->setFlash(__('Invalid project', true));
@@ -177,6 +201,9 @@ class ProjectsController extends AppController {
 		$this->set(compact('admins'));
 	}
 
+	/**
+	 * This will delete a project.
+	 */
 	function admin_delete($id = null) {
 		if (!$id) {
 			$this->Session->setFlash(__('Invalid id for project', true));
@@ -189,7 +216,9 @@ class ProjectsController extends AppController {
 		$this->Session->setFlash(__('Project was not deleted', true));
 		$this->redirect(array('action' => 'index'));
 	}
-	
+	/**
+	 * This will process the way imports work.
+	 */
 	function _processImport($data){
 		$this->Session->write('Import.total', count($data));
 		$this->Session->write('Import.progress', 0);

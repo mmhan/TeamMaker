@@ -112,10 +112,18 @@ TeamMaker = function () {
 					);
 				});
 				$container.empty().append($select);
+				$select.focus();
 			},
 			//will show a list of importable skills
 			isSkillModifySelect: function($container, prefix){
-				$container.empty();
+				var $select = $("<select>").attr('name', prefix + "[skill_id]");
+				$.each(TeamMaker.SkillFields, function(i, val){
+					$select.append(
+						$("<option>").attr('value', i).text(val)
+					);
+				});
+				$container.empty().append($select);
+				$select.focus();
 			},
 			//will not show anything as option.
 			discardModifySelect: function($container){

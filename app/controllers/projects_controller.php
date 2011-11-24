@@ -84,7 +84,6 @@ class ProjectsController extends AppController {
 	 */
 	function admin_add() {
 		if (!empty($this->data)) {
-			if(isset($this->data['Skill']['${i}'])) unset($this->data['Skill']['${i}']); 
 			$this->Project->create();
 			$status = $this->Project->saveAll($this->data);
 			if ($status) {
@@ -318,6 +317,42 @@ class ProjectsController extends AppController {
 				}
 			}
 		}
+	}
+
+	/**
+	 * This action will be used to edit skills once the project has been created.
+	 *
+	 * @return 	void
+	 * @author  @mmhan
+	 */
+	function admin_skills($id = null) {
+		if(
+			(empty($this->data) && $id == null ) || //GET
+			(!empty($this->data) && !isset($this->data['Project']['id'])) //POST
+		){
+			$this->Session->setFlash(__('Invalid Request', true));
+			$this->redirect(array('action' => 'index'));
+		}
+		
+		if(!empty($this->data)){
+			//AT POST
+			$status = $this->Project->saveAll($this->data);
+			
+			if($status){
+				$this->Session->setFlash("Project Saved.");
+				$this->redirect(array('action' => 'dashboard', $this->data['Project']['id']));
+			}else{
+				$this->Session->setFlash("Couldn't save data. Please try again.");
+			}
+		}else{
+			//AT GET
+			$this->data = $this->Project->find('first', array(
+				'fields' => array('Project.id', 'Project.name'),
+				'conditions' => array('Project.id' => $id),
+				'contain' => array('Skill')
+			));
+		}
+		
 	}
 	
 	/**

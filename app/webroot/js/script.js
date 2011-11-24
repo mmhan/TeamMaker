@@ -78,6 +78,7 @@ TeamMaker = function () {
 		},
 		/** scripts to handle the actions of importing fields **/
 		Import:{
+			
 			//checks whether or not to init module.
 			formId: '#ProjectAdminAddMembersForm',
 			$form: false,
@@ -85,12 +86,14 @@ TeamMaker = function () {
 				this.$form = $(this.formId);
 				return this.$form.length;
 			},
+			
 			//initialize the module.
 			init: function(){
 				$('tr.importFields')
 					.delegate('select.memberImportActions', 'change', $.proxy(this.actionChange, this));
 				this.$form.submit($.proxy(this.formSubmit, this));
 			},
+			
 			//action listener to change event of select dropdowns
 			actionChange: function(e){
 				var $me = $(e.target);
@@ -103,6 +106,7 @@ TeamMaker = function () {
 					'data[Import][' + index + "]"
 				);
 			},
+			
 			//will show a list of importable fields from user table.
 			mapFieldModifySelect: function($container, prefix){
 				var $select = $("<select>").attr('name', prefix + "[maps_to]");
@@ -114,6 +118,7 @@ TeamMaker = function () {
 				$container.empty().append($select);
 				$select.focus();
 			},
+			
 			//will show a list of importable skills
 			isSkillModifySelect: function($container, prefix){
 				var $select = $("<select>").attr('name', prefix + "[skill_id]");
@@ -125,10 +130,12 @@ TeamMaker = function () {
 				$container.empty().append($select);
 				$select.focus();
 			},
+			
 			//will not show anything as option.
 			discardModifySelect: function($container){
 				$container.empty();
 			},
+			
 			//will submit the form using ajax while checking for updates.
 			formSubmit: function(e){
 				//hides form and show status
@@ -150,10 +157,12 @@ TeamMaker = function () {
 				e.preventDefault();
 				return false;
 			},
+			
 			//will execute when the form has been successfully submitted.
 			formSubmitSuccess: function(data){
 				$('#status').hide().html(data);
 			},
+			
 			//will check for status of form submission.
 			formSubmitStatusCheck: function(){
 				$.ajax({
@@ -164,6 +173,7 @@ TeamMaker = function () {
 					success: this.formSubmitStatusSuccess
 				});
 			},
+			
 			//will check for success of form submission.
 			formSubmitStatusSuccess: function(data){
 				var $bar = $('#progressIndicator');
@@ -184,15 +194,18 @@ TeamMaker = function () {
 		 */
 		projectAddForm: {
 			$me : false,
+			
 			//to check whether to init this module or not.
 			autoInit: function(){
 				this.$me = $("#ProjectAdminAddForm");
 				return this.$me.length;
 			},
+			
 			//init module add listener for form submission
 			init: function(){
 				this.$me.submit($.proxy(this.onFormSubmit, this));
 			},
+			
 			//when the form was submitted.
 			onFormSubmit: function(e){
 				//e.preventDefault();
@@ -203,6 +216,7 @@ TeamMaker = function () {
 				return skillFormIsValid;
 			}
 		},
+		
 		/**
 		 * Module for creation of skills.
 		 */
@@ -210,6 +224,7 @@ TeamMaker = function () {
 			$me: false,
 			$tmpl: false,
 			$container: false,
+			
 			/**
 			 * Whether or not to init the module.
 			 */
@@ -217,6 +232,7 @@ TeamMaker = function () {
 				this.$me = $("#skillsForm");
 				return $("#skillsForm").length;
 			},
+			
 			/**
 			 * Init the module.
 			 */
@@ -237,8 +253,21 @@ TeamMaker = function () {
 				this.$container.delegate('div.textRange input', 'change', $.proxy(this.onTextRangeChange, this));
 				this.$container.delegate('div.text input', 'change', $.proxy(this.onTextChange, this));
 				
+				//if we are looking at edit skills page of the project instead of projects/add
+				var $skillForm = $('#ProjectSkillsForm');
+				if($skillForm.length){
+					$skillForm.submit(function(){
+						var ret = priv.skillsForm.onSubmit();
+						if(!ret){
+							alert("Please fix the errors highlighted.");
+						}
+						return ret;
+					});
+				}
+				
 				this.dataInit();
 			},
+			
 			/**
 			 * This function will check if data exists, if it does, will populate data, if not, will show you a blank one.
 			 */
@@ -252,6 +281,7 @@ TeamMaker = function () {
 				}
 				
 			},
+			
 			/**
 			 * This function will create new rows of skills.
 			 */
@@ -274,11 +304,22 @@ TeamMaker = function () {
 				this.$container.append($clone);
 				return myIndex;
 			},
+			
 			/**
 			 * This function will add new rows of skills using given data.
 			 */
 			addNewWithData: function(row){
 				var myIndex = this.addNew();
+				
+				//ref to my pub obj
+				var pub = TeamMaker.skillsForm;
+				
+				if(row.type == pub.constants.NUMERIC_RANGE && !('min' in row && 'max' in row)){
+					var splitted = row.range.split('-'); 
+					row.min = splitted[0];
+					row.max = splitted[1];
+				}
+				
 				//change select using data.
 				this.$container
 					.find('select[name="data[Skill][' + myIndex + '][type]"]')
@@ -350,6 +391,7 @@ TeamMaker = function () {
 					$me.data('error', false).removeClass('error');
 				}
 			},
+			
 			/**
 			 * Validate the numeric range input data.
 			 */
@@ -389,6 +431,7 @@ TeamMaker = function () {
 				//doesn't matter if any of 'em got an error or not, just update the value.
 				fields.$range.val(fields.$min.val() + "-" + fields.$max.val());
 			},
+			
 			/**
 			 * Validate the text range input data
 			 */
@@ -401,6 +444,7 @@ TeamMaker = function () {
 					$me.removeClass('error').data('error', false);
 				}
 			},
+			
 			/**
 			 * Validate the text input data.
 			 */
@@ -413,6 +457,10 @@ TeamMaker = function () {
 					$me.addClass('error').data('error', true);
 				}
 			},
+			
+			/**
+			 * Will do validation and also removing of template data.
+			 */
 			onSubmit: function(e){
 				//remove unselected fields.
 				this.$me.find('div.skillValuesType select').each(function(i, el){
@@ -448,6 +496,10 @@ TeamMaker = function () {
 							return false;
 						} 
 					}, this));
+					
+				if(ret){
+					$('#skillTemplate, #numericRangeTemplate, #textRangeTemplate, #textTemplate').remove();
+				}
 				return ret;
 			}
 		},

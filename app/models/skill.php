@@ -52,6 +52,20 @@ class Skill extends AppModel {
 		)
 	);
 	
+	/**
+	 * Call back to be executed afterSave
+	 */
+	function afterSave($created){
+		if(!$created){
+			
+		}
+	}
+	
+	/***
+	 * This function will validate a Range's validatity using type
+	 * Used for creation of the skills data. 
+	 * 
+	 */
 	function validateRangeWithType($check){
 		$range = array_shift($check);
 		$type = isset($this->data[$this->alias]['type']) ? $this->data[$this->alias]['type'] : '';
@@ -78,6 +92,14 @@ class Skill extends AppModel {
 		return $return;
 	}
 	
+	/**
+	 * This value will validate a skill value to be populated into the members_skills table 
+	 * using the range and type specified in this table.
+	 * 
+	 * @param	mixed	any value
+	 * @param	int		id of the skill that is in question.
+	 * @return	boolean
+	 */
 	function isValidValue($value, $id){
 		$skill = Cache::read("Skill_" . $id);
 		if(empty($skill)){
@@ -128,6 +150,17 @@ class Skill extends AppModel {
 				return strlen($value) <= $skill['range'];
 				break;
 		}
+	}
+
+	/**
+	 * This function will return the list of skills that are to be imported
+	 * for the given project
+	 * 
+	 * @param	int		id of the project
+	 * @return	mixed	an array of the all the skill names
+	 */
+	function findAllSkills($projectId){
+		return $this->find("list", array("conditions" => array("Skill.project_id" => $projectId)));
 	}
 }
 ?>

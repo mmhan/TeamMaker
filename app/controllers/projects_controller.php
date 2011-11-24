@@ -129,11 +129,12 @@ class ProjectsController extends AppController {
 				$this->Session->setFlash(__("Invalid csv file provided", true));
 				$this->redirect(array('action' => "dashboard", $projectId));
 			}
-			$importedFields = $this->Project->Upload->listHeaders($uploadId);
-			$this->set('importedFields', $importedFields);
 			
-			$userTableFields = $this->Project->Member->getImportableFields();
-			$this->set('userTableFields', $userTableFields);
+			$this->set('importedFields', $this->Project->Upload->listHeaders($uploadId));
+			
+			$this->set('userTableFields', $this->Project->Member->getImportableFields());
+			
+			$this->set("skillFields", $this->Project->Skill->getSkills($projectId));
 			
 			$this->data = array(
 				'Project' => array('id' => $projectId),

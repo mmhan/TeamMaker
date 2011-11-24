@@ -21,6 +21,41 @@ class SkillTestCase extends CakeTestCase {
 		ClassRegistry::flush();
 	}
 	
+	function testAfterSave(){
+		$data = array(
+		array(
+			'id' => 1,
+			'project_id' => 1,
+			'name' => 'Numeric Range',
+			'type' => SKILL_NUMERIC_RANGE,
+			'range' => '0-5'
+		),
+		array(
+			'id' => 2,
+			'project_id' => 1,
+			'name' => 'Numeric Range',
+			'type' => SKILL_NUMERIC_RANGE,
+			'range' => '0.0-5.0'
+		),
+		array(
+			'id' => 3,
+			'project_id' => 1,
+			'name' => 'Text Range',
+			'type' => SKILL_TEXT_RANGE,
+			'range' => 'Hopeless|Bad|Okay|Good|Awesome'
+		)
+		);
+		
+		//just create some caches to see if they are deleted later.
+		$this->Skill->isValidValue('0', 1);
+		$this->Skill->isValidValue('0', 2);
+		$this->Skill->isValidValue('0', 3);
+		
+		$this->assertNotNull(Cache::read("Skill_1"));
+		$this->assertNotNull(Cache::read("Skill_2"));
+		$this->assertNotNull(Cache::read("Skill_3"));
+	}
+	
 	function testValidateRangeWithType(){
 		$data = array(
 		array(

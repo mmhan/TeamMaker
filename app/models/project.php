@@ -140,5 +140,36 @@ class Project extends AppModel {
 		
 		return $members;
 	}
+
+	/**
+	 * Will find the remaining users who hasn't filled in all their skills
+	 *
+	 * @return	mixed	an array of members with data. 
+	 * @author  @mmham
+	 */
+	function findRemaining($id) {
+		
+		$skills = $this->Skill->find('list', array('Skill.project_id' => $id));
+		
+		$members = $this->Member->find('all', array(
+			'fields' => array('Member.id', 'Member.name', 'Member.email'),
+			'conditions' => array(),
+			'recursive' => -1,
+			'joins' => array(
+				array(
+					'table' => 'members_skills',
+					'alias' => 'MembersSkill',
+					'type'	=> "LEFT",
+					'conditions' => array(
+						'Member.id = MembersSkill.user_id',
+						'MembersSkill.skill_value IS NOT NULL',
+						'MembersSkill.skill_id IN (' . implode(",", array_keys($skills)) . ')'
+					)
+				)
+			)
+		));
+		
+		return $members;
+	}
 }
 ?>

@@ -84,6 +84,7 @@ class ProjectsController extends AppController {
 				$this->render("admin_dashboard_seed");
 				break;
 			case PROJECT_COLLECT:
+				$this->set('remaining', $this->Project->findRemaining($id));
 				$this->render("admin_dashboard_collect");
 				break;
 			case PROJECT_FEEDBACK:

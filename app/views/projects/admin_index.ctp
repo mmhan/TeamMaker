@@ -27,6 +27,22 @@
 		<div class="c25">
 			<h3>Collection Phase</h3>
 			<p>Launched Projects, members have been notifed to fill in their skills data and nomination data.</p>
+			<?php if (array_key_exists(PROJECT_COLLECT, $projects) && !empty($projects[PROJECT_COLLECT])): ?>
+			<ul class="projects collect">
+				<?php foreach ($projects[PROJECT_COLLECT] as $k => $proj): ?>
+				<li>
+					<li><div class="project" data-id="<?php echo $proj['id'] ?>" >
+						<h3><?php echo $proj['name'] ?></h3>
+						<div class="actions">
+							<ul>
+								<li><?php echo $this->Html->link('Go to Project &raquo;', array('action' => "dashboard", $proj['id']), array('escape' => false)); ?></li>
+							</ul>
+						</div>
+					</div></li>
+				</li>
+				<?php endforeach ?>
+			</ul>			
+			<?php endif ?>
 		</div>
 		<div class="c25">
 			<h3>Grouping Phase</h3>

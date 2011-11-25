@@ -2,7 +2,7 @@
 <div class="projectsAdminMembers">
 <h1><?php echo $this->data['Project']['name'] ?> : Edit Members</h1>
 <div class="colContainer">
-	<div class="c30">
+	<div class="c40">
 		<?php echo $this->Form->create("Project", array('action' => 'members')) ?>
 		<fieldset>
 			<legend>Add/Remove Existing Members</legend>
@@ -12,7 +12,7 @@
 		<?php echo $this->Form->submit("Save Members") ?>
 		<?php echo $this->Form->end(); ?>
 	</div>
-	<div class="c30">
+	<div class="c40">
 		<?php echo $this->Form->create("Project", array('action' => 'import_file', 'type' => 'file')); ?>
 		<fieldset>
 			<legend>Import CSV file</legend>
@@ -28,7 +28,7 @@
 		<?php echo $this->Form->submit('Submit'); ?>
 		<?php echo $this->Form->end(); ?>
 	</div>
-	<div class="c30">
+	<div class="c20">
 		<fieldset id="" class="">
 		  	<legend>Can't find a member?</legend>
 		  	<div class="actions autoWidth">

@@ -170,6 +170,38 @@ class UsersController extends AppController {
     }*/
     
     /**
+	 * Edit own's account
+	 */
+    function edit(){
+    	$userId = $this->Auth->user('id');
+		
+		if(!$userId){
+			$this->Session->setFlash(__('Invalid User', true));
+            $this->redirect('/');
+		}
+		
+		if(!empty($this->data)){
+			//if password field is blank don't update password.
+        	if (empty($this->data['User']['password']) || $this->data['User']['password'] == $this->Auth->password('')){
+        		unset($this->data['User']['password']);
+        	}else{//if it's not blank, prepare to update it.
+        		$this->data['User']['current_password'] = $this->Auth->password($this->data['User']['current_password']);
+        		//$this->data['User']['password'] = $this->Auth->password($this->data['User']['password']);
+	    		$this->data['User']['hashed_confirm_password'] = $this->Auth->password($this->data['User']['confirm_password']);
+        	}
+			
+			if ($this->User->save($this->data)) {
+            	$this->Session->setFlash(__('Your account has been saved', true));
+				$this->redirect('/');
+			} else {
+            	$this->Session->setFlash(__('Your account could not be saved. Please, try again.', true));
+			}
+		}else{
+	        $this->data = $this->User->read(null, $userId);
+		}
+    }
+    
+    /**
      * log user in
      *
      * @access public
@@ -194,7 +226,10 @@ class UsersController extends AppController {
 		$group->id = ROLE_ADMIN;
 			$this->Acl->allow($group, 'controllers');
 		
-        $group->id = ROLE_MEMBER;            
+        $group->id = ROLE_MEMBER;
+			$this->Acl->deny($group, 'controllers');
+			$this->Acl->allow($group, 'controllers/Users/edit');
+			$this->Acl->allow($group, 'controllers/Projects/index');
 	}
 
         

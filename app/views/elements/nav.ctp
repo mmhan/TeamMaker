@@ -5,6 +5,10 @@ $user = $this->Session->read('Auth.User');
 <div id="nav">
 	<ul class="sf-menu">
 	<?php if(!empty($user)): ?>
+		<?php if($user['group_id'] == ROLE_MEMBER): ?>
+		<li><?php echo $this->Html->link("Account", array('controller' => 'users', 'action' => 'edit')); ?></li>
+		<li><?php echo $this->Html->link("Projects", array('controller' => 'projects', 'action' => 'index')); ?></li>
+		<?php else: ?>
 		<li>
 			<?php echo $this->Html->link("Projects", array('controller' => 'projects', 'action' => 'index', 'admin' => 'true')); ?>
 			<ul>
@@ -20,6 +24,7 @@ $user = $this->Session->read('Auth.User');
 				<li><?php echo $this->Html->link("User Groups", array('controller' => 'groups', 'action' => 'index', 'admin' => 'true'), array('title' => "E.g.: Super Admins, Admins & Team Members")); ?></li>
 			</ul>
 		</li>
+		<?php endif; ?>
 	</ul>
 	<?php endif; ?>
 </div>

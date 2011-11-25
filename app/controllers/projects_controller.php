@@ -79,6 +79,21 @@ class ProjectsController extends AppController {
 		$project = $this->Project->read(null, $id);
 		//TODO: to check if the accessing admin is actually the owner of the project and deny access if he's not.
 		$this->set('project', $project);
+		switch ($project['Project']['status']) {
+			case PROJECT_SEED:
+				$this->render("admin_dashboard_seed");
+				break;
+			case PROJECT_COLLECT:
+				$this->render("admin_dashboard_collect");
+				break;
+			case PROJECT_FEEDBACK:
+				$this->render("admin_dashboard_feedback");
+				break;
+			case PROJECT_ARCHIVE:
+				$this->render("admin_dashboard_archive");
+			default:
+				break;
+		}
 	}
 	
 	/**

@@ -86,6 +86,10 @@ ul.projects div.actions, div.actions.autoWidth{
 ul.projects div.actions{
 	float: right;
 }
+ul.projects div.actions li{
+	margin-top:10px;
+}
+
 div.projMgmt{
 	min-height: 100px;
 }
@@ -136,3 +140,4 @@ div.actions.c80{width:70%;}
 div.launch{
 	margin-top: 50px;
 }
+

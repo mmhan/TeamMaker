@@ -17,6 +17,52 @@ class ProjectsController extends AppController {
 		$this->Auth->allowedActions = array('admin_add_members_status');
 	}
 	
+	function index(){
+		$user = $this->Auth->user('id');
+		
+		$user = $this->Auth->user('id');
+		//get user's projects.
+		$result = $this->Project->find('all', array(
+			'recursive' => -1,
+			'fields' => array('Project.id', 'Project.name'),
+			'joins' => array(
+				array(
+					'table' => 'admins_projects',
+					'alias' => 'AdminProject',
+					'type' => 'LEFT',
+					'foreignKey' => false,
+					'conditions'=> array('Project.id = AdminProject.project_id','AdminProject.user_id =' . $user) 
+				)
+			)
+		));
+		$list = Set::classicExtract($result,'{n}.Project.id');
+		
+		//set all other projects.
+		$currProjects = $this->Project->find('all', array(
+			'recursive' => -1,
+			'conditions' => array(
+				'Project.status NOT' => array(PROJECT_SEED, PROJECT_ARCHIVE),
+				'Project.id' => $list				
+			)
+		));
+		$projects = Set::combine($currProjects, '{n}.Project.id', '{n}.Project', '{n}.Project.status');
+			
+		//sort phase 2 projects by their cut-off date
+		if(array_key_exists(PROJECT_COLLECT, $projects))
+			$projects[PROJECT_COLLECT] = Set::sort(array_values($projects[PROJECT_COLLECT]), '{n}.collection_end', 'asc');
+			
+		//sort phase 3 projects by their cut-off date
+		if(array_key_exists(PROJECT_FEEDBACK, $projects))
+			$projects[PROJECT_FEEDBACK] = Set::sort(array_values($projects[PROJECT_FEEDBACK]), '{n}.feedback_end', 'asc');
+		
+		//set archived projects.
+		$this->Project->recursive = 0;
+		$this->paginate['Project']['order'] = "Project.feedback_end DESC";
+		$projects[PROJECT_ARCHIVE] = $this->paginate(array('Project.status' => PROJECT_ARCHIVE, 'Project.id' => $list));
+		
+		$this->set(compact('projects'));
+	}
+	
 	/**
 	 * This action will show a list of all projects to admins.
 	 * 

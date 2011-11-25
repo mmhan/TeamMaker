@@ -6,6 +6,8 @@ class ProjectsController extends AppController {
 	
 	var $components = array('Email');
 	
+	var $helpers = array('Time');
+	
 	/**
 	 * Before filter call back that customize a few things.
 	 */
@@ -85,6 +87,7 @@ class ProjectsController extends AppController {
 				break;
 			case PROJECT_COLLECT:
 				$this->set('remaining', $this->Project->findRemaining($id));
+				$this->set("total", $this->Project->findTotal($id));
 				$this->render("admin_dashboard_collect");
 				break;
 			case PROJECT_FEEDBACK:

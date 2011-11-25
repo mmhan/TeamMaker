@@ -148,8 +148,9 @@ class Project extends AppModel {
 	 * @author  @mmham
 	 */
 	function findRemaining($id) {
-		
+		//find all skills that are in this project.
 		$skills = $this->Skill->find('list', array('Skill.project_id' => $id));
+		
 		
 		$members = $this->Member->find('all', array(
 			'fields' => array('Member.id', 'Member.name', 'Member.email'),
@@ -170,6 +171,29 @@ class Project extends AppModel {
 		));
 		
 		return $members;
+	}
+	
+	/**
+	 * will find the total number of members that belongs to the project.
+	 *
+	 * @return void
+	 * @author  
+	 */
+	function findTotal($id) {
+		return $this->Member->find('count', array(
+			'joins' => array(
+				array(
+				'table' => "members_projects",
+				'alias' => "MembersProject",
+				'type' => "LEFT",
+				'conditions' => array(
+					'MembersProject.user_id = Member.id',
+					'MembersProject.project_id = ' . $id
+				)
+				)
+			),
+			'recursive' => -1
+		));
 	}
 }
 ?>

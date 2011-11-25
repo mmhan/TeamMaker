@@ -11,8 +11,8 @@
 		<h3 class="skills"><?php echo $this->Html->link("Skills", array('action' => 'skills', $project['Project']['id'])); ?></h3>
 		<p class="tips">Edit the list of skills that will be collected and/or imported for this project.</p>
 	</div>
-	<?php echo $this->element('projects/rules', array('id' => $project['Project']['id'])) ?>
-	<?php echo $this->element('projects/settings', array('id' => $project['Project']['id'])) ?>
+	<div class="c25"><?php echo $this->element('projects/rules', array('id' => $project['Project']['id'])) ?></div>
+	<div class="c25"><?php echo $this->element('projects/settings', array('id' => $project['Project']['id'])) ?></div>
 </div>
 <div class="launch">
 <?php echo $this->Form->create("Project", array('action' => 'launch')) ?>

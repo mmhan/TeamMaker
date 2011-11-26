@@ -92,8 +92,7 @@ class Skill extends AppModel {
 	 * @return	boolean
 	 */
 	function isValidValue($value, $id){
-		
-		if(empty($value)) return false;
+		if($value !== '0' && empty($value)) return false;
 		
 		$skill = Cache::read("Skill_" . $id);
 		if(empty($skill)){
@@ -111,6 +110,8 @@ class Skill extends AppModel {
 		
 		//get the type.
 		$type = $skill['type'];
+		
+		
 		switch($type){
 			case SKILL_NUMERIC_RANGE:
 				//only integers??
@@ -134,7 +135,7 @@ class Skill extends AppModel {
 				break;
 			case SKILL_TEXT_RANGE:
 				//true if the index is in range.
-				return
+				return	
 					is_numeric($value) && 
 					(int) $value <= count(explode('|', $skill['range'])) - 1 &&
 					(int) $value >= 0;
@@ -151,10 +152,11 @@ class Skill extends AppModel {
 	 * for the given project
 	 * 
 	 * @param	int		id of the project
+	 * @param	type	find type for the return data.
 	 * @return	mixed	an array of the all the skill names
 	 */
-	function findAllSkills($projectId){
-		return $this->find("list", array("conditions" => array("Skill.project_id" => $projectId)));
+	function findAllSkills($projectId, $type = 'list'){
+		return $this->find($type, array("conditions" => array("Skill.project_id" => $projectId), 'recursive' => -1));		
 	}
 	
 	/**

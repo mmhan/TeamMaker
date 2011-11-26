@@ -34,15 +34,16 @@ class MembersSkill extends AppModel {
 			'notempty' => array(
 				'rule' => 'notempty'
 			),
-			'validateValidValue' => array(
-				'rule' => 'validateValueWithSkill'
+			'validateValueWithSkill' => array(
+				'rule' => 'validateValueWithSkill',
+				'message' => "Invalid value provided."
 			)
 		)
 	);
 	
 	function validateValueWithSkill($check){
 		$val = array_shift($check);
-		return $this->Skill->isValidValue($check, $this->data[$this->alias]['skill_id']);
+		return $this->Skill->isValidValue($val, $this->data[$this->alias]['skill_id']);
 	}
 }
 ?>

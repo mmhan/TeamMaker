@@ -62,7 +62,7 @@ class ProjectsController extends AppController {
 		
 		$this->set(compact('projects'));
 	}
-	
+
 	/**
 	 * This action will show a list of all projects to admins.
 	 * 

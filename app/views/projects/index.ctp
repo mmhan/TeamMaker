@@ -12,7 +12,7 @@
 						<h3><?php echo $proj['name'] ?></h3>
 						<div class="actions">
 							<ul>
-								<li><?php echo $this->Html->link('Enter Data &raquo;', array('action' => "enter_data", $proj['id']), array('escape' => false)); ?></li>
+								<li><?php echo $this->Html->link('Enter Data &raquo;', array('controller'=> 'members_skills', 'action' => "enter_data", $proj['id']), array('escape' => false)); ?></li>
 								<li><?php echo $this->Html->link('Nominate Members &raquo;', array('action' => "nominate", $proj['id']), array('escape' => false)); ?></li>
 							</ul>
 						</div>

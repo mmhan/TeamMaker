@@ -230,6 +230,7 @@ class UsersController extends AppController {
 			$this->Acl->deny($group, 'controllers');
 			$this->Acl->allow($group, 'controllers/Users/edit');
 			$this->Acl->allow($group, 'controllers/Projects/index');
+			$this->Acl->allow($group, 'controllers/MembersSkills/enter_data');
 	}
 
         

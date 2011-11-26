@@ -51,6 +51,16 @@ class User extends AppModel {
 			)
 		),
 	);
+	
+	/** Associate with skills **/
+	public $hasMany = array(
+		'MembersSkill' => array(
+			'className' => 'MembersSkill',
+			'foreign_key' => 'user_id',
+			'dependent' => true
+		)
+	);
+	
 	/**
 	 * Find the parent node of the user and returns. Used for acl.
 	 *  
@@ -212,6 +222,9 @@ class User extends AppModel {
 		switch ($type) {
 			case "resetPassword" : 
 				unset($this->validate['password']['currentPasswordIsCorrect']);
+				break;
+			case "import" : 
+				unset($this->validate['password']);
 				break;
 			default :
 				return false;

@@ -171,7 +171,7 @@ class ProjectsController extends AppController {
 			}
 		}else{
 			//make it so that the person who's creating is one of the admin by default.
-			$this->data['Admin']['Admin'] = array($this->Auth->user('group_id'));
+			$this->data['Admin']['Admin'] = array($this->Auth->user('id'));
 		}
 		$admins = $this->Project->Admin->find('list');
 		
@@ -436,7 +436,7 @@ class ProjectsController extends AppController {
 		
 		//get all users
 		$members = $this->Project->Member->findForLaunch($this->data['Project']['id']);
-		
+				
 		//generating passwords for new users.
 		if (!empty($members['new'])) {
 			foreach ($members['new'] as $i => $m) {

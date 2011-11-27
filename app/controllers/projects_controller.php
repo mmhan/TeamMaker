@@ -479,14 +479,20 @@ class ProjectsController extends AppController {
 		$this->Session->write('Import.total', count($data));
 		$this->Session->write('Import.progress', 0);
 		$status = array();
-		foreach($data as $i => $member){
-			//prep model
-			$this->Project->Member->disableValidate('import');
+		
+		//Prep model
+		$this->Project->Member->beforeImport();
+		
+		//Import.
+		foreach($data as $i => $member){			
 			//import
 			$status[$i]['status'] = $this->Project->Member->import($member);
-			$status[$i]['error'] = $this->Project->Member->validationErrors;
+			$status[$i]['error'] = $this->Project->Member->User->validationErrors;
 			$this->Session->write('Import.progress', $i + 1);
 		}
+		//clean up
+		$this->Project->Member->afterImport();
+		
 		return $status;
 	}
 	

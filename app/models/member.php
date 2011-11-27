@@ -87,6 +87,28 @@ class Member extends User{
 	}
 	
 	/**
+	 * This will prep the model for import process.
+	 *
+	 * @return void
+	 * @author  @mmhan
+	 */
+	function beforeImport() {
+		//Prep model for saving.
+		//For the sake of ACL we can't save directly with Member model,
+		//So import User, and save as that.
+		$this->User = ClassRegistry::init("User");
+		$this->User->disableValidate('import');
+		//Associate with skills so that saveAll will save everything.
+		$this->User->bindModel(array('hasMany' => array(
+			'MembersSkill' => array(
+				'className' => 'MembersSkill',
+				'foreign_key' => 'user_id',
+				'dependent' => true
+			)
+		)), false); //don't let it reset, we'll remove the association when all is done.
+	}
+	
+	/**
 	 * Import a single row of user
 	 * 
 	 * @param 	mixed 	that data that is to be imported.
@@ -97,13 +119,24 @@ class Member extends User{
 		$data = Set::merge($this->findMergeableData($data), $data);
 		
 		if(empty($data['MembersSkill'])) unset($data['MembersSkill']);
-		
+		//import user data and save member as user
 		$userData['User'] = $data['Member'];
 		$userData['User']['group_id'] = ROLE_MEMBER;
-		//import user data and save member as user
-		$this->User = ClassRegistry::init("User");
-		$this->User->disableValidate('import');
+		
 		return $this->User->saveAll($userData);
+	}
+	
+	/**
+	 * This will be executed to clean up after the import process is done.
+	 *
+	 * @return void
+	 * @author @mmhan
+	 */
+	function afterImport() {
+		//now remove the association (Just in case there needs to be some other call after this) for performance.
+		$this->User->unbindModel(array(
+			'hasMany' => array('MembersSkill')
+		));
 	}
 	
 	/**

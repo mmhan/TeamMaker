@@ -79,8 +79,8 @@ class ProjectsController extends AppController {
 	 * What this function will do is that 
 	 * 		1)	it'll check all projects that are under collection phase and grouping phase and upgrade their status when necessary. 
 	 * 
-	 * This action also features a hack under debug mode and accepts a fake date under parameter `fake`.
-	 * 		e.g: /projects/cron/fake:2012-01-01 (Y-m-d)
+	 * This action also features a hack under debug mode and accepts a fake date under parameter `time_machine`.
+	 * 		e.g: /projects/cron/time_machine:2012-01-01 (Y-m-d)
 	 *
 	 * @return void
 	 * @author @mmhan
@@ -90,8 +90,8 @@ class ProjectsController extends AppController {
 		$now = strtotime('now');
 		
 		//check for the hack
-		if(Configure::read('debug') != 0 && isset($this->params['named']['fake'])){
-			$now = strtotime($this->params['named']['fake']);
+		if(Configure::read('debug') != 0 && isset($this->params['named']['time_machine'])){
+			$now = strtotime($this->params['named']['time_machine']);
 		}
 		
 		$this->Project->upgradeProjects();

@@ -1,0 +1,8 @@
+"Person ID","Email","Name","Numeric Range Skill","Numeric Decimal Range Skill","Text Range Skill","Text Skill","Comments"
+"11111D","11111D@sayhi.oib.com","John Smith",,,,,"This should be successfully imported"
+"11112D","1111gD@sayhi.oib.com","Alan Smith",,,,,"This should be successfully imported, then over-written"
+"11112D","11112D@sayhi.oib.com","Alan Jr. Smith",,,,,"This should be over-write row 3"
+"11113D","bla","Jones Smith",,,,,"This should raise email error"
+"11114D","11111D@sayhi.oib.com","Jane Smith",,,,,"This should raise email error"
+"11115D","11115D@sayhi.oib.com","Harry Potter",10,2.5,"Black","Wears Specs","This member should be uploaded and the skills should be imported as well"
+"11116D","11116D@sayhi.oib.com","Hermione Granger",-10,-0.1,"ummmm....","Lorem ipsum silat dolar mant lamen blabla bla bla bla bla bla bla bla blabsdkjflasjdf qoweiurqwejkrasdf","None of these text skills will be added"

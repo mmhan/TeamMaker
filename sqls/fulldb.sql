@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Nov 27, 2011 at 09:25 PM
+-- Generation Time: Nov 27, 2011 at 10:29 PM
 -- Server version: 5.1.41
 -- PHP Version: 5.3.2-1ubuntu4.10
 
@@ -377,7 +377,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 --
 
 INSERT INTO `users` (`id`, `given_id`, `name`, `email`, `password`, `group_id`, `last_login_time`, `created`, `modified`) VALUES
-(1, '123', 'Super Admin', 'mmhan2u@gmail.com', '6c46adf5a02d03471d5173ecfa6b7db309d2b708', 1, '2011-11-27 20:53:17', '2011-10-19 20:36:26', '2011-11-27 20:53:17'),
-(4, '333', 'Test Admin', 'mmhan2u+admin@gmail.com', '6c46adf5a02d03471d5173ecfa6b7db309d2b708', 2, NULL, '2011-10-19 20:36:26', '2011-11-26 20:25:23'),
-(5, '122', 'Member', 'mmhan2u+member@gmail.com', '6c46adf5a02d03471d5173ecfa6b7db309d2b708', 3, NULL, '2011-10-19 20:36:26', '2011-10-19 20:36:26'),
+(1, '123', 'Super Admin', 'su@example.com', '6c46adf5a02d03471d5173ecfa6b7db309d2b708', 1, '2011-11-27 20:53:17', '2011-10-19 20:36:26', '2011-11-27 20:53:17'),
+(4, '333', 'Test Admin', 'admin@example.com', '6c46adf5a02d03471d5173ecfa6b7db309d2b708', 2, NULL, '2011-10-19 20:36:26', '2011-11-26 20:25:23'),
+(5, '122', 'Member', 'member@example.com', '6c46adf5a02d03471d5173ecfa6b7db309d2b708', 3, NULL, '2011-10-19 20:36:26', '2011-10-19 20:36:26'),
 (7, '1234', 'Mr. Soong', 'soongwengchew@gmail.com', '62f37d34f4d62e6776066d30b7694a14a640b47c', 1, NULL, '2011-10-28 13:12:36', '2011-11-05 08:54:33');

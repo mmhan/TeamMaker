@@ -9,7 +9,11 @@ class Member extends User{
 	var $useTable = "users";
 	var $actsAs = array("Containable");
 	
-	/** Associate with projects **/
+	/**
+	 * hasAndBelongsToMany associations.
+	 *
+	 * @var array
+	 */
 	var $hasAndBelongsToMany = array(
 		'Project' => array(
 			'className' => 'Project',
@@ -25,10 +29,21 @@ class Member extends User{
 			'finderQuery' => '',
 			'deleteQuery' => '',
 			'insertQuery' => ''
+		),
+		'Team' => array(
+			'className' => "Team",
+			'joinTable' => "members_teams",
+			'foreignKey' => 'user_id',
+			'associationForeignKey' => 'team_id',
+			'unique' => true
 		)
 	);
 	
-	/** Associate with skills **/
+	/**
+	 * hasMany association with skills
+	 *
+	 * @var array
+	 */
 	public $hasMany = array(
 		'MembersSkill' => array(
 			'className' => 'MembersSkill',
@@ -36,6 +51,8 @@ class Member extends User{
 			'dependent' => true
 		)
 	);
+	
+	
 	
 	/**
 	 * A list of fields that should not be imported.

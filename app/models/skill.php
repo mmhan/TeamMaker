@@ -163,7 +163,7 @@ class Skill extends AppModel {
 	 * @return 	mixed	returns the same value if it's not text range, else index number.
 	 * @author  @mmhan
 	 */
-	function getValidValue($id, $val) {
+	function getValidValue($val, $id) {
 		if($val !== '0' && empty($val)) return false;
 		
 		$skill = $this->getSkill($id);

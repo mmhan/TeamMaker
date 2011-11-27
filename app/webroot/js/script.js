@@ -352,7 +352,7 @@ TeamMaker = function () {
 				);
 								
 				//populate container
-				$container.html(cloneStr);
+				$container.html(cloneStr).find("input[name$='[name]']").focus();
 				
 				//check if there's data to populate automatically.
 				var row = $me.data('data');

@@ -116,11 +116,21 @@ class Member extends User{
 		$this->User = ClassRegistry::init("User");
 		$this->User->disableValidate('import');
 		//Associate with skills so that saveAll will save everything.
-		$this->User->bindModel(array('hasMany' => array(
+		$this->User->bindModel(array(
+		'hasMany' => array(
 			'MembersSkill' => array(
 				'className' => 'MembersSkill',
 				'foreign_key' => 'user_id',
 				'dependent' => true
+			)
+		),
+		'hasAndBelongsToMany' => array(
+			'Project' => array(
+				'className' => 'Project',
+				'joinTable' => 'members_projects',
+				'foreignKey' => 'user_id',
+				'associationForeignKey' => 'project_id',
+				'unique' => true
 			)
 		)), false); //don't let it reset, we'll remove the association when all is done.
 	}
@@ -137,10 +147,12 @@ class Member extends User{
 		
 		if(empty($data['MembersSkill'])) unset($data['MembersSkill']);
 		//import user data and save member as user
-		$userData['User'] = $data['Member'];
-		$userData['User']['group_id'] = ROLE_MEMBER;
-		
-		return $this->User->saveAll($userData);
+		$userData = $data['Member'];
+		$userData['group_id'] = ROLE_MEMBER;
+		unset($data['Member']);
+		$data['User'] = $userData;
+		FireCake::log($data);
+		return $this->User->saveAll($data);
 	}
 	
 	/**
@@ -152,7 +164,8 @@ class Member extends User{
 	function afterImport() {
 		//now remove the association (Just in case there needs to be some other call after this) for performance.
 		$this->User->unbindModel(array(
-			'hasMany' => array('MembersSkill')
+			'hasMany' => array('MembersSkill'),
+			'hasAndBelongsToMany' => array("Project")
 		));
 	}
 	

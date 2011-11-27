@@ -172,6 +172,8 @@ class ProjectsController extends AppController {
 				$this->render("admin_dashboard_collect");
 				break;
 			case PROJECT_FEEDBACK:
+				$this->set('remaining', $this->Project->findRemaining($id));
+				$this->set("total", $this->Project->findTotal($id));
 				$this->render("admin_dashboard_feedback");
 				break;
 			case PROJECT_ARCHIVE:
@@ -305,6 +307,8 @@ class ProjectsController extends AppController {
 		}
 		//TODO: to check if the accessing admin is actually the owner of the project and deny access if he's not.
 		
+		$status = false;
+		
 		if (!empty($this->data)) {
 			if ($this->Project->save($this->data)) {
 				$this->Session->setFlash(__('The project has been saved', true));
@@ -315,9 +319,26 @@ class ProjectsController extends AppController {
 		}
 		if (empty($this->data)) {
 			$this->data = $this->Project->read(null, $id);
+			
+			//for extending deadlines.
+			
+			//currently only handles going back to PROJECT_COLLECT
+			if(!empty($this->params['named']['status_to'])){
+				$status = $this->params['named']['status_to'];
+				switch ($status) {
+					case PROJECT_COLLECT:
+						$this->data['Project']['status'] = PROJECT_COLLECT;
+						$this->data['Project']['collection_end'] = date("Y-m-d 00:00:00", strtotime("+2 week"));
+						$this->data['Project']['feedback_end'] = date("Y-m-d 00:00:00", strtotime("+4 week"));
+						FireCake::log($this->data);
+						break;
+					default:
+						break;
+				}
+			}
 		}
 		$admins = $this->Project->Admin->find('list');
-		$this->set(compact('admins'));
+		$this->set(compact('admins', 'status'));
 	}
 
 	/**

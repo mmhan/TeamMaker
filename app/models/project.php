@@ -229,7 +229,7 @@ class Project extends AppModel {
 			), 
 			array( //conditions
 				'Project.status' => PROJECT_FEEDBACK,
-				'Project.collection_end <' => date("Y-m-d H:i:s", $now)
+				'Project.feedback_end <' => date("Y-m-d H:i:s", $now)
 			)
 		);
 	}

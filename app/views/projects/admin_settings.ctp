@@ -1,4 +1,5 @@
 <?php
+
 //TODO:: refine labels.
 ?>
 <div class="projects">
@@ -8,6 +9,7 @@
 	<?php
 		echo $this->Form->input('id');
 		echo $this->Form->input('name');
+		if($status)	echo $this->Form->hidden('status');
 	?>
 	<div class="colContainer">
 		<div class="c50">

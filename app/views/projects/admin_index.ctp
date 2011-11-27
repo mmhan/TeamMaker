@@ -47,6 +47,22 @@
 		<div class="c25">
 			<h3>Grouping Phase</h3>
 			<p>Projects with members who are ready to be divided into teams and Projects with teams divided awaiting feedbacks from users.</p>
+			<?php if (array_key_exists(PROJECT_FEEDBACK, $projects) && !empty($projects[PROJECT_FEEDBACK])): ?>
+			<ul class="projects collect">
+				<?php foreach ($projects[PROJECT_FEEDBACK] as $k => $proj): ?>
+				<li>
+					<li><div class="project" data-id="<?php echo $proj['id'] ?>" >
+						<h3><?php echo $proj['name'] ?></h3>
+						<div class="actions">
+							<ul>
+								<li><?php echo $this->Html->link('Go to Project &raquo;', array('action' => "dashboard", $proj['id']), array('escape' => false)); ?></li>
+							</ul>
+						</div>
+					</div></li>
+				</li>
+				<?php endforeach ?>
+			</ul>
+			<?php endif ?>
 		</div>
 		<div class="c25">
 			<h3>Archived Phase</h3>

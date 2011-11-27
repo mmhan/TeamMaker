@@ -124,7 +124,7 @@ Configure::write('Routing.prefixes', array('admin'));
  * the cake shell command: cake schema create Sessions
  *
  */
-	Configure::write('Session.save', 'php');
+	Configure::write('Session.save', 'cake');
 
 /**
  * The model name to be used for the session model.

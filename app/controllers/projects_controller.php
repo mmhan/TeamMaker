@@ -501,11 +501,13 @@ class ProjectsController extends AppController {
 				$members['new'][$i] = $m;
 			}
 			//reformat the data for saveAll()
-			$saveData = Set::combine($members['new'], '{n}.Member.id', '{n}.Member');
+			$saveData = Set::combine($members['new'], '{n}.Member.id', '{n}.User');
 			
 			//save it
 			$this->Project->Member->disableValidate("import");
+			$this->Project->Member->beforeImport();
 			$status = $this->Project->Member->saveAll($saveData);
+			$this->Project->Member->afterImport();
 			
 			if(!$status){
 				$this->Session->setFlash("Project failed to launch. Passwords can't be generated.");
@@ -589,7 +591,9 @@ class ProjectsController extends AppController {
         if(Configure::read("debug") != 0){
         	$this->Email->delivery = 'debug';
 			$status = $this->Email->send();
-			FireCake::info($this->Session->read("Message.email"));
+			$email = $this->Session->read("Message.email");
+			$this->log($email);
+			FireCake::info($email);
 			$this->Session->delete("Message.email");
 			return $status;
         }else{

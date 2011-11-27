@@ -36,7 +36,12 @@
 	<div class="c50"><?php echo $this->Form->end(__('Submit', true));?></div>
 	<div class="c50"><div class="actions autoWidth fRight">
 	<ul>
-		<li><?php echo $this->Html->link("Delete Project", array('action' => 'delete', $this->data['Project']['id'])); ?></li>
+		<li><?php echo $this->Html->link(
+			"Delete Project", 
+			array('action' => 'delete',$this->data['Project']['id']),
+			array(),
+			"Are you sure you want to delete this project?"
+		); ?></li>
 	</ul>
 	</div></div>
 </div>

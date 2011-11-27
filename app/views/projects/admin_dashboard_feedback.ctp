@@ -1,4 +1,8 @@
-<?php $projectId = $project['Project']['id']; ?>
+<?php 
+$projectId = $project['Project']['id'];
+$remaining = $data['remaining'];
+$total = $data['total']; 
+?>
 
 <h1><?php echo $project['Project']['name'] ?> : Dashboard</h1>
 <p><?php echo $project['Project']['description'] ?></p>

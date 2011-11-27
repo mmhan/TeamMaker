@@ -38,17 +38,20 @@ class MembersSkillsController extends AppController {
 				$this->MembersSkill->find(
 					'all', 
 					array(
-						'conditions' => array('MembersSkill.skill_id' => array_keys($skills)),
+						'conditions' => array(
+							'MembersSkill.skill_id' => array_keys($skills),
+							'MembersSkill.user_id' => $userId
+						),
 						'recursive' => -1
 					)
-				), '{n}.MembersSkill.id', '{n}.MembersSkill');
-			if(empty($this->data['MembersSkill'])){
-				$i = 0;
-				foreach($skills as $id => $skill){
-					$this->data['MembersSkill'][$i]['skill_id'] = $id;
-					$this->data['MemebrsSkill'][$i]['user_id'] = $userId;
+				), '{n}.MembersSkill.skill_id', '{n}.MembersSkill');
+			
+			$i = 0;
+			foreach($skills as $id => $skill){
+				if(empty($this->data['MembersSkill'][$id])) 
+					$this->data['MembersSkill'][$id]['skill_id'] = $id;
+					$this->data['MembersSkill'][$id]['user_id'] = $userId;
 					$i++;
-				}
 			}
 		}
 		

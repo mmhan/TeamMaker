@@ -94,7 +94,7 @@ class ProjectsController extends AppController {
 			$now = strtotime($this->params['named']['time_machine']);
 		}
 		
-		$this->Project->upgradeProjects();
+		$this->Project->upgradeProjects($now);
 	}
 	
 
@@ -167,13 +167,11 @@ class ProjectsController extends AppController {
 				$this->render("admin_dashboard_seed");
 				break;
 			case PROJECT_COLLECT:
-				$this->set('remaining', $this->Project->findRemaining($id));
-				$this->set("total", $this->Project->findTotal($id));
+				$this->set('data', $this->Project->findTotalAndRemaining($id));
 				$this->render("admin_dashboard_collect");
 				break;
 			case PROJECT_FEEDBACK:
-				$this->set('remaining', $this->Project->findRemaining($id));
-				$this->set("total", $this->Project->findTotal($id));
+				$this->set('data', $this->Project->findTotalAndRemaining($id));
 				$this->render("admin_dashboard_feedback");
 				break;
 			case PROJECT_ARCHIVE:
@@ -496,12 +494,12 @@ class ProjectsController extends AppController {
 		//generating passwords for new users.
 		if (!empty($members['new'])) {
 			foreach ($members['new'] as $i => $m) {
-				$m['Member']['g_password'] = $password = $this->_generatePassword($m);
-				$m['Member']['password'] = $this->Auth->password($password);
+				$m['Member']['g_password'] = $this->_generatePassword($m);
+				$m['Member']['password'] = $this->Auth->password($m['Member']['g_password']);
 				$members['new'][$i] = $m;
 			}
 			//reformat the data for saveAll()
-			$saveData = Set::combine($members['new'], '{n}.Member.id', '{n}.User');
+			$saveData = Set::combine($members['new'], '{n}.Member.id', '{n}.Member');
 			
 			//save it
 			$this->Project->Member->disableValidate("import");

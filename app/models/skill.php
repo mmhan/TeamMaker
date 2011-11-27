@@ -147,8 +147,15 @@ class Skill extends AppModel {
 			case SKILL_TEXT_RANGE:
 				//true if the index is in range.
 				$values = explode("|", $skill['range']);
-				$index = array_search($value, $values);
-				return $index !== false;
+				if((int) $value == $value){
+					return (int) $value >= 0 && (int) $value <= count($values);
+				}else{
+					//this is only allowed for import
+					//TODO: refactor this so that this is not so un-pattern like.
+					$index = array_search($value, $values);
+					return $index !== false;
+				}
+				
 				break;
 			case SKILL_TEXT:
 				//true if the text is less than given number of characters.

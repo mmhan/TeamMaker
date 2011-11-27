@@ -147,45 +147,16 @@ class Project extends AppModel {
 	 * @return	mixed	an array of members with data. 
 	 * @author  @mmham
 	 */
-	function findRemaining($id) {
+	function findTotalAndRemaining($id) {
 		//find all skills that are in this project.
 		$skills = $this->Skill->find('list', array('Skill.project_id' => $id));
 		
-		
-		$members = $this->Member->find('all', array(
-			'fields' => array('Member.id', 'Member.name', 'Member.email'),
-			'conditions' => array(),
-			'recursive' => -1,
-			'joins' => array(
-				array(
-					'table' => 'members_skills',
-					'alias' => 'MembersSkill',
-					'type'	=> "LEFT",
-					'conditions' => array(
-						'Member.id = MembersSkill.user_id',
-						'MembersSkill.skill_value IS NOT NULL',
-						'MembersSkill.skill_id IN (' . implode(",", array_keys($skills)) . ')'
-					)
-				)
-			)
-		));
-		
-		return $members;
-	}
-	
-	/**
-	 * will find the total number of members that belongs to the project.
-	 *
-	 * @return void
-	 * @author  
-	 */
-	function findTotal($id) {
-		return $this->Member->find('count', array(
+		//find all members in this project.
+		$allMembers = $this->Member->find('list', array(
 			'joins' => array(
 				array(
 				'table' => "members_projects",
 				'alias' => "MembersProject",
-				'type' => "LEFT",
 				'conditions' => array(
 					'MembersProject.user_id = Member.id',
 					'MembersProject.project_id = ' . $id
@@ -194,8 +165,30 @@ class Project extends AppModel {
 			),
 			'recursive' => -1
 		));
+		
+		//build sub query 
+		$dbo = $this->Member->getDataSource();
+		$subQueryExpression = $dbo->expression(
+			count($skills) . " <> " .
+			"(SELECT COUNT(`ms`.`user_id`) FROM `members_skills` AS `ms` " . 
+			"WHERE `ms`.`skill_id` IN (" . implode(',' , array_keys($skills)) . ") AND " .
+			"`ms`.`user_id` = `Member`.`id`)" 
+		);
+		$conditions = array($subQueryExpression);
+		$conditions['Member.id'] = array_keys($allMembers);
+		
+		$members = $this->Member->find('all', array(
+			'fields' => array('Member.id', 'Member.name', 'Member.email'),
+			'conditions' => $conditions,
+			'recursive' => -1,
+		));
+		
+		return array(
+			'total' => count($allMembers),
+			'remaining' => $members
+		);
 	}
-	
+		
 	/**
 	 * This function will do the model part of the cron job by 
 	 * running the neccessary functions to upgrade the statuses of the projects

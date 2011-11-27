@@ -1,4 +1,8 @@
-<?php $projectId = $project['Project']['id']; ?>
+<?php 
+$projectId = $project['Project']['id'];
+$remaining = $data['remaining'];
+$total = $data['total']; 
+?>
 
 <h1><?php echo $project['Project']['name'] ?> : Dashboard</h1>
 <p><?php echo $project['Project']['description'] ?></p>
@@ -24,7 +28,7 @@
 <div class="c30">
 	<div class="projMgmt">
 		<h3 class="dataStatus">Data Status</h3>
-		<p class="tips"><?php echo $total - count($remaining) ?> / <?php echo count($remaining) ?></p>
+		<p class="tips"><?php echo $total - count($remaining) ?> / <?php echo $total ?></p>
 		<p>&nbsp;</p>
 		<p class="tips">Cut-off date is on <?php echo $this->Time->niceShort($project['Project']['collection_end']); ?></p>
 	</div>

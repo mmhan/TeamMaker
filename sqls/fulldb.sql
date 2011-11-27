@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Nov 27, 2011 at 09:05 PM
+-- Generation Time: Nov 27, 2011 at 09:25 PM
 -- Server version: 5.1.41
 -- PHP Version: 5.3.2-1ubuntu4.10
 
@@ -25,6 +25,7 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 -- Table structure for table `acos`
 --
 
+DROP TABLE IF EXISTS `acos`;
 CREATE TABLE IF NOT EXISTS `acos` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `parent_id` int(10) DEFAULT NULL,
@@ -105,6 +106,7 @@ INSERT INTO `acos` (`id`, `parent_id`, `model`, `foreign_key`, `alias`, `lft`, `
 -- Table structure for table `admins_projects`
 --
 
+DROP TABLE IF EXISTS `admins_projects`;
 CREATE TABLE IF NOT EXISTS `admins_projects` (
   `id` int(16) NOT NULL AUTO_INCREMENT,
   `user_id` int(16) NOT NULL,
@@ -123,6 +125,7 @@ CREATE TABLE IF NOT EXISTS `admins_projects` (
 -- Table structure for table `aros`
 --
 
+DROP TABLE IF EXISTS `aros`;
 CREATE TABLE IF NOT EXISTS `aros` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `parent_id` int(10) DEFAULT NULL,
@@ -154,6 +157,7 @@ INSERT INTO `aros` (`id`, `parent_id`, `model`, `foreign_key`, `alias`, `lft`, `
 -- Table structure for table `aros_acos`
 --
 
+DROP TABLE IF EXISTS `aros_acos`;
 CREATE TABLE IF NOT EXISTS `aros_acos` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `aro_id` int(10) NOT NULL,
@@ -180,6 +184,7 @@ INSERT INTO `aros_acos` (`id`, `aro_id`, `aco_id`, `_create`, `_read`, `_update`
 -- Table structure for table `groups`
 --
 
+DROP TABLE IF EXISTS `groups`;
 CREATE TABLE IF NOT EXISTS `groups` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) CHARACTER SET latin1 NOT NULL,
@@ -203,6 +208,7 @@ INSERT INTO `groups` (`id`, `name`, `created`, `modified`) VALUES
 -- Table structure for table `members_projects`
 --
 
+DROP TABLE IF EXISTS `members_projects`;
 CREATE TABLE IF NOT EXISTS `members_projects` (
   `id` int(16) NOT NULL AUTO_INCREMENT,
   `user_id` int(16) NOT NULL,
@@ -221,6 +227,7 @@ CREATE TABLE IF NOT EXISTS `members_projects` (
 -- Table structure for table `members_skills`
 --
 
+DROP TABLE IF EXISTS `members_skills`;
 CREATE TABLE IF NOT EXISTS `members_skills` (
   `id` int(32) NOT NULL,
   `skill_id` int(32) NOT NULL,
@@ -242,6 +249,7 @@ CREATE TABLE IF NOT EXISTS `members_skills` (
 -- Table structure for table `members_teams`
 --
 
+DROP TABLE IF EXISTS `members_teams`;
 CREATE TABLE IF NOT EXISTS `members_teams` (
   `id` int(16) unsigned NOT NULL AUTO_INCREMENT,
   `team_id` int(16) unsigned NOT NULL,
@@ -260,6 +268,7 @@ CREATE TABLE IF NOT EXISTS `members_teams` (
 -- Table structure for table `projects`
 --
 
+DROP TABLE IF EXISTS `projects`;
 CREATE TABLE IF NOT EXISTS `projects` (
   `id` int(16) NOT NULL AUTO_INCREMENT,
   `name` varchar(150) NOT NULL,
@@ -283,6 +292,7 @@ CREATE TABLE IF NOT EXISTS `projects` (
 -- Table structure for table `skills`
 --
 
+DROP TABLE IF EXISTS `skills`;
 CREATE TABLE IF NOT EXISTS `skills` (
   `id` int(32) NOT NULL AUTO_INCREMENT,
   `project_id` int(32) NOT NULL,
@@ -305,6 +315,7 @@ CREATE TABLE IF NOT EXISTS `skills` (
 -- Table structure for table `teams`
 --
 
+DROP TABLE IF EXISTS `teams`;
 CREATE TABLE IF NOT EXISTS `teams` (
   `id` int(16) unsigned NOT NULL AUTO_INCREMENT,
   `project_id` int(16) unsigned NOT NULL,
@@ -324,6 +335,7 @@ CREATE TABLE IF NOT EXISTS `teams` (
 -- Table structure for table `uploads`
 --
 
+DROP TABLE IF EXISTS `uploads`;
 CREATE TABLE IF NOT EXISTS `uploads` (
   `id` int(16) NOT NULL AUTO_INCREMENT,
   `project_id` int(16) NOT NULL,
@@ -345,6 +357,7 @@ CREATE TABLE IF NOT EXISTS `uploads` (
 -- Table structure for table `users`
 --
 
+DROP TABLE IF EXISTS `users`;
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `given_id` varchar(32) CHARACTER SET latin1 NOT NULL,

@@ -84,16 +84,12 @@ class Skill extends AppModel {
 	}
 	
 	/**
-	 * This value will validate a skill value to be populated into the members_skills table 
-	 * using the range and type specified in this table.
-	 * 
-	 * @param	mixed	any value
-	 * @param	int		id of the skill that is in question.
-	 * @return	boolean
+	 * Will get cached/retrieved+cached data of the skill
+	 *
+	 * @return 	mixed	Returns the read() with recursive -1 format of the skill
+	 * @author  @mmhan
 	 */
-	function isValidValue($value, $id){
-		if($value !== '0' && empty($value)) return false;
-		
+	function getSkill($id) {
 		$skill = Cache::read("Skill_" . $id);
 		if(empty($skill)){
 			$this->id = $id;
@@ -107,11 +103,26 @@ class Skill extends AppModel {
 			//write it to cache
 			Cache::write('Skill_' . $id, $skill);
 		}
+		return $skill;
+	}
+	
+	/**
+	 * This value will validate a skill value to be populated into the members_skills table 
+	 * using the range and type specified in this table.
+	 * 
+	 * @param	mixed	any value
+	 * @param	int		id of the skill that is in question.
+	 * @return	boolean
+	 */
+	function isValidValue($value, $id){
+		if($value !== '0' && empty($value)) return false;
+		
+		$skill = $this->getSkill($id);
 		
 		//get the type.
 		$type = $skill['type'];
 		
-		
+		//switch over type and return appropriately.
 		switch($type){
 			case SKILL_NUMERIC_RANGE:
 				//only integers??
@@ -135,15 +146,35 @@ class Skill extends AppModel {
 				break;
 			case SKILL_TEXT_RANGE:
 				//true if the index is in range.
-				return	
-					is_numeric($value) && 
-					(int) $value <= count(explode('|', $skill['range'])) - 1 &&
-					(int) $value >= 0;
+				$values = explode("|", $skill['range']);
+				$index = array_search($value, $values);
+				return $index !== false;
 				break;
 			case SKILL_TEXT:
 				//true if the text is less than given number of characters.
 				return strlen($value) <= $skill['range'];
 				break;
+		}
+	}
+
+	/**
+	 * This function helps at populating import data mainly to map String to index of text range.
+	 *
+	 * @return 	mixed	returns the same value if it's not text range, else index number.
+	 * @author  @mmhan
+	 */
+	function getValidValue($id, $val) {
+		if($val !== '0' && empty($val)) return false;
+		
+		$skill = $this->getSkill($id);
+		
+		//get the type.
+		$type = $skill['type'];
+		
+		if($type == SKILL_TEXT_RANGE){
+			return array_search($val, explode("|", $skill['range']));
+		}else{
+			return $val;
 		}
 	}
 

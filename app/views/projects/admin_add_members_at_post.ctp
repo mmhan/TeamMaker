@@ -13,9 +13,10 @@ $hasError = 0;
 		<th>Status</th>
 		<th>Message</th>
 	</thead>
+	<?php $rowNum = 0; ?>
 	<?php foreach($data as $i => $row): ?>
 	<tr>
-		<td><?php echo $i + 1 ?></td>
+		<td><?php echo ++$rowNum; ?></td>
 		<td><?php echo $row['status'] ? "Success" : "Fail" ?></td>
 		<td>
 		<?php if (!empty($row['warning'])): ?>
@@ -54,7 +55,7 @@ $hasError = 0;
 <?php endif ?>
 
 <p>Please see above for a list of rows that we have failed to import.</p>
-<div class="notice">
+<div class="message">
 	<p>Please seperate those rows out from the uploaded file and ensure that they have all the necessary fields.<br />Import the seperated file again after fixing the data.</p>
 </div>
 <?php endif; ?>

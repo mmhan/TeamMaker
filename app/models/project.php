@@ -121,7 +121,7 @@ class Project extends AppModel {
 						$skillErrors[$i][$field] = sprintf("Value cannot be empty.");						 
 					}else if($this->Skill->isValidValue($value, $column['skill_id'])){
 						$m['MembersSkill'][$skillCount]['skill_id'] = $column['skill_id'];
-						$m['MembersSkill'][$skillCount]['skill_value'] = $value;
+						$m['MembersSkill'][$skillCount]['skill_value'] = $this->Skill->getValidValue($value, $column['skill_id']);
 						$skillCount++;
 					}else{
 						$skillErrors[$i]['warning'][$field] = sprintf("Given value `%s` is not within defined range", $value);

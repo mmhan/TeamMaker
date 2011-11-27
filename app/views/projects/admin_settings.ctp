@@ -32,6 +32,16 @@
 		echo $this->Form->input("Admin", array('div' => 'input select habtmSelector'));
 	?>
 	</fieldset>
-<?php echo $this->Form->end(__('Submit', true));?>
+<div class="clearfix">
+	<div class="c50"><?php echo $this->Form->end(__('Submit', true));?></div>
+	<div class="c50"><div class="actions autoWidth fRight">
+	<ul>
+		<li><?php echo $this->Html->link("Delete Project", array('action' => 'delete', $this->data['Project']['id'])); ?></li>
+	</ul>
+	</div></div>
+</div>
+
 <?php echo $this->Html->link("&laquo; Back", array('action' => 'index'), array('escape' => false)); ?>
 </div>
+
+

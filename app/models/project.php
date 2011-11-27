@@ -195,5 +195,43 @@ class Project extends AppModel {
 			'recursive' => -1
 		));
 	}
+	
+	/**
+	 * This function will do the model part of the cron job by 
+	 * running the neccessary functions to upgrade the statuses of the projects
+	 * depending on the datetime provided
+	 *
+	 * @param	time		time (optional) default: strtotime('now')
+	 * @return 	void
+	 * @author  @mmhan
+	 */
+	function upgradeProjects($now = false){
+		
+		if(!$now) $now = strtotime('now');
+		
+		//update all projects under PROJECT_COLLECT and passed the deadline for collection_end
+		$this->updateAll(
+			array( //fields
+				'Project.status' => PROJECT_FEEDBACK,
+				'Project.modified' => '"' . date("Y-m-d H:i:s") . '"' //since it's not going to get automatically updated.
+			), 
+			array( //conditions
+				'Project.status' => PROJECT_COLLECT,
+				'Project.collection_end <' => date("Y-m-d H:i:s", $now)
+			)	
+		);
+		
+		//update all projects under PROJECT_FEEDBACK and passed the deadline for feedback_end
+		$this->updateAll(
+			array( //fields
+				'Project.status' => PROJECT_ARCHIVE,
+				'Project.modified' => '"' . date("Y-m-d H:i:s") . '"'//since it's not going to get automatically updated.
+			), 
+			array( //conditions
+				'Project.status' => PROJECT_FEEDBACK,
+				'Project.collection_end <' => date("Y-m-d H:i:s", $now)
+			)
+		);
+	}
 }
 ?>

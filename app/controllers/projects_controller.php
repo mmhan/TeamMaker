@@ -12,11 +12,22 @@ class ProjectsController extends AppController {
 	 * Before filter call back that customize a few things.
 	 */
 	function beforeFilter(){
-		//allow this to happen with no authentication, to speed it up.
-		//it is used by admin_add_members for the progress indicator.
-		$this->Auth->allowedActions = array('admin_add_members_status');
+		
+		$this->Auth->allowedActions = array(
+			//allow cron to happen with no authentication, we don't need to.
+			'cron',
+			//allow add_memebers_status to happen with no authentication, to speed it up.
+			//it is used by admin_add_members for the progress indicator.
+			'admin_add_members_status'
+		);
 	}
 	
+	/**
+	 * Index page of projects for Members to see the list of all the projects that they belong to.
+	 *
+	 * @return	void
+	 * @author  @mmhan
+	 */
 	function index(){
 		$user = $this->Auth->user('id');
 		
@@ -62,6 +73,30 @@ class ProjectsController extends AppController {
 		
 		$this->set(compact('projects'));
 	}
+
+	/**
+	 * This action should be called by cron that's running preferably at every ten minutes.
+	 * What this function will do is that 
+	 * 		1)	it'll check all projects that are under collection phase and grouping phase and upgrade their status when necessary. 
+	 * 
+	 * This action also features a hack under debug mode and accepts a fake date under parameter `fake`.
+	 * 		e.g: /projects/cron/fake:2012-01-01 (Y-m-d)
+	 *
+	 * @return void
+	 * @author @mmhan
+	 */
+	function cron() {
+		//look at the clock.
+		$now = strtotime('now');
+		
+		//check for the hack
+		if(Configure::read('debug') != 0 && isset($this->params['named']['fake'])){
+			$now = strtotime($this->params['named']['fake']);
+		}
+		
+		$this->Project->upgradeProjects();
+	}
+	
 
 	/**
 	 * This action will show a list of all projects to admins.

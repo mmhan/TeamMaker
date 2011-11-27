@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Nov 26, 2011 at 08:36 PM
+-- Generation Time: Nov 27, 2011 at 09:05 PM
 -- Server version: 5.1.41
 -- PHP Version: 5.3.2-1ubuntu4.10
 
@@ -25,7 +25,6 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 -- Table structure for table `acos`
 --
 
-DROP TABLE IF EXISTS `acos`;
 CREATE TABLE IF NOT EXISTS `acos` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `parent_id` int(10) DEFAULT NULL,
@@ -35,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `acos` (
   `lft` int(10) DEFAULT NULL,
   `rght` int(10) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC AUTO_INCREMENT=58 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC AUTO_INCREMENT=58 ;
 
 --
 -- Dumping data for table `acos`
@@ -106,7 +105,6 @@ INSERT INTO `acos` (`id`, `parent_id`, `model`, `foreign_key`, `alias`, `lft`, `
 -- Table structure for table `admins_projects`
 --
 
-DROP TABLE IF EXISTS `admins_projects`;
 CREATE TABLE IF NOT EXISTS `admins_projects` (
   `id` int(16) NOT NULL AUTO_INCREMENT,
   `user_id` int(16) NOT NULL,
@@ -125,7 +123,6 @@ CREATE TABLE IF NOT EXISTS `admins_projects` (
 -- Table structure for table `aros`
 --
 
-DROP TABLE IF EXISTS `aros`;
 CREATE TABLE IF NOT EXISTS `aros` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `parent_id` int(10) DEFAULT NULL,
@@ -135,7 +132,7 @@ CREATE TABLE IF NOT EXISTS `aros` (
   `lft` int(10) DEFAULT NULL,
   `rght` int(10) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC AUTO_INCREMENT=14 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC AUTO_INCREMENT=14 ;
 
 --
 -- Dumping data for table `aros`
@@ -157,7 +154,6 @@ INSERT INTO `aros` (`id`, `parent_id`, `model`, `foreign_key`, `alias`, `lft`, `
 -- Table structure for table `aros_acos`
 --
 
-DROP TABLE IF EXISTS `aros_acos`;
 CREATE TABLE IF NOT EXISTS `aros_acos` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `aro_id` int(10) NOT NULL,
@@ -168,7 +164,7 @@ CREATE TABLE IF NOT EXISTS `aros_acos` (
   `_delete` varchar(2) CHARACTER SET latin1 NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `ARO_ACO_KEY` (`aro_id`,`aco_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC AUTO_INCREMENT=3 ;
 
 --
 -- Dumping data for table `aros_acos`
@@ -184,14 +180,13 @@ INSERT INTO `aros_acos` (`id`, `aro_id`, `aco_id`, `_create`, `_read`, `_update`
 -- Table structure for table `groups`
 --
 
-DROP TABLE IF EXISTS `groups`;
 CREATE TABLE IF NOT EXISTS `groups` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) CHARACTER SET latin1 NOT NULL,
   `created` datetime DEFAULT NULL,
   `modified` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC AUTO_INCREMENT=4 ;
 
 --
 -- Dumping data for table `groups`
@@ -208,7 +203,6 @@ INSERT INTO `groups` (`id`, `name`, `created`, `modified`) VALUES
 -- Table structure for table `members_projects`
 --
 
-DROP TABLE IF EXISTS `members_projects`;
 CREATE TABLE IF NOT EXISTS `members_projects` (
   `id` int(16) NOT NULL AUTO_INCREMENT,
   `user_id` int(16) NOT NULL,
@@ -227,7 +221,6 @@ CREATE TABLE IF NOT EXISTS `members_projects` (
 -- Table structure for table `members_skills`
 --
 
-DROP TABLE IF EXISTS `members_skills`;
 CREATE TABLE IF NOT EXISTS `members_skills` (
   `id` int(32) NOT NULL,
   `skill_id` int(32) NOT NULL,
@@ -246,10 +239,27 @@ CREATE TABLE IF NOT EXISTS `members_skills` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `members_teams`
+--
+
+CREATE TABLE IF NOT EXISTS `members_teams` (
+  `id` int(16) unsigned NOT NULL AUTO_INCREMENT,
+  `team_id` int(16) unsigned NOT NULL,
+  `user_id` int(16) unsigned NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+--
+-- Dumping data for table `members_teams`
+--
+
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `projects`
 --
 
-DROP TABLE IF EXISTS `projects`;
 CREATE TABLE IF NOT EXISTS `projects` (
   `id` int(16) NOT NULL AUTO_INCREMENT,
   `name` varchar(150) NOT NULL,
@@ -273,7 +283,6 @@ CREATE TABLE IF NOT EXISTS `projects` (
 -- Table structure for table `skills`
 --
 
-DROP TABLE IF EXISTS `skills`;
 CREATE TABLE IF NOT EXISTS `skills` (
   `id` int(32) NOT NULL AUTO_INCREMENT,
   `project_id` int(32) NOT NULL,
@@ -293,10 +302,28 @@ CREATE TABLE IF NOT EXISTS `skills` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `teams`
+--
+
+CREATE TABLE IF NOT EXISTS `teams` (
+  `id` int(16) unsigned NOT NULL AUTO_INCREMENT,
+  `project_id` int(16) unsigned NOT NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+--
+-- Dumping data for table `teams`
+--
+
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `uploads`
 --
 
-DROP TABLE IF EXISTS `uploads`;
 CREATE TABLE IF NOT EXISTS `uploads` (
   `id` int(16) NOT NULL AUTO_INCREMENT,
   `project_id` int(16) NOT NULL,
@@ -318,7 +345,6 @@ CREATE TABLE IF NOT EXISTS `uploads` (
 -- Table structure for table `users`
 --
 
-DROP TABLE IF EXISTS `users`;
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `given_id` varchar(32) CHARACTER SET latin1 NOT NULL,
@@ -331,14 +357,14 @@ CREATE TABLE IF NOT EXISTS `users` (
   `modified` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `GivenID` (`given_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC AUTO_INCREMENT=8 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC AUTO_INCREMENT=14 ;
 
 --
 -- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`id`, `given_id`, `name`, `email`, `password`, `group_id`, `last_login_time`, `created`, `modified`) VALUES
-(1, '123', 'Super Admin', 'mmhan2u@gmail.com', '6c46adf5a02d03471d5173ecfa6b7db309d2b708', 1, '2011-11-18 14:25:44', '2011-10-19 20:36:26', '2011-11-18 14:25:44'),
-(5, '122', 'Member', 'mmhan2u+member@gmail.com', '6c46adf5a02d03471d5173ecfa6b7db309d2b708', 3, NULL, '2011-10-19 20:36:26', '2011-10-19 20:36:26'),
+(1, '123', 'Super Admin', 'mmhan2u@gmail.com', '6c46adf5a02d03471d5173ecfa6b7db309d2b708', 1, '2011-11-27 20:53:17', '2011-10-19 20:36:26', '2011-11-27 20:53:17'),
 (4, '333', 'Test Admin', 'mmhan2u+admin@gmail.com', '6c46adf5a02d03471d5173ecfa6b7db309d2b708', 2, NULL, '2011-10-19 20:36:26', '2011-11-26 20:25:23'),
+(5, '122', 'Member', 'mmhan2u+member@gmail.com', '6c46adf5a02d03471d5173ecfa6b7db309d2b708', 3, NULL, '2011-10-19 20:36:26', '2011-10-19 20:36:26'),
 (7, '1234', 'Mr. Soong', 'soongwengchew@gmail.com', '62f37d34f4d62e6776066d30b7694a14a640b47c', 1, NULL, '2011-10-28 13:12:36', '2011-11-05 08:54:33');

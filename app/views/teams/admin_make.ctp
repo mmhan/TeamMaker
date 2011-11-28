@@ -1,1 +1,132 @@
+<?php 
+$skillsOptions = Set::combine($skills, "{n}.id", "{n}.name");
+?>
+
+<script type="text/javascript">
+var TeamMaker = TeamMaker || {};
+TeamMaker.Rules = {
+	view :{
+		container: "#rules",
+		ruleTmpl: "#ruleTmpl",
+		tmpl :<?php echo $this->Javascript->object(array(
+			SKILL_NUMERIC_RANGE => '#numericRangeTemplate',
+			SKILL_TEXT_RANGE => '#textRangeTemplate',
+			SKILL_TEXT => '#textTemplate'
+		)); ?>,
+		numFilterValTmpl: "#numFilterValueTemplate",
+		textRangeFilterValTmpl: "#textRangeFilterValueTemplate",
+		constants: {
+			NUMERIC_RANGE:<?php echo SKILL_NUMERIC_RANGE ?>,
+			TEXT_RANGE:<?php echo SKILL_TEXT_RANGE ?>,
+			TEXT: <?php echo SKILL_TEXT ?>
+		}
+	},
+	data: {
+		members: <?php echo $this->Javascript->object($members) ?>,
+		skills: <?php echo $this->Javascript->object($skills) ?>
+	}
+}; 
+</script>
+
+<div class="hidden" id="rulesTmpl">
+	<div id="ruleTmpl">
+		<div class="rule clearfix" data-index="${i}">
+			<div class="c25 skillSelect">
+				<?php echo $this->Form->input(
+					'Project.rule.${i}.type', 
+					array(
+						'options' => $skillsOptions, 
+						'label' => 'Skill',
+						'empty' => "-- Select One --"
+					)
+				); ?>
+			</div>
+			<div class="c75 ruleConditions"></div>
+			<div class="clearfix">
+				
+			</div>
+		</div>
+	</div>
+	<div id="numericRangeTemplate">
+		<div class="c25 filterType numFilterType">
+			<?php echo $this->Form->input('Project.rule.${i}.filter_type', array(
+				'options' => array(
+					"between" => "Between",
+					"gt" => "Greater Than",
+					"lt" => "Less Than",
+					"gtet" => "Greater Than or Equal To",
+					"ltet" => "Less Than or Equal To",
+					"is" => "Is"
+				),
+				'empty' => "-- Select One --"
+			))?>
+		</div>
+		<div class="c75 filterValue numRangeFilterValue">
+		</div>
+	</div>
+	<div id="textRangeTemplate">
+		<div class="c25 filterType textRangeFilterType">
+			<?php echo $this->Form->input('Project.rule.${i}.filter_type', array(
+				'options' => array(
+					"between" => "Between",
+					"gt" => "Greater Than",
+					"lt" => "Less Than",
+					"gtet" => "Greater Than or Equal To",
+					"ltet" => "Less Than or Equal To",
+					"is" => "Is"
+				),
+				'empty' => "-- Select One --"
+			))?>
+		</div>
+		<div class="c75 filterValue textRangeFilterValue">
+		</div>
+	</div>
+	<div id="textTemplate">
+		<div class="c25 filterType textFilterType">
+			<label>Filter Type</label>
+			<label>RegExp</label>
+		</div>
+		<div class="c75 filterValue textFilterValue">
+			<?php echo $this->Form->input('Project.rule.${i}.filter_value.0', array(
+				'label' => "Pattern ",
+				'div' => 'text input pattern'
+			)) ?>
+			<?php echo $this->Form->input('Project.rule.${i}.filter_value.1', array(
+				'label' => "Modifier ",
+			)) ?>
+			<?php echo $this->Html->link("?", "http://www.w3schools.com/jsref/jsref_obj_regexp.asp", array('target' => "_blank")); ?>
+		</div>
+	</div>
+	<div id="numFilterValueTemplate">
+		<div class="input text">
+			<label for="ProjectRuleFilterValue_${i}_${j}">${label}</label>
+			<input type="text" name="data[Project][rule][${i}][filter_value][${j}]" id="ProjectRuleFilterValue_${i}_${j}" />
+		</div>
+	</div>
+	<div id="textRangeFilterValueTemplate">
+		<div class="input select">
+			<label for="ProjectRuleFilterValue_${i}_${j}">${label}</label>
+			<select name="data[Project][rule][${i}][filter_value][${j}]" id="ProjectRuleFilterValue_${i}_${j}"></select>
+		</div>
+	</div>
+</div>
+<?php echo $this->Javascript->link("make_team", false); ?>
 <h1>Create/Edit Teams</h1>
+
+<?php echo $this->Form->input("Project.rule.num", 
+	array(
+		'type' => 'text', 
+		'label' => "Each team should have ",
+		'after' => " number of members.",
+		'div' => 'input text numberOfMembers'
+	)); ?>
+	
+<div id="rules">
+	
+</div>
+<div class="actions">
+	<ul>
+		<li><?php echo $this->Html->link("Add More", "#", array('id' => "addMoreRule")) ?></li>
+		<li><?php echo $this->Html->link("Generate Team", "#", array('id' => "generateTeam")) ?></li>
+	</ul>
+</div>

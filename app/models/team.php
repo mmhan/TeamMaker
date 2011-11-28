@@ -32,7 +32,7 @@ class Team extends AppModel {
 		
 		//get the ids of the skills
 		$skills = $this->Project->Skill->find('all', array(
-			'fields' => array('Skill.id', 'Skill.name', 'Skill.range'),
+			'fields' => array('Skill.id', 'Skill.name', 'Skill.range','Skill.type'),
 			'conditions' => array(
 				'project_id' => $id
 			),

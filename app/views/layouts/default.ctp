@@ -26,7 +26,7 @@ $this->Html->script(array('plugins','script'),array('inline'=>false));
          
   <!-- Moving jquery to the top, cuz some jquery plugins don't play with with it at the bottom of the page -->
   <!-- Grab Google CDN's jQuery. fall back to local if necessary -->
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
   <!-- JQuery UI -->
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js"></script>
   <script>!window.jQuery && document.write(unescape('%3Cscript src="<?php echo Router::url('/js/jquery-1.4.4.min.js'); ?>"%3E%3C/script%3E'))</script>

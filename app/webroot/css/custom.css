@@ -141,3 +141,36 @@ div.launch{
 	margin-top: 50px;
 }
 
+/* admin/teams/make */
+#rules{
+	margin-top: 20px;
+}
+.rule{
+	padding: 10px 0;
+	border-bottom: 1px solid #ccc;
+}
+
+.filterValue{
+	padding-top:1em;
+}
+.filterValue div{
+	display:inline;
+}
+.numberOfMembers label, .filterValue label{
+	display:inline;
+}
+.numberOfMembers input, .filterValue input{
+	min-width: 0; 
+	width: 50px; height: 20px; padding: 2px;
+	display:inline;
+}
+.textRangeFilterValue select{
+	margin-top:6px;
+}
+.textRangeFilterValue label{
+	vertical-align:text-top;
+}
+.textFilterValue .pattern input{
+	width: 300px;
+}
+

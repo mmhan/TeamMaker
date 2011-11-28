@@ -3,14 +3,15 @@ class TeamsController extends AppController {
 
 	var $name = 'Teams';
 
-	function make($project_id){
+	function admin_make($project_id){
+		
+		
 		
 		if (!empty($this->data)) {
 			
 		}
 		
-		
-		$this->set(compact('projects', 'members'));
+		$this->set($this->Team->findMakeData($project_id));
 	}
 }
 ?>

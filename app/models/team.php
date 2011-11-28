@@ -6,10 +6,7 @@ class Team extends AppModel {
 	var $belongsTo = array(
 		'Project' => array(
 			'className' => 'Project',
-			'foreignKey' => 'project_id',
-			'conditions' => '',
-			'fields' => '',
-			'order' => ''
+			'foreignKey' => 'project_id'
 		)
 	);
 
@@ -19,17 +16,62 @@ class Team extends AppModel {
 			'joinTable' => 'members_teams',
 			'foreignKey' => 'team_id',
 			'associationForeignKey' => 'member_id',
-			'unique' => true,
-			'conditions' => '',
-			'fields' => '',
-			'order' => '',
-			'limit' => '',
-			'offset' => '',
-			'finderQuery' => '',
-			'deleteQuery' => '',
-			'insertQuery' => ''
+			'unique' => true
 		)
 	);
-
+	
+	
+	/**
+	 * This function will find all the required data for make()
+	 *
+	 * @return 	mixed
+	 * @author  @mmhan  
+	 */
+	function findMakeData($id) {
+		$data = array();
+		
+		//get the ids of the skills
+		$skills = $this->Project->Skill->find('all', array(
+			'fields' => array('Skill.id', 'Skill.name', 'Skill.range'),
+			'conditions' => array(
+				'project_id' => $id
+			),
+			'recursive' => -1
+		));
+		$data['skills'] = Set::combine($skills, "{n}.Skill.id", "{n}.Skill");
+		$skillIds = Set::extract($skills, "{n}.Skill.id");
+		
+		//prep the model so that only the skills that belongs to this project gets retrieved.
+		$this->Member->unbindModel(array("hasMany" => array("MembersSkill")));
+		$this->Member->bindModel(array(
+			'hasMany' => array(
+				"MembersSkill" => array(
+					'className' => 'MembersSkill',
+					'foreign_key' => 'user_id',
+					'dependent' => true,
+					'fields' => array('MembersSkill.skill_id','MembersSkill.skill_value'),
+					"conditions" => array("MembersSkill.skill_id" => $skillIds)
+				)
+			)
+		));
+		
+		//retrieve members and their skills
+		$data['members'] = Set::combine($this->Member->find('all', array(
+			'fields' => array('Member.id', 'Member.name', 'Member.email', 'Member.given_id'),
+			'contain' => array("MembersSkill"),
+			'joins' => array(
+				array(
+				'table' => "members_projects",
+				'alias' => "MembersProject",
+				'conditions' => array(
+					'MembersProject.user_id = Member.id',
+					'MembersProject.project_id = ' . $id
+				)
+				)
+			)
+		)), "{n}.Member.id", "{n}");
+		
+		return $data;
+	}
 }
 ?>

@@ -10,7 +10,7 @@ $total = $data['total'];
 <div class="c70">
 <h2>Create Teams</h2>
 <?php if(count($remaining) == 0): ?>
-<p>You can create teams now</p>
+<p>You can create teams now.</p>
 <?php else: ?>
 <p>You have some remaining members who has not entered their data yet. 
 	Consider 
@@ -19,7 +19,7 @@ $total = $data['total'];
 <?php endif; ?>
 <div class="actions autoWidth">
 	<ul>
-		<li><?php echo $this->Html->link("Create Teams Now", array('controller' => 'teams', "action" => "create", $projectId)) ?></li>
+		<li><?php echo $this->Html->link("Create Teams", array('controller' => 'teams', "action" => "make", $projectId)) ?></li>
 	</ul>
 </div>
 </div>

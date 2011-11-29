@@ -46,6 +46,7 @@ TeamMaker.Rules = {
 				<ul class="rearrangeBtns ui-widget ui-helper-clearfix">
 					<li class="ui-state-default ui-corner-all"><span class="ui-icon ui-icon-triangle-1-s moveDown" title="Move Down"></span></li>
 					<li class="ui-state-default ui-corner-all"><span class="ui-icon ui-icon-triangle-1-n moveUp" title="Move Up"></span></li>
+					<li class="ui-state-default ui-corner-all"><span class="ui-icon ui-icon-trash remove" title="Remove"></span></li>
 				</ul>
 			</div>
 		</div>

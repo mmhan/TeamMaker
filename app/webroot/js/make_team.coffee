@@ -280,6 +280,7 @@ TeamMaker.MakeTeam ?= (($)->
         ###
         getRule: (index) ->
           retVals = {}
+          hasErr = false
           for el, i in @$container.find("div.rule[data-index='" + index + "'] :input")
             $me = $(el)
             name = $me.attr('name')
@@ -287,9 +288,24 @@ TeamMaker.MakeTeam ?= (($)->
             if val
               $me.removeClass('error')
             else
+              hasErr = true
               $me.addClass('error')
+              
+          return if hasErr then false else retVals
+        
+        ###
+          Get all rules in an array.
+        ###  
+        getAllRules: () ->
+          retVals = {}
+          hasErr = false
+          for i in [0..@$container.find('div.rule').length-1]
+            rule = @getRule(i)
+            hasErr = true if !rule 
+            retVals[i] = if rule then rule else false
             
-          retVals
+          return if hasErr then false else retVals
+        
         ###
           To move down the rule
         ###
@@ -305,9 +321,44 @@ TeamMaker.MakeTeam ?= (($)->
           e.preventDefault()
           $rule = $(e.target).closest('div.rule')
           $rule.prev().before($rule)
-          
-          
-  
+        
+    ###
+      For all the data-related operations
+    ###  
+    model:
+      init: ->
+        $("#generateTeam").click($.proxy(@generateTeam, this))
+        
+      rules: {} 
+      ###
+        To generate a team
+      ###
+      generateTeam: (e) ->
+        e.preventDefault()
+        #get all rules
+        rules = TeamMaker.MakeTeam.views.Rules.getAllRules()
+        return alert("Please fix the errors highlighted.") if !rules
+        
+        #build rules
+        for rule, i in rules
+          @rules[i]['rule'] = @buildRules(rule)
+        
+        #filter people into sets
+        
+      ###
+        Build a function using the given data.
+      ###
+      buildRule: (rule) ->
+        consts = TeamMaker.Rules.view.constants
+        dataType = TeamMaker.Rules.data.skills[rule.type]
+        switch(dataType)
+          when consts.NUMERIC_RANGE
+            console.log('num range')
+          when consts.TEXT_RANGE
+            console.log("text range")
+          when consts.TEXT
+            console.log('text')
+      
   #returns obj
   obj
   

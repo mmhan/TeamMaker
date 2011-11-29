@@ -267,8 +267,9 @@
                       Get rule
             */
             getRule: function(index) {
-              var $me, el, i, name, retVals, val, _len, _ref2;
+              var $me, el, hasErr, i, name, retVals, val, _len, _ref2;
               retVals = {};
+              hasErr = false;
               _ref2 = this.$container.find("div.rule[data-index='" + index + "'] :input");
               for (i = 0, _len = _ref2.length; i < _len; i++) {
                 el = _ref2[i];
@@ -278,10 +279,33 @@
                 if (val) {
                   $me.removeClass('error');
                 } else {
+                  hasErr = true;
                   $me.addClass('error');
                 }
               }
-              return retVals;
+              if (hasErr) {
+                return false;
+              } else {
+                return retVals;
+              }
+            },
+            /*
+                      Get all rules in an array.
+            */
+            getAllRules: function() {
+              var hasErr, i, retVals, rule, _ref2;
+              retVals = {};
+              hasErr = false;
+              for (i = 0, _ref2 = this.$container.find('div.rule').length - 1; 0 <= _ref2 ? i <= _ref2 : i >= _ref2; 0 <= _ref2 ? i++ : i--) {
+                rule = this.getRule(i);
+                if (!rule) hasErr = true;
+                retVals[i] = rule ? rule : false;
+              }
+              if (hasErr) {
+                return false;
+              } else {
+                return retVals;
+              }
             },
             /*
                       To move down the rule
@@ -300,6 +324,46 @@
               e.preventDefault();
               $rule = $(e.target).closest('div.rule');
               return $rule.prev().before($rule);
+            }
+          }
+        },
+        /*
+              For all the data-related operations
+        */
+        model: {
+          init: function() {
+            return $("#generateTeam").click($.proxy(this.generateTeam, this));
+          },
+          rules: {},
+          /*
+                  To generate a team
+          */
+          generateTeam: function(e) {
+            var i, rule, rules, _len, _results;
+            e.preventDefault();
+            rules = TeamMaker.MakeTeam.views.Rules.getAllRules();
+            if (!rules) return alert("Please fix the errors highlighted.");
+            _results = [];
+            for (i = 0, _len = rules.length; i < _len; i++) {
+              rule = rules[i];
+              _results.push(this.rules[i]['rule'] = this.buildRules(rule));
+            }
+            return _results;
+          },
+          /*
+                  Build a function using the given data.
+          */
+          buildRule: function(rule) {
+            var consts, dataType;
+            consts = TeamMaker.Rules.view.constants;
+            dataType = TeamMaker.Rules.data.skills[rule.type];
+            switch (dataType) {
+              case consts.NUMERIC_RANGE:
+                return console.log('num range');
+              case consts.TEXT_RANGE:
+                return console.log("text range");
+              case consts.TEXT:
+                return console.log('text');
             }
           }
         }

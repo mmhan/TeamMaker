@@ -25,7 +25,30 @@ TeamMaker.MakeTeam ?= (($)->
           
           @$container.delegate(".numFilterType select", "change", $.proxy(@onNumFilterTypeChange, this))
           @$container.delegate(".textRangeFilterType select", "change", $.proxy(@onTextRangeFilterTypeChange, this))
+          @$container.delegate(".textFilterType select", "change", $.proxy(@onTextFilterTypeChange, this))
           
+          #hover for the up-down buttons
+          @$container
+            .delegate(
+              ".rearrangeBtns li", 
+              "mouseenter",
+              (e)-> 
+                $(this).addClass("ui-state-hover")
+                e.preventDefault();
+                e.stopPropagation();
+            )
+            .delegate(
+              ".rearrangeBtns li", 
+              "mouseleave",
+              (e)-> 
+                $(this).removeClass("ui-state-hover")
+                e.preventDefault();
+                e.stopPropagation();
+            );
+          
+          #add-more button
+          $("#addMoreRule").click($.proxy(@addNew, this))
+            
           @createRules()
           
         ###
@@ -41,8 +64,8 @@ TeamMaker.MakeTeam ?= (($)->
         ###
           add new row
         ###
-        addNew: ->
-          
+        addNew: (e)->
+          e.preventDefault() if e?
           #first get the string
           tmpl = $(opts.ruleTmpl).html()
           
@@ -118,7 +141,7 @@ TeamMaker.MakeTeam ?= (($)->
           will create number filter value input fields
         ###
         getNumFilterValueFields: (index, fields, options) ->
-          tmpl = $(opts.numFilterValTmpl).html()
+          tmpl = $(opts.filterValTmpl).html()
           
           retArr = []
           
@@ -153,13 +176,13 @@ TeamMaker.MakeTeam ?= (($)->
           ## get the select tag
           switch val
             when 'between' 
-              html = @getTextFilterValueFields(index, [
+              html = @getTextRangeFilterValueFields(index, [
                 {label: "Min"},
                 {label: "Max"}
               ])
               
             when 'gt', 'lt', 'gtet', 'ltet', 'is' 
-              html = @getTextFilterValueFields(index, [
+              html = @getTextRangeFilterValueFields(index, [
                 {label: "Value"}
               ])
           
@@ -172,11 +195,11 @@ TeamMaker.MakeTeam ?= (($)->
             html[i] = $tmp.html()
             
           $container.html(html.join("\n"))
-          
+        
         ###
           Will create dropdown menus for filtering
         ###
-        getTextFilterValueFields: (index, fields) ->
+        getTextRangeFilterValueFields: (index, fields, after) ->
           tmpl = $(opts.textRangeFilterValTmpl).html()
           
           retArr = []
@@ -188,7 +211,83 @@ TeamMaker.MakeTeam ?= (($)->
               
             retArr.push(modTmpl)
           
+          retArr.push(after)
+          
           return retArr
+        
+        ###
+          To respond to drop-down menu changes for text filter type
+        ###
+        onTextFilterTypeChange: (e) ->
+          e.preventDefault()
+          
+          $me = $(e.target);
+          val = $me.val() if $me.val()
+          return val if not val
+          
+          index = $me.closest('div.rule').attr('data-index')
+          
+          $container = $me.closest('div.rule').find('.filterValue');
+          
+          html = ''
+          
+          ## get all the options as array to pass to getTextFilterValueFields
+          options = TeamMaker.Rules.data.skills[$me.closest('div.rule').find(".skillSelect select").val()].range.split("|")
+          
+          ## get the select tag
+          switch val
+            when 'is', '!is', 'contains', '!contains'
+              html = @getTextFilterValueFields(index, [
+                {label: "Term"}
+              ], "Case-insensitive")
+              
+            when 'matches' 
+              html = @getTextFilterValueFields(index, [
+                {label: "Pattern"},
+                {label: "Modifier"}
+              ], "<a href='http://www.w3schools.com/jsref/jsref_obj_regexp.asp' target='_blank'>?</a>")
+          
+          html[0] = $("<div>")
+            .html(html[0])
+            .children().first().addClass("term")
+            .parent().html()
+          
+          $container.html(html.join("\n"))
+        
+        ###
+          Will create dropdown menus for filtering
+        ###
+        getTextFilterValueFields: (index, fields, after) ->
+          tmpl = $(opts.filterValTmpl).html()
+          
+          retArr = []
+          
+          for field, count in fields
+            modTmpl = tmpl
+            for key, val of {i: index, j: count, label: field.label}
+              modTmpl = modTmpl.replace(new RegExp('\\${'+ key + '}', 'g'), val)
+              
+            retArr.push(modTmpl)
+          
+          retArr.push(after)
+          
+          return retArr
+          
+        ###
+          Get rule
+        ###
+        getRule: (index) ->
+          retVals = {}
+          for el, i in @$container.find("div.rule[data-index='" + index + "'] :input")
+            $me = $(el)
+            retVals[$me.attr('name')] = val = $me.val() 
+            if val
+              $me.removeClass('error')
+            else
+              $me.addClass('error')
+            
+          retVals
+            
   
   #returns obj
   obj

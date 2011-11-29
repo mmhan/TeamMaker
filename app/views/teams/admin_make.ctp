@@ -13,7 +13,7 @@ TeamMaker.Rules = {
 			SKILL_TEXT_RANGE => '#textRangeTemplate',
 			SKILL_TEXT => '#textTemplate'
 		)); ?>,
-		numFilterValTmpl: "#numFilterValueTemplate",
+		filterValTmpl: "#filterValueTemplate",
 		textRangeFilterValTmpl: "#textRangeFilterValueTemplate",
 		constants: {
 			NUMERIC_RANGE:<?php echo SKILL_NUMERIC_RANGE ?>,
@@ -31,7 +31,7 @@ TeamMaker.Rules = {
 <div class="hidden" id="rulesTmpl">
 	<div id="ruleTmpl">
 		<div class="rule clearfix" data-index="${i}">
-			<div class="c25 skillSelect">
+			<div class="c20 skillSelect">
 				<?php echo $this->Form->input(
 					'Project.rule.${i}.type', 
 					array(
@@ -41,9 +41,12 @@ TeamMaker.Rules = {
 					)
 				); ?>
 			</div>
-			<div class="c75 ruleConditions"></div>
-			<div class="clearfix">
-				
+			<div class="c70 ruleConditions">&nbsp;</div>
+			<div class="c10">
+				<ul class="rearrangeBtns ui-widget ui-helper-clearfix">
+					<li class="ui-state-default ui-corner-all"><span class="ui-icon ui-icon-triangle-1-s" class="moveDown" title="Move Down"></span></li>
+					<li class="ui-state-default ui-corner-all"><span class="ui-icon ui-icon-triangle-1-n" class="moveUp" title="Move Up"></span></li>
+				</ul>
 			</div>
 		</div>
 	</div>
@@ -83,21 +86,21 @@ TeamMaker.Rules = {
 	</div>
 	<div id="textTemplate">
 		<div class="c25 filterType textFilterType">
-			<label>Filter Type</label>
-			<label>RegExp</label>
+			<?php echo $this->Form->input('Project.rule.${i}.filter_type', array(
+				'options' => array(
+					'is' => 'Is',
+					'!is' => "Is not",
+					'contains' => "Contains",
+					"!contains" => "Does not Contain",
+					"matches" => "Matches RegExp"
+				),
+				'empty' => ' -- Select One -- '
+			)) ?>
 		</div>
 		<div class="c75 filterValue textFilterValue">
-			<?php echo $this->Form->input('Project.rule.${i}.filter_value.0', array(
-				'label' => "Pattern ",
-				'div' => 'text input pattern'
-			)) ?>
-			<?php echo $this->Form->input('Project.rule.${i}.filter_value.1', array(
-				'label' => "Modifier ",
-			)) ?>
-			<?php echo $this->Html->link("?", "http://www.w3schools.com/jsref/jsref_obj_regexp.asp", array('target' => "_blank")); ?>
 		</div>
 	</div>
-	<div id="numFilterValueTemplate">
+	<div id="filterValueTemplate">
 		<div class="input text">
 			<label for="ProjectRuleFilterValue_${i}_${j}">${label}</label>
 			<input type="text" name="data[Project][rule][${i}][filter_value][${j}]" id="ProjectRuleFilterValue_${i}_${j}" />

@@ -149,7 +149,9 @@ div.launch{
 	padding: 10px 0;
 	border-bottom: 1px solid #ccc;
 }
-
+.skillSelect select, .filterType select{
+	max-width:100%;
+}
 .filterValue{
 	padding-top:1em;
 }
@@ -170,7 +172,13 @@ div.launch{
 .textRangeFilterValue label{
 	vertical-align:text-top;
 }
-.textFilterValue .pattern input{
+.textFilterValue .term input{
 	width: 300px;
+}
+.rearrangeBtns{
+	list-style:none;
+}
+.rearrangeBtns li{
+	margin:2px; padding:2px 0; cursor: pointer; float:left; list-style:none;
 }
 

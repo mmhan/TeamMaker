@@ -29,7 +29,7 @@
                 $(this).removeClass("ui-state-hover");
                 e.preventDefault();
                 return e.stopPropagation();
-              });
+              }).delegate(".moveDown", 'click', $.proxy(this.moveDown, this)).delegate(".moveUp", "click", $.proxy(this.moveUp, this));
               $("#addMoreRule").click($.proxy(this.addNew, this));
               return this.createRules();
             },
@@ -267,13 +267,14 @@
                       Get rule
             */
             getRule: function(index) {
-              var $me, el, i, retVals, val, _len, _ref2;
+              var $me, el, i, name, retVals, val, _len, _ref2;
               retVals = {};
               _ref2 = this.$container.find("div.rule[data-index='" + index + "'] :input");
               for (i = 0, _len = _ref2.length; i < _len; i++) {
                 el = _ref2[i];
                 $me = $(el);
-                retVals[$me.attr('name')] = val = $me.val();
+                name = $me.attr('name');
+                retVals[name.slice(name.lastIndexOf("[") + 1, name.lastIndexOf("]"))] = val = $me.val();
                 if (val) {
                   $me.removeClass('error');
                 } else {
@@ -281,6 +282,24 @@
                 }
               }
               return retVals;
+            },
+            /*
+                      To move down the rule
+            */
+            moveDown: function(e) {
+              var $rule;
+              e.preventDefault();
+              $rule = $(e.target).closest('div.rule');
+              return $rule.next().after($rule);
+            },
+            /*
+                      To move up the rule
+            */
+            moveUp: function(e) {
+              var $rule;
+              e.preventDefault();
+              $rule = $(e.target).closest('div.rule');
+              return $rule.prev().before($rule);
             }
           }
         }

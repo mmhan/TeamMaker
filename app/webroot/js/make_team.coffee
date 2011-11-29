@@ -44,7 +44,9 @@ TeamMaker.MakeTeam ?= (($)->
                 $(this).removeClass("ui-state-hover")
                 e.preventDefault();
                 e.stopPropagation();
-            );
+            )
+            .delegate(".moveDown", 'click', $.proxy(@moveDown, this))
+            .delegate(".moveUp", "click", $.proxy(@moveUp, this))
           
           #add-more button
           $("#addMoreRule").click($.proxy(@addNew, this))
@@ -280,14 +282,31 @@ TeamMaker.MakeTeam ?= (($)->
           retVals = {}
           for el, i in @$container.find("div.rule[data-index='" + index + "'] :input")
             $me = $(el)
-            retVals[$me.attr('name')] = val = $me.val() 
+            name = $me.attr('name')
+            retVals[name.slice(name.lastIndexOf("[") + 1, name.lastIndexOf("]"))] = val = $me.val() 
             if val
               $me.removeClass('error')
             else
               $me.addClass('error')
             
           retVals
-            
+        ###
+          To move down the rule
+        ###
+        moveDown: (e) ->
+          e.preventDefault()
+          $rule = $(e.target).closest('div.rule')
+          $rule.next().after($rule)
+          
+        ###
+          To move up the rule
+        ###
+        moveUp: (e) ->
+          e.preventDefault()
+          $rule = $(e.target).closest('div.rule')
+          $rule.prev().before($rule)
+          
+          
   
   #returns obj
   obj

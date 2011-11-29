@@ -44,8 +44,8 @@ TeamMaker.Rules = {
 			<div class="c70 ruleConditions">&nbsp;</div>
 			<div class="c10">
 				<ul class="rearrangeBtns ui-widget ui-helper-clearfix">
-					<li class="ui-state-default ui-corner-all"><span class="ui-icon ui-icon-triangle-1-s" class="moveDown" title="Move Down"></span></li>
-					<li class="ui-state-default ui-corner-all"><span class="ui-icon ui-icon-triangle-1-n" class="moveUp" title="Move Up"></span></li>
+					<li class="ui-state-default ui-corner-all"><span class="ui-icon ui-icon-triangle-1-s moveDown" title="Move Down"></span></li>
+					<li class="ui-state-default ui-corner-all"><span class="ui-icon ui-icon-triangle-1-n moveUp" title="Move Up"></span></li>
 				</ul>
 			</div>
 		</div>

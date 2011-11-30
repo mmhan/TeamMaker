@@ -175,10 +175,21 @@ div.launch{
 .textFilterValue .term input{
 	width: 300px;
 }
-.rearrangeBtns{
+.rearrangeBtns, .actionsBtns{
 	list-style:none;
 }
-.rearrangeBtns li{
+.rearrangeBtns li, .actionsBtns li{
 	margin:2px; padding:2px 0; cursor: pointer; float:left; list-style:none;
 }
-
+.actionsBtns{
+	margin-top: 2em;
+}
+.actionsBtns a{
+	padding: 5px 10px 5px 20px;
+	text-decoration: none;
+	color:#555;
+}
+.actionsBtns a span.ui-icon{
+	float:left;
+	left: 1.5em; top:50%; position:relative; 
+}

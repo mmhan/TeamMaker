@@ -7,7 +7,8 @@
       opts = TeamMaker.Rules.view;
       obj = {
         init: function() {
-          return this.views.Rules.init();
+          this.views.Rules.init();
+          return this.model.init();
         },
         views: {
           Rules: {
@@ -29,8 +30,12 @@
                 $(this).removeClass("ui-state-hover");
                 e.preventDefault();
                 return e.stopPropagation();
-              }).delegate(".moveDown", 'click', $.proxy(this.moveDown, this)).delegate(".moveUp", "click", $.proxy(this.moveUp, this));
-              $("#addMoreRule").click($.proxy(this.addNew, this));
+              }).delegate(".moveDown", 'click', $.proxy(this.moveDown, this)).delegate(".moveUp", "click", $.proxy(this.moveUp, this)).delegate(".remove", 'click', $.proxy(this.remove, this));
+              $("#addMoreRule").click($.proxy(this.addNew, this)).parent().parent().find('a').hover(function(e) {
+                return $(this).addClass('ui-state-hover');
+              }, function(e) {
+                return $(this).removeClass('ui-state-hover');
+              });
               return this.createRules();
             },
             /*
@@ -324,46 +329,154 @@
               e.preventDefault();
               $rule = $(e.target).closest('div.rule');
               return $rule.prev().before($rule);
+            },
+            /*
+                      To remove a rule
+            */
+            remove: function(e) {
+              e.preventDefault();
+              return $(e.target).closest('div.rule').remove();
+            },
+            /*
+                      To return number of teams
+            */
+            getNumForEachTeams: function() {
+              var $el, val;
+              $el = $(".numberOfMembers input").first();
+              val = $el.val();
+              if (val) {
+                $el.removeClass('error');
+                return val;
+              } else {
+                $el.addClass('error');
+                return false;
+              }
             }
           }
         },
-        /*
-              For all the data-related operations
+        /*===================================================================
+          For all the data-related operations
         */
         model: {
-          init: function() {
-            return $("#generateTeam").click($.proxy(this.generateTeam, this));
-          },
           rules: {},
+          members: false,
+          init: function() {
+            $("#generateTeam").click($.proxy(this.generateTeam, this));
+            return this.members = TeamMaker.Rules.data.members;
+          },
           /*
                   To generate a team
           */
           generateTeam: function(e) {
-            var i, rule, rules, _len, _results;
+            var i, member, membersLeft, numOfTeams, rule, rules, _ref2, _results;
             e.preventDefault();
             rules = TeamMaker.MakeTeam.views.Rules.getAllRules();
             if (!rules) return alert("Please fix the errors highlighted.");
-            _results = [];
-            for (i = 0, _len = rules.length; i < _len; i++) {
+            numOfTeams = TeamMaker.MakeTeam.views.Rules.getNumForEachTeams();
+            if (!numOfTeams) return alert("Please provide number of teams.");
+            for (i in rules) {
               rule = rules[i];
-              _results.push(this.rules[i]['rule'] = this.buildRules(rule));
+              this.rules[i] = {
+                rule: this.buildRule(rule)
+              };
+            }
+            _ref2 = this.rules;
+            _results = [];
+            for (i in _ref2) {
+              rule = _ref2[i];
+              membersLeft = false;
+              _results.push((function() {
+                var _results2;
+                _results2 = [];
+                for (member in this.members) {
+                  if ((member.allocated != null) && !member.allocated) {
+                    _results2.push(membersLeft = true);
+                  } else {
+                    _results2.push(void 0);
+                  }
+                }
+                return _results2;
+              }).call(this));
             }
             return _results;
           },
           /*
-                  Build a function using the given data.
+                  Build a function that either return true or false for a value given, 
+                  using the given data.
           */
           buildRule: function(rule) {
-            var consts, dataType;
+            var arg1, arg2, consts, dataType;
             consts = TeamMaker.Rules.view.constants;
-            dataType = TeamMaker.Rules.data.skills[rule.type];
+            dataType = parseInt(TeamMaker.Rules.data.skills[rule.type].type);
             switch (dataType) {
               case consts.NUMERIC_RANGE:
-                return console.log('num range');
               case consts.TEXT_RANGE:
-                return console.log("text range");
+                arg1 = parseInt(rule[0]);
+                if (rule[1] != null) arg2 = parseInt(rule[1]);
+                switch (rule.filter_type) {
+                  case "gt":
+                    return function(v) {
+                      return v > arg1;
+                    };
+                  case "gtet":
+                    return function(v) {
+                      return v >= arg1;
+                    };
+                  case "lt":
+                    return function(v) {
+                      return v < arg1;
+                    };
+                  case "ltet":
+                    return function(v) {
+                      return v <= arg1;
+                    };
+                  case "is":
+                    return function(v) {
+                      return v === arg1;
+                    };
+                  case "between":
+                    return function(v) {
+                      return (arg1 <= v && v <= arg2);
+                    };
+                }
+                break;
               case consts.TEXT:
-                return console.log('text');
+                arg1 = rule[0];
+                if (rule[1] != null) arg2 = rule[1];
+                switch (rule.filter_type) {
+                  case "is":
+                    return function(v) {
+                      return v.lower() === rule[0].lower();
+                    };
+                  case "!is":
+                    return function(v) {
+                      return v.lower() !== rule[0].lower();
+                    };
+                  case "contains":
+                    return function(v) {
+                      if (v.match(new RegExp(arg1, 'gi'))) {
+                        return true;
+                      } else {
+                        return false;
+                      }
+                    };
+                  case "!contains":
+                    return function(v) {
+                      if (v.match(new RegExp(arg1, 'gi'))) {
+                        return false;
+                      } else {
+                        return true;
+                      }
+                    };
+                  case "matches":
+                    return function(v) {
+                      if (v.match(new RegExp(arg1, arg2))) {
+                        return true;
+                      } else {
+                        return false;
+                      }
+                    };
+                }
             }
           }
         }

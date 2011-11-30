@@ -6,6 +6,7 @@ TeamMaker.MakeTeam ?= (($)->
     
     init: ->
       @views.Rules.init()
+      @model.init()
     
     views: 
       #for rules
@@ -47,9 +48,17 @@ TeamMaker.MakeTeam ?= (($)->
             )
             .delegate(".moveDown", 'click', $.proxy(@moveDown, this))
             .delegate(".moveUp", "click", $.proxy(@moveUp, this))
+            .delegate(".remove", 'click', $.proxy(@remove, this))
           
           #add-more button
-          $("#addMoreRule").click($.proxy(@addNew, this))
+          $("#addMoreRule")
+            .click($.proxy(@addNew, this))
+            .parent().parent().find('a') #select both links under this tree
+            .hover(
+              (e) -> $(this).addClass('ui-state-hover')
+              (e) -> $(this).removeClass('ui-state-hover')
+            )
+          
             
           @createRules()
           
@@ -321,15 +330,41 @@ TeamMaker.MakeTeam ?= (($)->
           e.preventDefault()
           $rule = $(e.target).closest('div.rule')
           $rule.prev().before($rule)
-        
-    ###
+          
+        ###
+          To remove a rule
+        ###
+        remove: (e) ->
+          e.preventDefault()
+          $(e.target).closest('div.rule').remove()
+          
+        ###
+          To return number of teams
+        ###
+        getNumForEachTeams: ->
+          $el = $(".numberOfMembers input").first()
+          val = $el.val() 
+          if val
+            $el.removeClass('error')
+            return val
+          else
+            $el.addClass('error')
+            return false
+          
+    ###===================================================================
       For all the data-related operations
-    ###  
+      
+    ###
     model:
+      
+      rules: {}
+      members: false
+      
       init: ->
         $("#generateTeam").click($.proxy(@generateTeam, this))
         
-      rules: {} 
+        @members = TeamMaker.Rules.data.members
+       
       ###
         To generate a team
       ###
@@ -339,25 +374,68 @@ TeamMaker.MakeTeam ?= (($)->
         rules = TeamMaker.MakeTeam.views.Rules.getAllRules()
         return alert("Please fix the errors highlighted.") if !rules
         
-        #build rules
-        for rule, i in rules
-          @rules[i]['rule'] = @buildRules(rule)
+        numOfTeams = TeamMaker.MakeTeam.views.Rules.getNumForEachTeams()
+        return alert("Please provide number of teams.") if !numOfTeams
         
-        #filter people into sets
+        #build rules
+        for i, rule of rules
+          @rules[i] = {
+            rule: @buildRule(rule)
+          } 
+        
+        
+        #generate now
+        # for each rule
+        for i, rule of @rules
+          membersLeft = false
+          for member of @members
+            membersLeft = true if member.allocated? and !member.allocated
+          
+          # Suppose X[] is a set of unallocated members who satisfy currentRule
+          # X = []
+          # for member of @members
+            # if member.
+        
         
       ###
-        Build a function using the given data.
+        Build a function that either return true or false for a value given, 
+        using the given data.
       ###
       buildRule: (rule) ->
         consts = TeamMaker.Rules.view.constants
-        dataType = TeamMaker.Rules.data.skills[rule.type]
+        dataType = parseInt TeamMaker.Rules.data.skills[rule.type].type
         switch(dataType)
-          when consts.NUMERIC_RANGE
-            console.log('num range')
-          when consts.TEXT_RANGE
-            console.log("text range")
+          when consts.NUMERIC_RANGE, consts.TEXT_RANGE
+            arg1 = parseInt rule[0]
+            arg2 = parseInt rule[1] if rule[1]?
+            switch(rule.filter_type)
+              when "gt"
+                return (v) -> v >  arg1
+              when "gtet"
+                return (v) -> v >= arg1
+              when "lt"
+                return (v) -> v <  arg1
+              when "ltet"
+                return (v) -> v <= arg1
+              when "is"
+                return (v) -> v == arg1
+              when "between"
+                return (v) -> arg1 <= v <= arg2 
+          
           when consts.TEXT
-            console.log('text')
+            arg1 = rule[0]
+            arg2 = rule[1] if rule[1]?
+            switch(rule.filter_type)
+              when "is"
+                return (v) -> v.lower() == rule[0].lower()
+              when "!is"
+                return (v) -> v.lower() != rule[0].lower()
+              when "contains"
+                return (v) -> if v.match(new RegExp(arg1, 'gi')) then true else false
+              when "!contains"
+                return (v) -> if v.match(new RegExp(arg1, 'gi')) then false else true
+              when "matches"
+                return (v) -> if v.match(new RegExp(arg1, arg2)) then true else false
       
   #returns obj
   obj

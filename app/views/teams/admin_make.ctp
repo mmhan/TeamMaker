@@ -124,13 +124,29 @@ TeamMaker.Rules = {
 		'after' => " number of members.",
 		'div' => 'input text numberOfMembers'
 	)); ?>
-	
-<div id="rules">
-	
-</div>
-<div class="actions">
-	<ul>
-		<li><?php echo $this->Html->link("Add More", "#", array('id' => "addMoreRule")) ?></li>
-		<li><?php echo $this->Html->link("Generate Team", "#", array('id' => "generateTeam")) ?></li>
+<div class="rulesContainer">
+	<h3>Rules</h3>
+	<div id="rules">
+		
+	</div>
+	<ul class="actionsBtns ui-widget ui-helper-clearfix">
+		<li class="">
+			<?php echo $this->Html->link(
+				$this->Html->tag("span", "", array('class' => 'ui-icon ui-icon-plusthick')) . "Add More", 
+				"#", 
+				array(
+					'id' => "addMoreRule", 'class' => 'ui-state-default ui-corner-all',
+					'escape' => false
+				)
+			) ?></li>
+		<li class="">
+			<?php echo $this->Html->link(
+				$this->Html->tag("span", "", array('class' => 'ui-icon ui-icon-gear')) . "Generate Team", 
+				"#", 
+				array(
+					'id' => "generateTeam", 'class' => 'ui-state-default ui-corner-all',
+					'escape' => false
+				)
+			) ?></li>
 	</ul>
 </div>

@@ -3,8 +3,20 @@
 
   if ((_ref = TeamMaker.MakeTeam) == null) {
     TeamMaker.MakeTeam = (function($) {
-      var obj, opts;
+      var obj, opts, shuffle;
       opts = TeamMaker.Rules.view;
+      shuffle = function(array) {
+        var i, len, p, t;
+        len = array.length;
+        i = len;
+        while (i--) {
+          p = parseInt(Math.random() * len);
+          t = array[i];
+          array[i] = array[p];
+          array[p] = t;
+        }
+        return array;
+      };
       obj = {
         init: function() {
           this.views.Rules.init();
@@ -343,7 +355,7 @@
             getNumForEachTeams: function() {
               var $el, val;
               $el = $(".numberOfMembers input").first();
-              val = $el.val();
+              val = parseInt($el.val());
               if (val) {
                 $el.removeClass('error');
                 return val;
@@ -360,6 +372,7 @@
         model: {
           rules: {},
           members: false,
+          numForEachTeam: 0,
           init: function() {
             $("#generateTeam").click($.proxy(this.generateTeam, this));
             return this.members = TeamMaker.Rules.data.members;
@@ -368,37 +381,70 @@
                   To generate a team
           */
           generateTeam: function(e) {
-            var i, member, membersLeft, numOfTeams, rule, rules, _ref2, _results;
+            var currentlyConsideredMembers, i, id, j, member, membersLeft, rule, rules, _ref2, _ref3, _ref4, _results;
             e.preventDefault();
             rules = TeamMaker.MakeTeam.views.Rules.getAllRules();
             if (!rules) return alert("Please fix the errors highlighted.");
-            numOfTeams = TeamMaker.MakeTeam.views.Rules.getNumForEachTeams();
-            if (!numOfTeams) return alert("Please provide number of teams.");
+            this.numForEachTeam = TeamMaker.MakeTeam.views.Rules.getNumForEachTeams();
+            if (!this.numForEachTeam) {
+              return alert("Please provide number of teams.");
+            }
             for (i in rules) {
               rule = rules[i];
               this.rules[i] = {
-                rule: this.buildRule(rule)
+                rule: this.buildRule(rule),
+                skill_id: rule.type
               };
             }
             _ref2 = this.rules;
             _results = [];
             for (i in _ref2) {
               rule = _ref2[i];
-              membersLeft = false;
-              _results.push((function() {
-                var _results2;
-                _results2 = [];
-                for (member in this.members) {
-                  if ((member.allocated != null) && !member.allocated) {
-                    _results2.push(membersLeft = true);
-                  } else {
-                    _results2.push(void 0);
+              membersLeft = true;
+              _ref3 = this.members;
+              for (i in _ref3) {
+                member = _ref3[i];
+                if (member.allocated != null) {
+                  membersLeft = false;
+                  break;
+                }
+              }
+              if (membersLeft) {
+                currentlyConsideredMembers = [];
+                _ref4 = this.members;
+                for (j in _ref4) {
+                  member = _ref4[j];
+                  if (rule.rule(member.MembersSkill[rule.skill_id])) {
+                    if (member.satisfy != null) {
+                      member.satisfy.push(i);
+                      currentlyConsideredMembers.push(j);
+                    } else {
+                      member.satisfy = [i];
+                    }
                   }
                 }
-                return _results2;
-              }).call(this));
+                shuffle(currentlyConsideredMembers);
+                _results.push((function() {
+                  var _i, _len, _results2;
+                  _results2 = [];
+                  for (_i = 0, _len = currentlyConsideredMembers.length; _i < _len; _i++) {
+                    id = currentlyConsideredMembers[_i];
+                    console.log(this.getAllocationFor(this.members[id]));
+                    _results2.push('something');
+                  }
+                  return _results2;
+                }).call(this));
+              } else {
+                _results.push(void 0);
+              }
             }
             return _results;
+          },
+          /*
+                  Allocate a member to a team
+          */
+          getAllocationFor: function(member) {
+            return parseInt(Math.random() * this.numForEachTeam);
           },
           /*
                   Build a function that either return true or false for a value given, 

@@ -2,6 +2,25 @@ TeamMaker.MakeTeam ?= (($)->
   
   opts = TeamMaker.Rules.view;
   
+  shuffle = (array)->
+    # http://www.hardcode.nl/subcategory_1/article_317-array-shuffle-function
+    # var len = this.length;
+    # var i = len;
+     # while (i--) {
+      # var p = parseInt(Math.random()*len);
+      # var t = this[i];
+      # this[i] = this[p];
+      # this[p] = t;
+    # }
+    len = array.length
+    i = len
+    while i--
+      p = parseInt(Math.random() * len)
+      t = array[i]
+      array[i] = array[p]
+      array[p] = t
+    array
+  
   obj =
     
     init: ->
@@ -343,7 +362,7 @@ TeamMaker.MakeTeam ?= (($)->
         ###
         getNumForEachTeams: ->
           $el = $(".numberOfMembers input").first()
-          val = $el.val() 
+          val = parseInt($el.val()) 
           if val
             $el.removeClass('error')
             return val
@@ -360,6 +379,8 @@ TeamMaker.MakeTeam ?= (($)->
       rules: {}
       members: false
       
+      numForEachTeam: 0
+      
       init: ->
         $("#generateTeam").click($.proxy(@generateTeam, this))
         
@@ -374,27 +395,50 @@ TeamMaker.MakeTeam ?= (($)->
         rules = TeamMaker.MakeTeam.views.Rules.getAllRules()
         return alert("Please fix the errors highlighted.") if !rules
         
-        numOfTeams = TeamMaker.MakeTeam.views.Rules.getNumForEachTeams()
-        return alert("Please provide number of teams.") if !numOfTeams
+        @numForEachTeam = TeamMaker.MakeTeam.views.Rules.getNumForEachTeams()
+        return alert("Please provide number of teams.") if !@numForEachTeam
         
         #build rules
         for i, rule of rules
           @rules[i] = {
             rule: @buildRule(rule)
+            skill_id: rule.type
           } 
         
         
         #generate now
         # for each rule
         for i, rule of @rules
-          membersLeft = false
-          for member of @members
-            membersLeft = true if member.allocated? and !member.allocated
+          membersLeft = true
+          for i, member of @members
+            if member.allocated?
+              membersLeft = false 
+              break
           
-          # Suppose X[] is a set of unallocated members who satisfy currentRule
-          # X = []
-          # for member of @members
-            # if member.
+          if membersLeft
+            # Suppose X[] is a set of unallocated members who satisfy currentRule
+            # figuring out who satisfy this rule
+            currentlyConsideredMembers = []
+            for j, member of @members
+               if rule.rule(member.MembersSkill[rule.skill_id])
+                 if member.satisfy?
+                   member.satisfy.push(i)
+                   currentlyConsideredMembers.push(j)
+                 else
+                   member.satisfy = [i]
+                 
+            #shuffle x[]
+            shuffle currentlyConsideredMembers
+            
+            for id in currentlyConsideredMembers
+              console.log(@getAllocationFor @members[id])
+              'something'
+            
+      ###
+        Allocate a member to a team
+      ###      
+      getAllocationFor: (member) ->
+        return parseInt(Math.random() * @numForEachTeam)
         
         
       ###

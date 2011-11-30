@@ -70,7 +70,9 @@ class Team extends AppModel {
 				)
 			)
 		)), "{n}.Member.id", "{n}");
-		
+		foreach($data['members'] as $k => $member){
+			$data['members'][$k]['MembersSkill'] = Set::combine($member['MembersSkill'], "{n}.skill_id", "{n}.skill_value");
+		} 
 		return $data;
 	}
 }

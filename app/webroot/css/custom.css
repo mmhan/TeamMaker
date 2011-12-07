@@ -200,14 +200,14 @@ div.launch{
 #teamsContainer, .teamsContainer{margin-top: 30px;}
 
 .team{margin-top: 10px; padding-bottom: 10px; border-bottom: 1px solid #ccc;}
-.team .member{
-	float:left; width: 100px; height: 60px; margin-right:3px; padding: 5px;
+#teamsContainer .member{
+	float:left; width: 100px; height: 60px; margin:0 3px 3px 0; padding: 5px; cursor: default;
 }
 
 .team .teamNum{ font-weight: bold;}
 .team .satisfyingRules, .team .teamMembers{margin-top: 10px;}
 
-.team .teamMembers{padding: 5px 0; overflow-x:scroll;}
-.team .member{font-size: 10px;}
-.team .member .name{font-weight: bold;}
-.team .member .rules{margin-top: 5px;}
+.team .teamMembers{padding: 5px 0; overflow-x:scroll; overflow-y: hidden;}
+#teamsContainer .member{font-size: 10px;}
+#teamsContainer .member .name{font-weight: bold;}
+#teamsContainer .member .rules{margin-top: 5px;}

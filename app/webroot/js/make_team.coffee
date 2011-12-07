@@ -438,9 +438,44 @@ TeamMaker.MakeTeam ?= (($)->
                 e.stopPropagation();
             )
           
+          
         renderTeams: (teams) ->
           @$container.hide().empty()
           @renderTeam(team, i) for i, team of teams
+          
+          ###
+          Drag-n-drop
+          ###
+          @$container.find(".member").draggable({
+            revert: "invalid"
+            appendTo: "#teamsContainer"
+            helper: "clone"
+          })
+          
+          @$container.find(".teamMembers").droppable({
+            connectWithSortable: true
+            accept: (dragged) ->
+              return $(dragged).data('team') != $(this).data('team') 
+            drop: (event, ui) ->
+              $oldTeamContainer = $(ui.draggable).closest('.team')
+              
+              $(this).append(ui.draggable)
+              $dragged = $(ui.draggable)
+              oldTeam = $dragged.data('team')
+              memberId = $dragged.data('memberId')
+              newTeam = $(this).data('team')
+              
+              $dragged.data("team", newTeam)
+              
+              $newTeamContainer = $(this).closest('.team')
+              
+              #move member
+              TeamMaker.MakeTeam.model.moveMember(memberId, oldTeam, newTeam)
+              #refresh satisfying rules of the teams
+              $oldTeamContainer.find(".satisfyingRules").text(TeamMaker.MakeTeam.model.getSatisfyingRules(oldTeam).join(" | "))
+              $newTeamContainer.find(".satisfyingRules").text(TeamMaker.MakeTeam.model.getSatisfyingRules(newTeam).join(" | "))
+          })
+          
           @$container.show()
             .parent().show()
             
@@ -456,9 +491,12 @@ TeamMaker.MakeTeam ?= (($)->
                 .addClass('ui-state-default ui-corner-all member')
                 .append($("<div>").addClass("name").text(member.Member.name))
                 .append($("<div>").addClass("rules").text("Rule: " + member.satisfy.join(" | ")))
-            )
+                .data('memberId', memberId)
+                .data('team', i)
+                .attr('title', "#" + memberId)
+            ).data('team', i)
           
-          $cloned.find(".satisfyingRules").text(TeamMaker.MakeTeam.model.getSatisfyingRules(team).join(" | "))
+          $cloned.find(".satisfyingRules").text(TeamMaker.MakeTeam.model.getSatisfyingRules(i).join(" | "))
           
           @$container.append($cloned)
           
@@ -712,14 +750,26 @@ TeamMaker.MakeTeam ?= (($)->
       ###
         Find satisfying rules of a given set of array.
       ###
-      getSatisfyingRules: (team)->
+      getSatisfyingRules: (index)->
         result = []
+        team = @teams[index]
         for i, rule of @rules
           num = 0
           for j, memberId of team
             num++ if $.inArray(i, @members[memberId].satisfy) != -1
           result.push(i) if num >= rule.num
         return result
+      
+      ###
+        Move a member as a result of drag-n-drop allocation
+      ###
+      moveMember: (memberId, oldTeam, newTeam) ->
+        index = $.inArray(memberId, @teams[oldTeam])
+        @teams[oldTeam].splice(index, 1) if index != -1
+        @teams[newTeam].push(memberId)
+        TeamMaker.MakeTeam.views.Log.text("Moved member. Printing current teams now.");
+        for i, team of @teams
+          TeamMaker.MakeTeam.views.Log.text("Team #1 : " + team.join(", "))
             
   #returns obj
   obj

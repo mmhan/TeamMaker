@@ -433,6 +433,34 @@
                 team = teams[i];
                 this.renderTeam(team, i);
               }
+              /*
+                        Drag-n-drop
+              */
+              this.$container.find(".member").draggable({
+                revert: "invalid",
+                appendTo: "#teamsContainer",
+                helper: "clone"
+              });
+              this.$container.find(".teamMembers").droppable({
+                connectWithSortable: true,
+                accept: function(dragged) {
+                  return $(dragged).data('team') !== $(this).data('team');
+                },
+                drop: function(event, ui) {
+                  var $dragged, $newTeamContainer, $oldTeamContainer, memberId, newTeam, oldTeam;
+                  $oldTeamContainer = $(ui.draggable).closest('.team');
+                  $(this).append(ui.draggable);
+                  $dragged = $(ui.draggable);
+                  oldTeam = $dragged.data('team');
+                  memberId = $dragged.data('memberId');
+                  newTeam = $(this).data('team');
+                  $dragged.data("team", newTeam);
+                  $newTeamContainer = $(this).closest('.team');
+                  TeamMaker.MakeTeam.model.moveMember(memberId, oldTeam, newTeam);
+                  $oldTeamContainer.find(".satisfyingRules").text(TeamMaker.MakeTeam.model.getSatisfyingRules(oldTeam).join(" | "));
+                  return $newTeamContainer.find(".satisfyingRules").text(TeamMaker.MakeTeam.model.getSatisfyingRules(newTeam).join(" | "));
+                }
+              });
               return this.$container.show().parent().show();
             },
             renderTeam: function(team, i) {
@@ -443,9 +471,9 @@
               for (j = 0, _len = team.length; j < _len; j++) {
                 memberId = team[j];
                 member = TeamMaker.MakeTeam.model.members[memberId];
-                $membersContainer.append($("<div>").addClass('ui-state-default ui-corner-all member').append($("<div>").addClass("name").text(member.Member.name)).append($("<div>").addClass("rules").text("Rule: " + member.satisfy.join(" | "))));
+                $membersContainer.append($("<div>").addClass('ui-state-default ui-corner-all member').append($("<div>").addClass("name").text(member.Member.name)).append($("<div>").addClass("rules").text("Rule: " + member.satisfy.join(" | "))).data('memberId', memberId).data('team', i).attr('title', "#" + memberId)).data('team', i);
               }
-              $cloned.find(".satisfyingRules").text(TeamMaker.MakeTeam.model.getSatisfyingRules(team).join(" | "));
+              $cloned.find(".satisfyingRules").text(TeamMaker.MakeTeam.model.getSatisfyingRules(i).join(" | "));
               return this.$container.append($cloned);
             }
           }
@@ -750,9 +778,10 @@
           /*
                   Find satisfying rules of a given set of array.
           */
-          getSatisfyingRules: function(team) {
-            var i, j, memberId, num, result, rule, _ref2;
+          getSatisfyingRules: function(index) {
+            var i, j, memberId, num, result, rule, team, _ref2;
             result = [];
+            team = this.teams[index];
             _ref2 = this.rules;
             for (i in _ref2) {
               rule = _ref2[i];
@@ -764,6 +793,23 @@
               if (num >= rule.num) result.push(i);
             }
             return result;
+          },
+          /*
+                  Move a member as a result of drag-n-drop allocation
+          */
+          moveMember: function(memberId, oldTeam, newTeam) {
+            var i, index, team, _ref2, _results;
+            index = $.inArray(memberId, this.teams[oldTeam]);
+            if (index !== -1) this.teams[oldTeam].splice(index, 1);
+            this.teams[newTeam].push(memberId);
+            TeamMaker.MakeTeam.views.Log.text("Moved member. Printing current teams now.");
+            _ref2 = this.teams;
+            _results = [];
+            for (i in _ref2) {
+              team = _ref2[i];
+              _results.push(TeamMaker.MakeTeam.views.Log.text("Team #1 : " + team.join(", ")));
+            }
+            return _results;
           }
         }
       };

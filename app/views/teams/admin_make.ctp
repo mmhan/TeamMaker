@@ -180,7 +180,7 @@ TeamMaker.Teams = {
 				)
 			); ?>
 		</li>
-		<li class="fRight">
+		<li>
 			<?php echo $this->Html->link(
 				$this->Html->tag("span", "", array('class' => 'ui-icon ui-icon-gear')) . "Generate Team", 
 				"#", 
@@ -196,6 +196,19 @@ TeamMaker.Teams = {
 	<h2>Generated Teams Suggestion</h2>
 	<div id="teamsContainer" style="display:none">
 	</div>
+	<ul class="actionsBtns ui-widget ui-helper-clearfix">
+		<li>
+			<?php echo $this->Html->link(
+				$this->Html->tag('span', "", array('class' => "ui-icon ui-icon-disk")) . "Save Teams",
+				"#",
+				array(
+					'id' => "saveTeams", 'class' => 'ui-state-default ui-corner-all',
+					'escape' => false,
+					'data-url' => Router::url(array('controller' => "teams", 'action' => "save", "admin" => true, $projectId))
+				)
+			); ?>
+		</li>
+	</ul>
 </div>
 
 <?php echo $this->Form->input("MakeTeam.log", array('type' => 'textarea', 'id' => 'log', 'readonly' => true, 'div' => "logContainer")); ?>

@@ -504,7 +504,7 @@ class ProjectsController extends AppController {
 			//save it
 			$this->Project->Member->disableValidate("import");
 			$this->Project->Member->beforeImport();
-			$status = $this->Project->Member->saveAll($saveData);
+			$status = $this->Project->Member->User->saveAll($saveData);
 			$this->Project->Member->afterImport();
 			
 			if(!$status){

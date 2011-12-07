@@ -185,7 +185,7 @@ class Project extends AppModel {
 		
 		return array(
 			'total' => count($allMembers),
-			'remaining' => $members
+			'remaining' => !empty($members) ? $members : array()
 		);
 	}
 		

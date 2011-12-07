@@ -151,7 +151,6 @@ class Member extends User{
 		$userData['group_id'] = ROLE_MEMBER;
 		unset($data['Member']);
 		$data['User'] = $userData;
-		FireCake::log($data);
 		return $this->User->saveAll($data);
 	}
 	

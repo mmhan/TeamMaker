@@ -25,12 +25,17 @@ TeamMaker.Rules = {
 		members: <?php echo $this->Javascript->object($members) ?>,
 		skills: <?php echo $this->Javascript->object($skills) ?>,
 		rules: <?php echo $this->Javascript->object($rules) ?>
+		
 	}
 };
 TeamMaker.Teams = {
 	view: {
 		container: "#teamsContainer",
 		teamTmpl: "#teamContainerTmpl"
+	}, 
+	data:{
+		teams: <?php echo $this->Javascript->object($teams) ?>,
+		hasTeams: <?php echo $this->Javascript->object(!empty($teams)); ?>
 	}
 }
 </script>

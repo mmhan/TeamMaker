@@ -613,7 +613,7 @@ class ProjectsController extends AppController {
 			$status = $this->Email->send();
 			$email = $this->Session->read("Message.email");
 			$this->log($email);
-			FireCake::info($email);
+			FireCake::log($email);
 			$this->Session->delete("Message.email");
 			return $status;
         }else{

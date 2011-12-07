@@ -22,8 +22,8 @@
         init: function() {
           this.views.Rules.init();
           this.views.Log.init();
-          this.views.Teams.init();
-          return this.model.init();
+          this.model.init();
+          return this.views.Teams.init();
         },
         views: {
           /*
@@ -416,7 +416,7 @@
             $container: false,
             init: function() {
               this.$container = $(tOpts.container);
-              return this.$container.delegate(".member", "mouseenter", function(e) {
+              this.$container.delegate(".member", "mouseenter", function(e) {
                 $(this).addClass("ui-state-hover");
                 e.preventDefault();
                 return e.stopPropagation();
@@ -425,6 +425,7 @@
                 e.preventDefault();
                 return e.stopPropagation();
               });
+              return this.renderTeams(TeamMaker.Teams.data.teams);
             },
             renderTeams: function(teams) {
               var i, team;
@@ -494,9 +495,23 @@
             FULL: 2
           },
           init: function() {
+            var i, rule, _ref2;
             $("#saveRules").click($.proxy(this.saveRules, this));
             $("#generateTeam").click($.proxy(this.generateTeam, this));
-            return this.members = TeamMaker.Rules.data.members;
+            $("#saveTeams").click($.proxy(this.saveTeams, this));
+            this.members = TeamMaker.Rules.data.members;
+            this.teams = TeamMaker.Teams.data.teams;
+            this.rules = TeamMaker.Rules.data.rules;
+            _ref2 = this.rules;
+            for (i in _ref2) {
+              rule = _ref2[i];
+              this.rules[i] = {
+                num: rule.num,
+                rule: this.buildRule(rule),
+                skill_id: rule.type
+              };
+            }
+            return this.populateSatisfy();
           },
           /*
                   To save the rules that was used.
@@ -523,7 +538,33 @@
                 if (data.status) {
                   return alert("Rules saved");
                 } else {
-                  return alert("Rules can't be save. Please try again");
+                  return alert("Rules can't be saved. Please try again");
+                }
+              }
+            });
+          },
+          /*
+                  To save the team
+          */
+          saveTeams: function(e) {
+            var $me;
+            e.preventDefault();
+            TeamMaker.MakeTeam.views.Log.text("Saving Teams.");
+            $me = $(e.target);
+            return $.ajax({
+              url: $me.attr('data-url'),
+              data: {
+                data: {
+                  Teams: this.teams
+                }
+              },
+              type: "POST",
+              dataType: 'json',
+              success: function(data) {
+                if (data.status) {
+                  return alert("Teams Saved");
+                } else {
+                  return alert("Teams can't be saved. Please try again.");
                 }
               }
             });
@@ -808,6 +849,38 @@
             for (i in _ref2) {
               team = _ref2[i];
               _results.push(TeamMaker.MakeTeam.views.Log.text("Team #1 : " + team.join(", ")));
+            }
+            return _results;
+          },
+          /*
+                  Just do populate the satisfy
+          */
+          populateSatisfy: function() {
+            var i, j, member, rule, _ref2, _ref3, _results;
+            _ref2 = this.members;
+            for (i in _ref2) {
+              member = _ref2[i];
+              this.members[i].allocated = false;
+              this.members[i].satisfy = [];
+            }
+            _ref3 = this.rules;
+            _results = [];
+            for (i in _ref3) {
+              rule = _ref3[i];
+              _results.push((function() {
+                var _ref4, _results2;
+                _ref4 = this.members;
+                _results2 = [];
+                for (j in _ref4) {
+                  member = _ref4[j];
+                  if (rule.rule(member.MembersSkill[rule.skill_id])) {
+                    _results2.push(this.members[j].satisfy.push(i));
+                  } else {
+                    _results2.push(void 0);
+                  }
+                }
+                return _results2;
+              }).call(this));
             }
             return _results;
           }

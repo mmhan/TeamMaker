@@ -27,8 +27,8 @@ TeamMaker.MakeTeam ?= (($)->
     init: ->
       @views.Rules.init()
       @views.Log.init()
-      @views.Teams.init()
       @model.init()
+      @views.Teams.init()
     
     views: 
       ###
@@ -438,6 +438,8 @@ TeamMaker.MakeTeam ?= (($)->
                 e.stopPropagation();
             )
           
+          @renderTeams(TeamMaker.Teams.data.teams)
+          
           
         renderTeams: (teams) ->
           @$container.hide().empty()
@@ -523,8 +525,20 @@ TeamMaker.MakeTeam ?= (($)->
       init: ->
         $("#saveRules").click($.proxy(@saveRules, this))
         $("#generateTeam").click($.proxy(@generateTeam, this))
+        $("#saveTeams").click($.proxy(@saveTeams, this))
         @members = TeamMaker.Rules.data.members
-       
+        @teams = TeamMaker.Teams.data.teams
+        @rules = TeamMaker.Rules.data.rules
+        #build rules
+        for i, rule of @rules
+          @rules[i] = {
+            num: rule.num
+            rule: @buildRule(rule)
+            skill_id: rule.type
+          } 
+          
+        @populateSatisfy()
+        
       ###
         To save the rules that was used.
       ###
@@ -546,7 +560,29 @@ TeamMaker.MakeTeam ?= (($)->
             if(data.status)
               alert("Rules saved")
             else
-              alert("Rules can't be save. Please try again")
+              alert("Rules can't be saved. Please try again")
+        })
+        
+      ###
+        To save the team
+      ###
+      saveTeams: (e) ->
+        e.preventDefault()
+        
+        TeamMaker.MakeTeam.views.Log.text("Saving Teams.");
+        
+        $me = $(e.target)
+        
+        $.ajax({
+          url: $me.attr('data-url')
+          data: {data: {Teams:@teams}}
+          type: "POST"
+          dataType: 'json'
+          success: (data)->
+            if(data.status)
+              alert("Teams Saved")
+            else
+              alert("Teams can't be saved. Please try again.")
         })
         
       ###
@@ -770,7 +806,21 @@ TeamMaker.MakeTeam ?= (($)->
         TeamMaker.MakeTeam.views.Log.text("Moved member. Printing current teams now.");
         for i, team of @teams
           TeamMaker.MakeTeam.views.Log.text("Team #1 : " + team.join(", "))
-            
+      
+      ###
+        Just do populate the satisfy
+      ###
+      populateSatisfy: ()->
+        #reset all members
+        for i, member of @members
+          @members[i].allocated = false
+          @members[i].satisfy = []
+          
+        for i, rule of @rules
+            for j, member of @members
+               if rule.rule(member.MembersSkill[rule.skill_id])
+                 @members[j].satisfy.push(i)
+      
   #returns obj
   obj
   

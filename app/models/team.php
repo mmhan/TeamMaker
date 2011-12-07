@@ -15,7 +15,7 @@ class Team extends AppModel {
 			'className' => 'Member',
 			'joinTable' => 'members_teams',
 			'foreignKey' => 'team_id',
-			'associationForeignKey' => 'member_id',
+			'associationForeignKey' => 'user_id',
 			'unique' => true
 		)
 	);
@@ -79,6 +79,18 @@ class Team extends AppModel {
 		$rules = $this->Project->field('rules');
 		if(!empty($rules)) $rules = unserialize($rules);
 		$data['rules'] = $rules;
+		
+		//retrive the teams if any
+		$teamsRaw = $this->find("all", array(
+			'fields' => array('Team.id'),
+			'contain' => array('Member.id'),
+			'conditions' => array('Team.project_id' => $id)
+		));
+		$teams = array();
+		foreach(Set::extract($teamsRaw, "{n}.Team.id") as $i => $teamId){
+			$teams[$teamId] = Set::extract($teamsRaw, "$i.Member.{n}.MembersTeam.user_id");
+		}
+		$data['teams'] = $teams;
 		
 		return $data;
 	}

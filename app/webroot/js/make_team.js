@@ -3,8 +3,9 @@
 
   if ((_ref = TeamMaker.MakeTeam) == null) {
     TeamMaker.MakeTeam = (function($) {
-      var obj, opts, shuffle;
+      var obj, opts, shuffle, tOpts;
       opts = TeamMaker.Rules.view;
+      tOpts = TeamMaker.Teams.view;
       shuffle = function(array) {
         var i, len, p, t;
         len = array.length;
@@ -46,6 +47,9 @@
               return this.$me.empty();
             }
           },
+          /*
+                  for rules
+          */
           Rules: {
             $container: false,
             /*
@@ -77,7 +81,16 @@
                       populate rules
             */
             createRules: function() {
-              if (TeamMaker.Rules.data.rules != null) {} else {
+              var rule, _i, _len, _ref2, _results;
+              if (TeamMaker.Rules.data.rules != null) {
+                _ref2 = TeamMaker.Rules.data.rules;
+                _results = [];
+                for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
+                  rule = _ref2[_i];
+                  _results.push(this.addNewWithData(rule));
+                }
+                return _results;
+              } else {
                 return this.addNew();
               }
             },
@@ -90,7 +103,23 @@
               tmpl = $(opts.ruleTmpl).html();
               nextI = this.$container.children().length;
               tmpl = tmpl.replace(/\${i}/g, nextI);
-              return this.$container.append($(tmpl));
+              this.$container.append($(tmpl));
+              return nextI;
+            },
+            /*
+                      To add new with data
+            */
+            addNewWithData: function(data) {
+              var $rule, i;
+              i = this.addNew();
+              $rule = this.$container.children().eq(i);
+              $rule.find(":input[name$='[num]']").val(data.num);
+              $rule.find(":input[name$='[type]']").val(data.type).change();
+              $rule.find(":input[name$='[filter_type]']").val(data.filter_type).change();
+              $rule.find(":input[name$='[0]']").val(data[0]).change();
+              if (data[1] != null) {
+                return $rule.find(":input[name$='[1]']").val(data[1]).change();
+              }
             },
             /*
                       Handler for changing select of skill
@@ -378,6 +407,17 @@
                 return false;
               }
             }
+          },
+          /*
+                  For the teams
+          */
+          Teams: {
+            $container: false,
+            init: function() {
+              return {
+                this.$container: $(opts.container)
+              };
+            }
           }
         },
         /*===================================================================
@@ -396,8 +436,39 @@
             FULL: 2
           },
           init: function() {
+            $("#saveRules").click($.proxy(this.saveRules, this));
             $("#generateTeam").click($.proxy(this.generateTeam, this));
             return this.members = TeamMaker.Rules.data.members;
+          },
+          /*
+                  To save the rules that was used.
+          */
+          saveRules: function(e) {
+            var $me, rules;
+            e.preventDefault();
+            $me = $(e.target);
+            rules = TeamMaker.MakeTeam.views.Rules.getAllRules();
+            if (!rules) return alert("Please fix the errors highlighted");
+            TeamMaker.MakeTeam.views.Log.text("Saving Rules.");
+            return $.ajax({
+              url: $me.attr('data-url'),
+              data: {
+                data: {
+                  Project: {
+                    rules: rules
+                  }
+                }
+              },
+              type: 'POST',
+              dataType: 'json',
+              success: function(data) {
+                if (data.status) {
+                  return alert("Rules saved");
+                } else {
+                  return alert("Rules can't be save. Please try again");
+                }
+              }
+            });
           },
           /*
                   To generate a team

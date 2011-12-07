@@ -73,6 +73,13 @@ class Team extends AppModel {
 		foreach($data['members'] as $k => $member){
 			$data['members'][$k]['MembersSkill'] = Set::combine($member['MembersSkill'], "{n}.skill_id", "{n}.skill_value");
 		} 
+		
+		//retrieve the rules if any
+		$this->Project->id = $id;
+		$rules = $this->Project->field('rules');
+		if(!empty($rules)) $rules = unserialize($rules);
+		$data['rules'] = $rules;
+		
 		return $data;
 	}
 }

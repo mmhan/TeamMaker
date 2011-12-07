@@ -12,6 +12,7 @@ class TeamsController extends AppController {
 		}
 		
 		$this->set($this->Team->findMakeData($project_id));
+		$this->set("projectId", $project_id);
 	}
 }
 ?>

@@ -529,6 +529,28 @@ class ProjectsController extends AppController {
 	}
 	
 	/**
+	 * To save the rules of a given project
+	 *
+	 * @return void
+	 * @author  
+	 */
+	function admin_save_rule($id = null) {
+		$this->layout = "ajax";
+		$data = array();
+		if(empty($this->data) || $id == null){
+			$data['status'] = false;
+		}
+		else{
+			$this->data['Project']['id'] = $id;
+			$this->data['Project']['rules'] = serialize($this->data['Project']['rules']);
+			$status = $this->Project->save($this->data);
+			$data['status'] = !empty($status);
+		}
+		$this->set("data", $data);
+		$this->render("/ajaxreturn");
+	}
+	
+	/**
 	 * This will process the way imports work.
 	 */
 	function _processImport($data){

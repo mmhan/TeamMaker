@@ -23,7 +23,8 @@ TeamMaker.Rules = {
 	},
 	data: {
 		members: <?php echo $this->Javascript->object($members) ?>,
-		skills: <?php echo $this->Javascript->object($skills) ?>
+		skills: <?php echo $this->Javascript->object($skills) ?>,
+		rules: <?php echo $this->Javascript->object($rules) ?>
 	}
 }; 
 </script>
@@ -117,6 +118,8 @@ TeamMaker.Rules = {
 		</div>
 	</div>
 </div>
+
+<div class="teams_make">
 <?php echo $this->Javascript->link("make_team", false); ?>
 <h1>Create/Edit Teams</h1>
 
@@ -142,7 +145,18 @@ TeamMaker.Rules = {
 					'escape' => false
 				)
 			) ?></li>
-		<li class="">
+		<li>
+			<?php echo $this->Html->link(
+				$this->Html->tag('span', "", array('class' => "ui-icon ui-icon-disk")) . "Save Rules",
+				"#",
+				array(
+					'id' => "saveRules", 'class' => 'ui-state-default ui-corner-all',
+					'escape' => false,
+					'data-url' => Router::url(array('controller' => "projects", 'action' => "save_rule", "admin" => true, $projectId))
+				)
+			); ?>
+		</li>
+		<li class="fRight">
 			<?php echo $this->Html->link(
 				$this->Html->tag("span", "", array('class' => 'ui-icon ui-icon-gear')) . "Generate Team", 
 				"#", 
@@ -151,5 +165,10 @@ TeamMaker.Rules = {
 					'escape' => false
 				)
 			) ?></li>
+		
 	</ul>
+</div>
+<div class="teamsContainer" style="display:none">
+	
+</div>
 </div>

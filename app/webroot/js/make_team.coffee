@@ -1,6 +1,7 @@
 TeamMaker.MakeTeam ?= (($)-> 
   
   opts = TeamMaker.Rules.view;
+  tOpts = TeamMaker.Teams.view;
   
   shuffle = (array)->
     # http://www.hardcode.nl/subcategory_1/article_317-array-shuffle-function
@@ -49,9 +50,10 @@ TeamMaker.MakeTeam ?= (($)->
           
         clear: ->
           @$me.empty()
-      #for rules
+      ###
+        for rules
+      ###
       Rules:
-        
         #container, templates
         $container: false
         
@@ -107,7 +109,8 @@ TeamMaker.MakeTeam ?= (($)->
         ###
         createRules: ->
           if TeamMaker.Rules.data.rules?
-            #populate the rules
+            for rule in TeamMaker.Rules.data.rules
+              @addNewWithData(rule)
           else
             #populate first row
             @addNew()
@@ -129,6 +132,21 @@ TeamMaker.MakeTeam ?= (($)->
           #then attach template to container
           @$container.append($(tmpl))
           
+          return nextI
+        
+        ###
+          To add new with data
+        ###
+        addNewWithData: (data) ->
+          i = @addNew()
+          $rule = @$container.children().eq(i)
+          
+          $rule.find(":input[name$='[num]']").val(data.num)
+          $rule.find(":input[name$='[type]']").val(data.type).change()
+          $rule.find(":input[name$='[filter_type]']").val(data.filter_type).change()
+          $rule.find(":input[name$='[0]']").val(data[0]).change()
+          $rule.find(":input[name$='[1]']").val(data[1]).change() if data[1]?
+        
         ###
           Handler for changing select of skill
         ###
@@ -391,6 +409,16 @@ TeamMaker.MakeTeam ?= (($)->
           else
             $el.addClass('error')
             return false
+      
+      ###
+        For the teams
+      ###
+      Teams:
+        # container
+        $container: false
+        init: () ->
+          @$container: $(opts.container)
+          
           
     ###===================================================================
       For all the data-related operations
@@ -413,9 +441,34 @@ TeamMaker.MakeTeam ?= (($)->
       }
       
       init: ->
+        $("#saveRules").click($.proxy(@saveRules, this))
         $("#generateTeam").click($.proxy(@generateTeam, this))
         @members = TeamMaker.Rules.data.members
        
+      ###
+        To save the rules that was used.
+      ###
+      saveRules: (e) ->
+        e.preventDefault()
+        
+        $me = $(e.target)
+        rules = TeamMaker.MakeTeam.views.Rules.getAllRules()
+        return alert("Please fix the errors highlighted") if !rules
+        
+        TeamMaker.MakeTeam.views.Log.text("Saving Rules.");
+        
+        $.ajax({
+          url: $me.attr('data-url')
+          data: {data: {Project: {rules: rules}}}
+          type: 'POST'
+          dataType: 'json'
+          success: (data) ->
+            if(data.status)
+              alert("Rules saved")
+            else
+              alert("Rules can't be save. Please try again")
+        })
+        
       ###
         To generate a team
       ###

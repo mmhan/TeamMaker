@@ -193,3 +193,5 @@ div.launch{
 	float:left;
 	left: 1.5em; top:50%; position:relative; 
 }
+
+.teams_make #log{ width: 80%; background: #ccc;}

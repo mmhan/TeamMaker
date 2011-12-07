@@ -3,17 +3,11 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Dec 07, 2011 at 03:02 PM
+-- Generation Time: Dec 07, 2011 at 03:10 PM
 -- Server version: 5.1.33
 -- PHP Version: 5.2.9
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
 
 --
 -- Database: `teammaker`
@@ -35,14 +29,14 @@ CREATE TABLE IF NOT EXISTS `acos` (
   `lft` int(10) DEFAULT NULL,
   `rght` int(10) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC AUTO_INCREMENT=58 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC AUTO_INCREMENT=77 ;
 
 --
 -- Dumping data for table `acos`
 --
 
 INSERT INTO `acos` (`id`, `parent_id`, `model`, `foreign_key`, `alias`, `lft`, `rght`) VALUES
-(1, NULL, NULL, NULL, 'controllers', 1, 114),
+(1, NULL, NULL, NULL, 'controllers', 1, 152),
 (2, 1, NULL, NULL, 'Pages', 2, 15),
 (3, 2, NULL, NULL, 'display', 3, 4),
 (4, 2, NULL, NULL, 'add', 5, 6),
@@ -61,7 +55,7 @@ INSERT INTO `acos` (`id`, `parent_id`, `model`, `foreign_key`, `alias`, `lft`, `
 (17, 9, NULL, NULL, 'index', 31, 32),
 (18, 9, NULL, NULL, 'view', 33, 34),
 (19, 9, NULL, NULL, 'delete', 35, 36),
-(20, 1, NULL, NULL, 'Projects', 38, 69),
+(20, 1, NULL, NULL, 'Projects', 38, 79),
 (21, 20, NULL, NULL, 'admin_index', 39, 40),
 (22, 20, NULL, NULL, 'admin_view', 41, 42),
 (23, 20, NULL, NULL, 'admin_add', 43, 44),
@@ -72,33 +66,52 @@ INSERT INTO `acos` (`id`, `parent_id`, `model`, `foreign_key`, `alias`, `lft`, `
 (28, 20, NULL, NULL, 'index', 53, 54),
 (29, 20, NULL, NULL, 'view', 55, 56),
 (30, 20, NULL, NULL, 'delete', 57, 58),
-(31, 1, NULL, NULL, 'Sitemaps', 70, 83),
-(32, 31, NULL, NULL, 'sitemap', 71, 72),
-(33, 31, NULL, NULL, 'add', 73, 74),
-(34, 31, NULL, NULL, 'edit', 75, 76),
-(35, 31, NULL, NULL, 'index', 77, 78),
-(36, 31, NULL, NULL, 'view', 79, 80),
-(37, 31, NULL, NULL, 'delete', 81, 82),
-(38, 1, NULL, NULL, 'Users', 84, 113),
-(39, 38, NULL, NULL, 'login', 85, 86),
-(40, 38, NULL, NULL, 'logout', 87, 88),
-(41, 38, NULL, NULL, 'admin_login', 89, 90),
-(42, 38, NULL, NULL, 'init_db', 91, 92),
-(43, 38, NULL, NULL, 'build_acl', 93, 94),
-(44, 38, NULL, NULL, 'admin_index', 95, 96),
-(45, 38, NULL, NULL, 'admin_add', 97, 98),
-(46, 38, NULL, NULL, 'admin_edit', 99, 100),
-(47, 38, NULL, NULL, 'admin_delete', 101, 102),
-(48, 38, NULL, NULL, 'add', 103, 104),
-(49, 38, NULL, NULL, 'edit', 105, 106),
-(50, 38, NULL, NULL, 'index', 107, 108),
-(51, 38, NULL, NULL, 'view', 109, 110),
-(52, 38, NULL, NULL, 'delete', 111, 112),
+(31, 1, NULL, NULL, 'Sitemaps', 80, 93),
+(32, 31, NULL, NULL, 'sitemap', 81, 82),
+(33, 31, NULL, NULL, 'add', 83, 84),
+(34, 31, NULL, NULL, 'edit', 85, 86),
+(35, 31, NULL, NULL, 'index', 87, 88),
+(36, 31, NULL, NULL, 'view', 89, 90),
+(37, 31, NULL, NULL, 'delete', 91, 92),
+(38, 1, NULL, NULL, 'Users', 94, 123),
+(39, 38, NULL, NULL, 'login', 95, 96),
+(40, 38, NULL, NULL, 'logout', 97, 98),
+(41, 38, NULL, NULL, 'admin_login', 99, 100),
+(42, 38, NULL, NULL, 'init_db', 101, 102),
+(43, 38, NULL, NULL, 'build_acl', 103, 104),
+(44, 38, NULL, NULL, 'admin_index', 105, 106),
+(45, 38, NULL, NULL, 'admin_add', 107, 108),
+(46, 38, NULL, NULL, 'admin_edit', 109, 110),
+(47, 38, NULL, NULL, 'admin_delete', 111, 112),
+(48, 38, NULL, NULL, 'add', 113, 114),
+(49, 38, NULL, NULL, 'edit', 115, 116),
+(50, 38, NULL, NULL, 'index', 117, 118),
+(51, 38, NULL, NULL, 'view', 119, 120),
+(52, 38, NULL, NULL, 'delete', 121, 122),
 (53, 20, NULL, NULL, 'admin_dashboard', 59, 60),
 (54, 20, NULL, NULL, 'admin_settings', 61, 62),
 (55, 20, NULL, NULL, 'admin_add_users', 63, 64),
 (56, 20, NULL, NULL, 'admin_add_members', 65, 66),
-(57, 20, NULL, NULL, 'admin_add_members_status', 67, 68);
+(57, 20, NULL, NULL, 'admin_add_members_status', 67, 68),
+(58, 1, NULL, NULL, 'MembersSkills', 124, 137),
+(59, 58, NULL, NULL, 'enter_data', 125, 126),
+(60, 58, NULL, NULL, 'add', 127, 128),
+(61, 58, NULL, NULL, 'edit', 129, 130),
+(62, 58, NULL, NULL, 'index', 131, 132),
+(63, 58, NULL, NULL, 'view', 133, 134),
+(64, 58, NULL, NULL, 'delete', 135, 136),
+(65, 20, NULL, NULL, 'cron', 69, 70),
+(66, 20, NULL, NULL, 'admin_members', 71, 72),
+(67, 20, NULL, NULL, 'admin_import_file', 73, 74),
+(68, 20, NULL, NULL, 'admin_skills', 75, 76),
+(69, 20, NULL, NULL, 'admin_launch', 77, 78),
+(70, 1, NULL, NULL, 'Teams', 138, 151),
+(71, 70, NULL, NULL, 'admin_make', 139, 140),
+(72, 70, NULL, NULL, 'add', 141, 142),
+(73, 70, NULL, NULL, 'edit', 143, 144),
+(74, 70, NULL, NULL, 'index', 145, 146),
+(75, 70, NULL, NULL, 'view', 147, 148),
+(76, 70, NULL, NULL, 'delete', 149, 150);
 
 -- --------------------------------------------------------
 
@@ -168,7 +181,7 @@ CREATE TABLE IF NOT EXISTS `aros_acos` (
   `_delete` varchar(2) CHARACTER SET latin1 NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `ARO_ACO_KEY` (`aro_id`,`aco_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC AUTO_INCREMENT=7 ;
 
 --
 -- Dumping data for table `aros_acos`
@@ -176,7 +189,11 @@ CREATE TABLE IF NOT EXISTS `aros_acos` (
 
 INSERT INTO `aros_acos` (`id`, `aro_id`, `aco_id`, `_create`, `_read`, `_update`, `_delete`) VALUES
 (1, 1, 1, '1', '1', '1', '1'),
-(2, 3, 1, '1', '1', '1', '1');
+(2, 3, 1, '1', '1', '1', '1'),
+(3, 7, 1, '-1', '-1', '-1', '-1'),
+(4, 7, 49, '1', '1', '1', '1'),
+(5, 7, 28, '1', '1', '1', '1'),
+(6, 7, 59, '1', '1', '1', '1');
 
 -- --------------------------------------------------------
 
@@ -229,14 +246,14 @@ CREATE TABLE IF NOT EXISTS `members_projects` (
 
 DROP TABLE IF EXISTS `members_skills`;
 CREATE TABLE IF NOT EXISTS `members_skills` (
-  `id` int(32) NOT NULL,
+  `id` int(32) NOT NULL AUTO_INCREMENT,
   `skill_id` int(32) NOT NULL,
   `user_id` int(32) DEFAULT NULL,
   `skill_value` text NOT NULL,
   `created` datetime DEFAULT NULL,
   `modified` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 --
 -- Dumping data for table `members_skills`

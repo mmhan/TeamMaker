@@ -31,6 +31,9 @@ TeamMaker.Rules = {
 <div class="hidden" id="rulesTmpl">
 	<div id="ruleTmpl">
 		<div class="rule clearfix" data-index="${i}">
+			
+			<?php echo $this->Form->input('Project.rule.${i}.num', array('label' => "Every team should have", 'after'=>" number of member(s) that satisfy the following rule.", 'div' => "input text numEachTeam")); ?>
+			
 			<div class="c20 skillSelect">
 				<?php echo $this->Form->input(
 					'Project.rule.${i}.type', 
@@ -120,10 +123,10 @@ TeamMaker.Rules = {
 <?php echo $this->Form->input("Project.rule.num", 
 	array(
 		'type' => 'text', 
-		'label' => "Each team should have ",
-		'after' => " number of members.",
-		'div' => 'input text numberOfMembers'
+		'label' => "Number of teams to generate ",
+		'div' => 'input text numberOfTeams'
 	)); ?>
+<?php echo $this->Form->input("MakeTeam.log", array('type' => 'textarea', 'id' => 'log', 'readonly' => true)); ?>
 <div class="rulesContainer">
 	<h3>Rules</h3>
 	<div id="rules">

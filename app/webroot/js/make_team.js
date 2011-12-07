@@ -20,9 +20,32 @@
       obj = {
         init: function() {
           this.views.Rules.init();
+          this.views.Log.init();
           return this.model.init();
         },
         views: {
+          /*
+                  To log the background statuses
+          */
+          Log: {
+            id: "#log",
+            $me: false,
+            init: function() {
+              return this.$me = $(this.id).empty();
+            },
+            scroll: function() {
+              return this.$me.scrollTop(this.$me[0].scrollHeight);
+            },
+            text: function(text) {
+              var current;
+              current = this.$me.html();
+              this.$me.html(current + "\n" + text);
+              return this.scroll();
+            },
+            clear: function() {
+              return this.$me.empty();
+            }
+          },
           Rules: {
             $container: false,
             /*
@@ -80,16 +103,7 @@
               type = parseInt(TeamMaker.Rules.data.skills[$(e.target).val()].type);
               index = $(e.target).closest('.rule').attr('data-index');
               tmpl = $(opts.tmpl[type]).html().replace(/\${i}/g, index);
-              switch (type) {
-                case opts.constants.NUMERIC_RANGE:
-                  console.log("num range");
-                  break;
-                case opts.constants.TEXT_RANGE:
-                  console.log("text range");
-                  break;
-                case opts.constants.TEXT:
-                  console.log("text range");
-              }
+              'switch type\n  when opts.constants.NUMERIC_RANGE\n    console.log("num range");\n  when opts.constants.TEXT_RANGE\n    console.log("text range");\n  when opts.constants.TEXT \n    console.log("text range");';
               return $(e.target).closest('.rule').find(".ruleConditions").html(tmpl);
             },
             /*
@@ -352,9 +366,9 @@
             /*
                       To return number of teams
             */
-            getNumForEachTeams: function() {
+            getNumOfTeams: function() {
               var $el, val;
-              $el = $(".numberOfMembers input").first();
+              $el = $(".numberOfTeams input").first();
               val = parseInt($el.val());
               if (val) {
                 $el.removeClass('error');
@@ -371,8 +385,16 @@
         */
         model: {
           rules: {},
+          teams: {},
           members: false,
-          numForEachTeam: 0,
+          numOfTeams: 0,
+          currentTeamToAllocate: 0,
+          rotatedFrom: false,
+          inMargin: {
+            NO: 0,
+            YES: 1,
+            FULL: 2
+          },
           init: function() {
             $("#generateTeam").click($.proxy(this.generateTeam, this));
             return this.members = TeamMaker.Rules.data.members;
@@ -381,70 +403,179 @@
                   To generate a team
           */
           generateTeam: function(e) {
-            var currentlyConsideredMembers, i, id, j, member, membersLeft, rule, rules, _ref2, _ref3, _ref4, _results;
+            var currentlyConsideredMembers, i, id, idsOfMembersLeft, j, member, membersLeft, rule, rules, team, _i, _j, _len, _len2, _log, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _results;
             e.preventDefault();
+            _log = TeamMaker.MakeTeam.views.Log;
+            _log.clear();
             rules = TeamMaker.MakeTeam.views.Rules.getAllRules();
             if (!rules) return alert("Please fix the errors highlighted.");
-            this.numForEachTeam = TeamMaker.MakeTeam.views.Rules.getNumForEachTeams();
-            if (!this.numForEachTeam) {
-              return alert("Please provide number of teams.");
+            _log.text("There are rules.");
+            this.numOfTeams = TeamMaker.MakeTeam.views.Rules.getNumOfTeams();
+            if (!this.numOfTeams) return alert("Please provide number of teams.");
+            _log.text("There should be " + this.numOfTeams + " teams.");
+            for (i = 0, _ref2 = this.numOfTeams - 1; 0 <= _ref2 ? i <= _ref2 : i >= _ref2; 0 <= _ref2 ? i++ : i--) {
+              this.teams[i] = [];
             }
             for (i in rules) {
               rule = rules[i];
               this.rules[i] = {
+                num: rule.num,
                 rule: this.buildRule(rule),
                 skill_id: rule.type
               };
             }
-            _ref2 = this.rules;
-            _results = [];
-            for (i in _ref2) {
-              rule = _ref2[i];
-              membersLeft = true;
-              _ref3 = this.members;
-              for (i in _ref3) {
-                member = _ref3[i];
-                if (member.allocated != null) {
-                  membersLeft = false;
+            _log.text("Build rules.");
+            _ref3 = this.members;
+            for (i in _ref3) {
+              member = _ref3[i];
+              this.members[i].allocated = false;
+            }
+            _ref4 = this.rules;
+            for (i in _ref4) {
+              rule = _ref4[i];
+              _log.text("Rule #" + i);
+              _log.text("==================");
+              membersLeft = false;
+              _ref5 = this.members;
+              for (j in _ref5) {
+                member = _ref5[j];
+                if (member.allocated === false) {
+                  membersLeft = true;
                   break;
                 }
               }
               if (membersLeft) {
+                _log.text("There are members still left. Will continue generating");
                 currentlyConsideredMembers = [];
-                _ref4 = this.members;
-                for (j in _ref4) {
-                  member = _ref4[j];
-                  if (rule.rule(member.MembersSkill[rule.skill_id])) {
-                    if (member.satisfy != null) {
-                      member.satisfy.push(i);
-                      currentlyConsideredMembers.push(j);
+                _ref6 = this.members;
+                for (j in _ref6) {
+                  member = _ref6[j];
+                  if (rule.rule(member.MembersSkill[rule.skill_id]) && !member.allocated) {
+                    if (this.members[j].satisfy != null) {
+                      this.members[j].satisfy.push(i);
                     } else {
-                      member.satisfy = [i];
+                      this.members[j].satisfy = [i];
                     }
+                    currentlyConsideredMembers.push(j);
                   }
                 }
+                _log.text("Members that are considered: " + currentlyConsideredMembers.join(","));
                 shuffle(currentlyConsideredMembers);
-                _results.push((function() {
-                  var _i, _len, _results2;
-                  _results2 = [];
-                  for (_i = 0, _len = currentlyConsideredMembers.length; _i < _len; _i++) {
-                    id = currentlyConsideredMembers[_i];
-                    console.log(this.getAllocationFor(this.members[id]));
-                    _results2.push('something');
-                  }
-                  return _results2;
-                }).call(this));
-              } else {
-                _results.push(void 0);
+                for (_i = 0, _len = currentlyConsideredMembers.length; _i < _len; _i++) {
+                  id = currentlyConsideredMembers[_i];
+                  this.allocate(id, i);
+                }
               }
+            }
+            'All rules has been satisfied. Now, going to assign random members to random teams.';
+            _log.text("All rules have been considered. Now going to assign the remaining members randomly.");
+            _log.text("==================");
+            idsOfMembersLeft = (function() {
+              var _ref7, _results;
+              _ref7 = this.members;
+              _results = [];
+              for (i in _ref7) {
+                member = _ref7[i];
+                if (member.allocated === false) _results.push(i);
+              }
+              return _results;
+            }).call(this);
+            shuffle(idsOfMembersLeft);
+            for (_j = 0, _len2 = idsOfMembersLeft.length; _j < _len2; _j++) {
+              id = idsOfMembersLeft[_j];
+              this.allocate(id);
+            }
+            _log.text("All done.");
+            _ref7 = this.teams;
+            _results = [];
+            for (i in _ref7) {
+              team = _ref7[i];
+              _results.push(_log.text("Team #" + i + ": " + team.join(", ")));
             }
             return _results;
           },
           /*
                   Allocate a member to a team
           */
-          getAllocationFor: function(member) {
-            return parseInt(Math.random() * this.numForEachTeam);
+          allocate: function(memberId, ruleIndex) {
+            var inMargin, _log;
+            _log = TeamMaker.MakeTeam.views.Log;
+            _log.text("Considering member#" + memberId);
+            if (ruleIndex === null) {
+              this.teams[this.currentTeamToAllocate].push(memberId);
+              this.members[memberId].allocated = true;
+              _log.text("No specific rule given allocated to team #" + this.currentTeamToAllocate);
+              this.rotateTeam();
+            } else {
+              inMargin = this.teamIsInMargin(ruleIndex);
+              switch (inMargin) {
+                case this.inMargin.YES:
+                  this.teams[this.currentTeamToAllocate].push(memberId);
+                  this.members[memberId].allocated = true;
+                  _log.text("Allocated member #" + memberId + " to team #" + this.currentTeamToAllocate);
+                  this.rotateTeam();
+                  break;
+                case this.inMargin.NO:
+                  if (this.rotateTeam(this.currentTeamToAllocate)) {
+                    this.allocate(memberId, ruleIndex);
+                  } else {
+                    alert("Something is seriously wrong.");
+                  }
+                  break;
+                case this.inMargin.FULL:
+                  this.rotateTeam();
+              }
+            }
+            return "something";
+          },
+          /*
+                  To check whether the current team can receive member
+                  The team can be determined as "within margin" for
+                  - not having satisfied current rule in consideration.
+                  - having min number of member that satisfy the current rule (when compared against other teams)
+          */
+          teamIsInMargin: function(ruleIndex) {
+            '  if currentRule does not exist:\n    return true\n  if currentTeam already statisfy currentRule of minimum X member:\n    return false\n  myCandidates = num of members (that satisfy currentRule) currentTeam already have \n  minCandidates = min num of members other teams have for currentRule\n\n  return myCandidate == minCandidate';
+            var i, member, memberId, minNum, numOfMembersForCurrRule, team, _i, _len, _ref2;
+            if (!ruleIndex) return this.inMargin.YES;
+            numOfMembersForCurrRule = {};
+            minNum = false;
+            _ref2 = this.teams;
+            for (i in _ref2) {
+              team = _ref2[i];
+              numOfMembersForCurrRule[i] = 0;
+              for (_i = 0, _len = team.length; _i < _len; _i++) {
+                memberId = team[_i];
+                member = this.members[memberId];
+                if ($.inArray(ruleIndex, member.satisfy) !== -1) {
+                  numOfMembersForCurrRule[i]++;
+                }
+              }
+              if (minNum === false) {
+                minNum = numOfMembersForCurrRule[i];
+              } else {
+                minNum = numOfMembersForCurrRule[i] < minNum ? numOfMembersForCurrRule[i] : minNum;
+              }
+            }
+            if (numOfMembersForCurrRule[this.currentTeamToAllocate] >= this.rules[ruleIndex].num) {
+              return this.inMargin.FULL;
+            }
+            if (minNum === numOfMembersForCurrRule[this.currentTeamToAllocate]) {
+              return this.inMargin.YES;
+            } else {
+              return this.inMargin.NO;
+            }
+          },
+          /*
+                  To rotate the current team
+          */
+          rotateTeam: function(remember) {
+            if ((remember != null) && this.rotatedFrom !== false && remember === this.rotatedFrom) {
+              return false;
+            }
+            this.rotatedFrom = remember ? remember : false;
+            this.currentTeamToAllocate = this.currentTeamToAllocate + 1 < this.numOfTeams ? this.currentTeamToAllocate + 1 : 0;
+            return true;
           },
           /*
                   Build a function that either return true or false for a value given, 

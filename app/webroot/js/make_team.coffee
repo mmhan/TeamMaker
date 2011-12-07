@@ -25,9 +25,30 @@ TeamMaker.MakeTeam ?= (($)->
     
     init: ->
       @views.Rules.init()
+      @views.Log.init()
       @model.init()
     
     views: 
+      ###
+        To log the background statuses
+      ###
+      Log: 
+        id : "#log"
+        $me : false
+        
+        init: () ->
+          @$me = $(@id).empty()
+        
+        scroll: () ->
+          @$me.scrollTop(@$me[0].scrollHeight)
+        
+        text: (text) ->
+          current = @$me.html()
+          @$me.html(current + "\n" + text)
+          @scroll()
+          
+        clear: ->
+          @$me.empty()
       #for rules
       Rules:
         
@@ -126,7 +147,7 @@ TeamMaker.MakeTeam ?= (($)->
           #get the replaced string
           tmpl = $(opts.tmpl[type]).html().replace(/\${i}/g, index)
           
-          
+          '''
           switch type
             when opts.constants.NUMERIC_RANGE
               console.log("num range");
@@ -134,6 +155,7 @@ TeamMaker.MakeTeam ?= (($)->
               console.log("text range");
             when opts.constants.TEXT 
               console.log("text range");
+          '''
           
           #put it in 
           $(e.target).closest('.rule').find(".ruleConditions").html(tmpl)
@@ -360,8 +382,8 @@ TeamMaker.MakeTeam ?= (($)->
         ###
           To return number of teams
         ###
-        getNumForEachTeams: ->
-          $el = $(".numberOfMembers input").first()
+        getNumOfTeams: ->
+          $el = $(".numberOfTeams input").first()
           val = parseInt($el.val()) 
           if val
             $el.removeClass('error')
@@ -377,13 +399,21 @@ TeamMaker.MakeTeam ?= (($)->
     model:
       
       rules: {}
+      teams: {}
       members: false
       
-      numForEachTeam: 0
+      numOfTeams: 0
+      currentTeamToAllocate: 0
+      rotatedFrom: false
+      
+      inMargin: {
+        NO: 0
+        YES: 1
+        FULL: 2
+      }
       
       init: ->
         $("#generateTeam").click($.proxy(@generateTeam, this))
-        
         @members = TeamMaker.Rules.data.members
        
       ###
@@ -391,55 +421,161 @@ TeamMaker.MakeTeam ?= (($)->
       ###
       generateTeam: (e) ->
         e.preventDefault()
+        
+        _log = TeamMaker.MakeTeam.views.Log
+        _log.clear()
+        
         #get all rules
         rules = TeamMaker.MakeTeam.views.Rules.getAllRules()
         return alert("Please fix the errors highlighted.") if !rules
+        _log.text("There are rules.")
         
-        @numForEachTeam = TeamMaker.MakeTeam.views.Rules.getNumForEachTeams()
-        return alert("Please provide number of teams.") if !@numForEachTeam
+        @numOfTeams = TeamMaker.MakeTeam.views.Rules.getNumOfTeams()
+        return alert("Please provide number of teams.") if !@numOfTeams
+        _log.text("There should be " + @numOfTeams + " teams.")
+        
+        #generate blank teams
+        for i in [0..@numOfTeams - 1]
+          @teams[i] = []
         
         #build rules
         for i, rule of rules
           @rules[i] = {
+            num: rule.num
             rule: @buildRule(rule)
             skill_id: rule.type
           } 
+        _log.text("Build rules.")
         
+        #reset all members
+        for i, member of @members
+          @members[i].allocated = false 
         
         #generate now
         # for each rule
         for i, rule of @rules
-          membersLeft = true
-          for i, member of @members
-            if member.allocated?
-              membersLeft = false 
+          _log.text("Rule #" + i)
+          _log.text("==================")
+          membersLeft = false
+          for j, member of @members
+            if member.allocated == false
+              membersLeft = true
               break
           
           if membersLeft
+            _log.text("There are members still left. Will continue generating")
+            
             # Suppose X[] is a set of unallocated members who satisfy currentRule
             # figuring out who satisfy this rule
             currentlyConsideredMembers = []
             for j, member of @members
-               if rule.rule(member.MembersSkill[rule.skill_id])
-                 if member.satisfy?
-                   member.satisfy.push(i)
-                   currentlyConsideredMembers.push(j)
+               if rule.rule(member.MembersSkill[rule.skill_id]) and !member.allocated
+                 if @members[j].satisfy?
+                   @members[j].satisfy.push(i)
                  else
-                   member.satisfy = [i]
+                   @members[j].satisfy = [i]
+                   
+                 currentlyConsideredMembers.push(j)
                  
             #shuffle x[]
+            _log.text("Members that are considered: " + currentlyConsideredMembers.join(","))
             shuffle currentlyConsideredMembers
             
             for id in currentlyConsideredMembers
-              console.log(@getAllocationFor @members[id])
-              'something'
-            
+              @allocate(id, i)
+        
+        '''
+          All rules has been satisfied. Now, going to assign random members to random teams.
+        '''
+        _log.text("All rules have been considered. Now going to assign the remaining members randomly.")
+        _log.text("==================")
+        idsOfMembersLeft = (i for i, member of @members when member.allocated == false)
+        shuffle idsOfMembersLeft
+        for id in idsOfMembersLeft
+          @allocate(id)
+        
+        _log.text("All done.")
+        for i, team of @teams
+          _log.text("Team #" + i + ": " + team.join(", "))
+        
       ###
         Allocate a member to a team
       ###      
-      getAllocationFor: (member) ->
-        return parseInt(Math.random() * @numForEachTeam)
+      allocate: (memberId, ruleIndex) ->
+        _log = TeamMaker.MakeTeam.views.Log
+        _log.text("Considering member#"+memberId)
         
+        if ruleIndex is null
+          @teams[@currentTeamToAllocate].push(memberId)
+          @members[memberId].allocated = true
+          _log.text("No specific rule given allocated to team #" + @currentTeamToAllocate)
+          @rotateTeam()
+        else
+          inMargin = @teamIsInMargin(ruleIndex)
+          switch inMargin
+            when @inMargin.YES 
+              @teams[@currentTeamToAllocate].push(memberId)
+              @members[memberId].allocated = true
+              _log.text("Allocated member #" + memberId + " to team #" + @currentTeamToAllocate)
+              @rotateTeam()
+            when @inMargin.NO
+              if @rotateTeam(@currentTeamToAllocate)
+                @allocate(memberId, ruleIndex)
+              else
+                alert("Something is seriously wrong.")
+            when @inMargin.FULL
+              @rotateTeam()
+        "something"
+          
+        
+      ###
+        To check whether the current team can receive member
+        The team can be determined as "within margin" for
+        - not having satisfied current rule in consideration.
+        - having min number of member that satisfy the current rule (when compared against other teams)
+      ###
+      teamIsInMargin: (ruleIndex) ->
+        '''
+        if currentRule does not exist:
+          return true
+        if currentTeam already statisfy currentRule of minimum X member:
+          return false
+        myCandidates = num of members (that satisfy currentRule) currentTeam already have 
+        minCandidates = min num of members other teams have for currentRule
+      
+        return myCandidate == minCandidate
+        '''
+        return @inMargin.YES if !ruleIndex
+        
+        #check for num of members for current rule in all team
+        numOfMembersForCurrRule = {}
+        minNum = false
+        for i, team of @teams
+          numOfMembersForCurrRule[i] = 0
+          for memberId in team
+            member = @members[memberId]
+            if $.inArray(ruleIndex, member.satisfy) != -1
+              numOfMembersForCurrRule[i]++
+          if minNum == false
+            minNum = numOfMembersForCurrRule[i] 
+          else
+            minNum = if numOfMembersForCurrRule[i] < minNum then numOfMembersForCurrRule[i] else minNum
+            
+        return @inMargin.FULL if numOfMembersForCurrRule[@currentTeamToAllocate] >= @rules[ruleIndex].num 
+        if minNum == numOfMembersForCurrRule[@currentTeamToAllocate]
+          return @inMargin.YES
+        else
+          return @inMargin.NO
+        
+        
+      ###
+        To rotate the current team 
+      ###
+      rotateTeam: (remember) ->
+        return false if remember? and @rotatedFrom != false and remember == @rotatedFrom
+        @rotatedFrom = if remember then remember else false
+        @currentTeamToAllocate = if @currentTeamToAllocate + 1 < @numOfTeams then @currentTeamToAllocate + 1 else 0
+        return true
         
       ###
         Build a function that either return true or false for a value given, 

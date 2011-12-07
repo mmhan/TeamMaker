@@ -26,7 +26,13 @@ TeamMaker.Rules = {
 		skills: <?php echo $this->Javascript->object($skills) ?>,
 		rules: <?php echo $this->Javascript->object($rules) ?>
 	}
-}; 
+};
+TeamMaker.Teams = {
+	view: {
+		container: "#teamsContainer",
+		teamTmpl: "#teamContainerTmpl"
+	}
+}
 </script>
 
 <div class="hidden" id="rulesTmpl">
@@ -119,6 +125,24 @@ TeamMaker.Rules = {
 	</div>
 </div>
 
+<div class="hidden" id="teamsTmpl">
+	<div id="teamContainerTmpl">
+		<div class="team colContainer">
+			<div class="c10 teamNum"></div>
+			<div class="c20">Satisfying Rules:
+				<div class="satisfyingRules">
+					
+				</div> 
+			</div>
+			<div class="c70">Members:
+				<div class="teamMembers">
+					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div class="teams_make">
 <?php echo $this->Javascript->link("make_team", false); ?>
 <h1>Create/Edit Teams</h1>
@@ -129,7 +153,7 @@ TeamMaker.Rules = {
 		'label' => "Number of teams to generate ",
 		'div' => 'input text numberOfTeams'
 	)); ?>
-<?php echo $this->Form->input("MakeTeam.log", array('type' => 'textarea', 'id' => 'log', 'readonly' => true)); ?>
+
 <div class="rulesContainer">
 	<h3>Rules</h3>
 	<div id="rules">
@@ -168,7 +192,11 @@ TeamMaker.Rules = {
 		
 	</ul>
 </div>
-<div class="teamsContainer" style="display:none">
-	
+<div class="teamsContainer" style="display:none;">
+	<h2>Generated Teams Suggestion</h2>
+	<div id="teamsContainer" style="display:none">
+	</div>
 </div>
+
+<?php echo $this->Form->input("MakeTeam.log", array('type' => 'textarea', 'id' => 'log', 'readonly' => true, 'div' => "logContainer")); ?>
 </div>

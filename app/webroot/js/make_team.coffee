@@ -27,6 +27,7 @@ TeamMaker.MakeTeam ?= (($)->
     init: ->
       @views.Rules.init()
       @views.Log.init()
+      @views.Teams.init()
       @model.init()
     
     views: 
@@ -417,8 +418,49 @@ TeamMaker.MakeTeam ?= (($)->
         # container
         $container: false
         init: () ->
-          @$container: $(opts.container)
+          @$container = $(tOpts.container)
           
+          @$container
+            .delegate(
+              ".member", 
+              "mouseenter",
+              (e)-> 
+                $(this).addClass("ui-state-hover")
+                e.preventDefault();
+                e.stopPropagation();
+            )
+            .delegate(
+              ".member", 
+              "mouseleave",
+              (e)-> 
+                $(this).removeClass("ui-state-hover")
+                e.preventDefault();
+                e.stopPropagation();
+            )
+          
+        renderTeams: (teams) ->
+          @$container.hide().empty()
+          @renderTeam(team, i) for i, team of teams
+          @$container.show()
+            .parent().show()
+            
+        renderTeam: (team, i) -> 
+          $cloned = $($(tOpts.teamTmpl).html())
+          $cloned.find('.teamNum').text("Team #" + i);
+          $membersContainer = $cloned.find(".teamMembers")
+          
+          for memberId, j in team
+            member = TeamMaker.MakeTeam.model.members[memberId]
+            $membersContainer.append(
+              $("<div>")
+                .addClass('ui-state-default ui-corner-all member')
+                .append($("<div>").addClass("name").text(member.Member.name))
+                .append($("<div>").addClass("rules").text("Rule: " + member.satisfy.join(" | ")))
+            )
+          
+          $cloned.find(".satisfyingRules").text(TeamMaker.MakeTeam.model.getSatisfyingRules(team).join(" | "))
+          
+          @$container.append($cloned)
           
     ###===================================================================
       For all the data-related operations
@@ -502,7 +544,8 @@ TeamMaker.MakeTeam ?= (($)->
         
         #reset all members
         for i, member of @members
-          @members[i].allocated = false 
+          @members[i].allocated = false
+          @members[i].satisfy = []
         
         #generate now
         # for each rule
@@ -523,11 +566,7 @@ TeamMaker.MakeTeam ?= (($)->
             currentlyConsideredMembers = []
             for j, member of @members
                if rule.rule(member.MembersSkill[rule.skill_id]) and !member.allocated
-                 if @members[j].satisfy?
-                   @members[j].satisfy.push(i)
-                 else
-                   @members[j].satisfy = [i]
-                   
+                 @members[j].satisfy.push(i)
                  currentlyConsideredMembers.push(j)
                  
             #shuffle x[]
@@ -548,8 +587,8 @@ TeamMaker.MakeTeam ?= (($)->
           @allocate(id)
         
         _log.text("All done.")
-        for i, team of @teams
-          _log.text("Team #" + i + ": " + team.join(", "))
+        TeamMaker.MakeTeam.views.Teams.renderTeams(@teams)
+          
         
       ###
         Allocate a member to a team
@@ -578,7 +617,7 @@ TeamMaker.MakeTeam ?= (($)->
                 alert("Something is seriously wrong.")
             when @inMargin.FULL
               @rotateTeam()
-        "something"
+        return 
           
         
       ###
@@ -632,7 +671,7 @@ TeamMaker.MakeTeam ?= (($)->
         
       ###
         Build a function that either return true or false for a value given, 
-        using the given data.
+        using the given rule data.
       ###
       buildRule: (rule) ->
         consts = TeamMaker.Rules.view.constants
@@ -669,7 +708,19 @@ TeamMaker.MakeTeam ?= (($)->
                 return (v) -> if v.match(new RegExp(arg1, 'gi')) then false else true
               when "matches"
                 return (v) -> if v.match(new RegExp(arg1, arg2)) then true else false
-      
+                
+      ###
+        Find satisfying rules of a given set of array.
+      ###
+      getSatisfyingRules: (team)->
+        result = []
+        for i, rule of @rules
+          num = 0
+          for j, memberId of team
+            num++ if $.inArray(i, @members[memberId].satisfy) != -1
+          result.push(i) if num >= rule.num
+        return result
+            
   #returns obj
   obj
   

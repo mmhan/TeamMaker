@@ -22,6 +22,7 @@
         init: function() {
           this.views.Rules.init();
           this.views.Log.init();
+          this.views.Teams.init();
           return this.model.init();
         },
         views: {
@@ -414,9 +415,38 @@
           Teams: {
             $container: false,
             init: function() {
-              return {
-                this.$container: $(opts.container)
-              };
+              this.$container = $(tOpts.container);
+              return this.$container.delegate(".member", "mouseenter", function(e) {
+                $(this).addClass("ui-state-hover");
+                e.preventDefault();
+                return e.stopPropagation();
+              }).delegate(".member", "mouseleave", function(e) {
+                $(this).removeClass("ui-state-hover");
+                e.preventDefault();
+                return e.stopPropagation();
+              });
+            },
+            renderTeams: function(teams) {
+              var i, team;
+              this.$container.hide().empty();
+              for (i in teams) {
+                team = teams[i];
+                this.renderTeam(team, i);
+              }
+              return this.$container.show().parent().show();
+            },
+            renderTeam: function(team, i) {
+              var $cloned, $membersContainer, j, member, memberId, _len;
+              $cloned = $($(tOpts.teamTmpl).html());
+              $cloned.find('.teamNum').text("Team #" + i);
+              $membersContainer = $cloned.find(".teamMembers");
+              for (j = 0, _len = team.length; j < _len; j++) {
+                memberId = team[j];
+                member = TeamMaker.MakeTeam.model.members[memberId];
+                $membersContainer.append($("<div>").addClass('ui-state-default ui-corner-all member').append($("<div>").addClass("name").text(member.Member.name)).append($("<div>").addClass("rules").text("Rule: " + member.satisfy.join(" | "))));
+              }
+              $cloned.find(".satisfyingRules").text(TeamMaker.MakeTeam.model.getSatisfyingRules(team).join(" | "));
+              return this.$container.append($cloned);
             }
           }
         },
@@ -474,7 +504,7 @@
                   To generate a team
           */
           generateTeam: function(e) {
-            var currentlyConsideredMembers, i, id, idsOfMembersLeft, j, member, membersLeft, rule, rules, team, _i, _j, _len, _len2, _log, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _results;
+            var currentlyConsideredMembers, i, id, idsOfMembersLeft, j, member, membersLeft, rule, rules, _i, _j, _len, _len2, _log, _ref2, _ref3, _ref4, _ref5, _ref6;
             e.preventDefault();
             _log = TeamMaker.MakeTeam.views.Log;
             _log.clear();
@@ -500,6 +530,7 @@
             for (i in _ref3) {
               member = _ref3[i];
               this.members[i].allocated = false;
+              this.members[i].satisfy = [];
             }
             _ref4 = this.rules;
             for (i in _ref4) {
@@ -522,11 +553,7 @@
                 for (j in _ref6) {
                   member = _ref6[j];
                   if (rule.rule(member.MembersSkill[rule.skill_id]) && !member.allocated) {
-                    if (this.members[j].satisfy != null) {
-                      this.members[j].satisfy.push(i);
-                    } else {
-                      this.members[j].satisfy = [i];
-                    }
+                    this.members[j].satisfy.push(i);
                     currentlyConsideredMembers.push(j);
                   }
                 }
@@ -557,13 +584,7 @@
               this.allocate(id);
             }
             _log.text("All done.");
-            _ref7 = this.teams;
-            _results = [];
-            for (i in _ref7) {
-              team = _ref7[i];
-              _results.push(_log.text("Team #" + i + ": " + team.join(", ")));
-            }
-            return _results;
+            return TeamMaker.MakeTeam.views.Teams.renderTeams(this.teams);
           },
           /*
                   Allocate a member to a team
@@ -597,7 +618,6 @@
                   this.rotateTeam();
               }
             }
-            return "something";
           },
           /*
                   To check whether the current team can receive member
@@ -650,7 +670,7 @@
           },
           /*
                   Build a function that either return true or false for a value given, 
-                  using the given data.
+                  using the given rule data.
           */
           buildRule: function(rule) {
             var arg1, arg2, consts, dataType;
@@ -726,6 +746,24 @@
                     };
                 }
             }
+          },
+          /*
+                  Find satisfying rules of a given set of array.
+          */
+          getSatisfyingRules: function(team) {
+            var i, j, memberId, num, result, rule, _ref2;
+            result = [];
+            _ref2 = this.rules;
+            for (i in _ref2) {
+              rule = _ref2[i];
+              num = 0;
+              for (j in team) {
+                memberId = team[j];
+                if ($.inArray(i, this.members[memberId].satisfy) !== -1) num++;
+              }
+              if (num >= rule.num) result.push(i);
+            }
+            return result;
           }
         }
       };

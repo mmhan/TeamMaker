@@ -8,6 +8,8 @@ Project TeamMaker is what I have produced within a few weeks for ICT 333 - IT Pr
 
 It's a system which, _eventually_, will helps course coordinators, tutors and managers with breaking people into equal teams.
 
+The wireframes of the system is uploaded at [google sites](http://sites.google.com/site/projteammaker/).
+
 The workflow of the system, in short, go thru the following processes
 
 1. Admin sets up new project

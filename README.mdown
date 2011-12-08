@@ -1,3 +1,96 @@
-# Project TeamMaker[WIP] #
+# Project TeamMaker #
 
-This is the repository for project TeamMaker.
+This is the repository for project TeamMaker released with [MIT Licence](http://en.wikipedia.org/wiki/MIT_License)
+
+## Info
+
+Project TeamMaker is what I have produced within a few weeks for ICT 333 - IT Project. 
+
+It's a system which, _eventually_, will helps course coordinators, tutors and managers with breaking people into equal teams.
+
+The workflow of the system, in short, go thru the following processes
+
+1. Admin sets up new project
+2. Admin sets up skill to consider during teammaking
+3. Import student's data
+4. Launch project and invite students to log in.
+5. Students fill in their skills data
+6. Students make nominations of people they want to group together with. (Not implemented)
+7. Once the deadline is over for collection, the admin start creating rules and making groups.
+8. Once the admin has fixed the teams, an email is sent out notifying the students of the allocation (Not implemented)
+9. The members can submit feedback to the allocation until the end of Feedback deadline. (Not implemented)
+
+This repository has been created so that the students of the Murdoch University, Australia who are taking up this project for further development can easily reference to it.
+
+Feel free to fork this repo even if you are not a student for whatever purposes.
+
+I will not continue developing this system. However, for any questions or issues, go ahead and [submit your issues](https://github.com/mmhan/TeamMaker/issues). I will be able to provide guidance or answer the questions related to the system.
+
+## Installation Steps
+
+### Step 1: Download
+
+Download the latest update (currently [v0.5](https://github.com/mmhan/TeamMaker/tarball/v0.5)) and Unzip at destination. 
+
+Or check out from github by running `git clone git://github.com/mmhan/TeamMaker.git` in terminal at the destination.
+
+### Step 2: Configure database.
+
+First of all, you must have created a clean database that you have access to. Import the database using the provided file at `sqls/fulldb.sql`
+
+After the database has been imported. Create a copy of the `app/config/database.php.default` as `database.php` in the same folder.
+
+Go to line 76 and edit the `$default` variable with your database configuration.
+
+    var $default = array(
+  	    'driver' => 'mysql', 
+		    'persistent' => false,
+	    	'host' => 'localhost',  //change this to the ip address if the database is located in another server
+		    'login' => 'user',   //change this to database user name
+		    'password' => 'password',  //change this to the database's password
+		    'database' => 'database_name',  //change this to databse name
+		    'prefix' => '', //do not change.
+	   );
+
+### Step 3: Configure write permissions
+
+There are a number of folders that is used by the system to temporarily store some data such as cache, logs and session and also a folder where uploaded CSVs will be stored.
+
+They should be writable by Apache's user (usually `www-data` or `www` or `apache`) own these files.
+
+The folders that should be writable by Apache are:
+1. `app/tmp` (and all the folders in it)
+2. `app/webroot/csv_files` 
+
+After this step is done, you should be able to see the home page with no error.
+
+### Step 4: Run Initial sequence
+
+For ACL to work, you must visit the following URLS for the initial sequence to run. 
+
+1. `http://www.example.com/teammaker/users/build_acl` 
+2. `http://www.example.com/teammaker/users/init_db`
+
+Do not pay attention to what the screen outputs.
+
+### Step 5: Logging in to the system.
+
+At this stage you system is ready. You should be able to log in to the system using the login access provided below.
+
+*Email* : su@example.com
+
+*Password* : 123123
+
+### Configuring Cron Job
+
+The system uses a regular CRON job that will upgrade projects from one stage to another. It must be set-up so that the URL `http://www.example.com/teammaker/projects/cron` is called by either `wget` or `curl` at least every one hour.
+
+### For further Development 
+
+(To students who's taking up this project for their FYP)
+
+1. Learn [MVC](http://en.wikipedia.org/wiki/Model–view–controller) and [CakePHP](http://cakephp.org)
+2. Know [Git](http://book.git-scm.com/) and [GitHub](http://help.github.com/)
+3. Javascript, HTML & CSS
+    * `app/webroot/js/make_team.js` is generated using [CoffeeScript](http://jashkenas.github.com/coffee-script/). You might as well check it out too.
+4. Fork this.

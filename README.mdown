@@ -58,9 +58,10 @@ Go to line 76 and edit the `$default` variable with your database configuration.
 
 There are a number of folders that is used by the system to temporarily store some data such as cache, logs and session and also a folder where uploaded CSVs will be stored.
 
-They should be writable by Apache's user (usually `www-data` or `www` or `apache`) own these files.
+They should be writable by Apache's user (usually `www-data` or `www` or `apache`). Either `chmod g+w` or `chown` these files.
 
 The folders that should be writable by Apache are:
+
 1. `app/tmp` (and all the folders in it)
 2. `app/webroot/csv_files` 
 
